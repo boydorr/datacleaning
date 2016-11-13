@@ -1,19 +1,20 @@
-#-----------------------------------------------------------------------------#
-# ** Load in Packages **
-#-----------------------------------------------------------------------------#
+#' change_project / Change the projection of a shapefile to LongLat WGS84
+#'
+#' Alters the projection of a shapefile to that of the entire project
+#' (+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0).
+#'
+#' @param shapefile: a shapefile object loaded in the original projection.
+#'
+#' @return a shapefile object in the LongLat WGS84 projection.
+#'
+#' @export
+#'
+#' @examples
+#' #
 
+# Load in Packages
 library(sp)
 library(rgdal)
-
-#-----------------------------------------------------------------------------#
-# ** Change_projection Function **
-#
-# This function will alter the projection of a shapefile to that of the entire
-# project (+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0).
-#
-# Argument:
-# - shapefile: Loaded in the original projection
-#-----------------------------------------------------------------------------#
 
 change_projection <- function(shapefile)
 {

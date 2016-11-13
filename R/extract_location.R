@@ -1,19 +1,29 @@
-#-------------------------------------------------------------------------------
-#'** FUNCTION to extract the location information from a set of coordinates**
-#-------------------------------------------------------------------------------
+#' extract_location / Extract the location information from a set of coordinates
+#'
+#' Extracts village, ward, district and region information for each data point
+#' as a data frame if coordinates are correct. Coordinates do not need to be in
+#' UTM format, but the columns containing coordinates currently need to be
+#' labelled as "X.UTM" and "Y.UTM".
+#'
+#' @param dataframe - coordinates in two seperate columns (unfortunately labelled
+#' X.UTM" and "Y.UTM")
+#' @param shapefile - shapefile object of "TANZANIA_VILLAGES.shp" in the project
+#' projction ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+#' @param data.projection - an object containing the projection that the data
+#' is currently in.
+#'
+#' @return a plot overlaying the location of all data points over Village
+#' polygons in Tanzania, and a dataframe object listing location information that
+#' can be easily exported as .csv.
+#'
+#' @export
+#'
+#' @examples
+#' #
 
-#' Arguments:
-## dataframe = coordinates in two seperate columns (unfortunately labelled
-## "X.UTM" and "Y.UTM")
-## shapefile = "TANZANIA_VILLAGES.shp" in Geoproj format
-## ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-## data.projection = the projection that the data is currently in
-## (e.g. "+proj=utm +zone=36 +south +datum=WGS84")
-
-#' Return:
-## A plot showing the location of the data points over all Villages in Tanzania
-## A dataframe object listing location information that can be easily exported
-## as .csv
+# Load in Packages
+library(sp)
+library(rgdal)
 
 extract_location <- function(dataframe, shapefile, data.projection)
 {
