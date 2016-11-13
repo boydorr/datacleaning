@@ -4,7 +4,6 @@
 
 library(sp)
 library(rgdal)
-library(maptools)
 
 #-----------------------------------------------------------------------------#
 # ** Change_projection Function **
