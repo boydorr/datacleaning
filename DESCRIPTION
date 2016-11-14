@@ -1,10 +1,19 @@
 Package: datacleaning
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Package for cleaning datasets
 Version: 0.1
 Date: 2016-11-11
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Authors@R: c(
+    person("Richard", "Reeve", email = "richard.reeve@glasgow.ac.uk",
+           role = c("aut", "cre")),
+    person("Rachel", "Steenson", role = "aut"),
+    person("Francesco", "Ventura", role = "aut"))
+Maintainer: Richard Reeve <richard.reeve@glasgow.ac.uk>
+Description: This package contains the useful helper functions that we are using
+    to clean and process datasets we are working with.
 License: What license is it under?
 LazyData: TRUE
+RoxygenNote: 5.0.1
+Imports: maptools,
+    rgdal,
+    sp
