@@ -21,18 +21,14 @@
 #' @examples
 #' #
 
-# Load in Packages
-library(sp)
-library(rgdal)
-
 extract_location <- function(dataframe, shapefile, data.projection)
 {
   # Set shapefile projetion
-  Geoproj <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
   #' Transform from UTM to latlong
-  data <- SpatialPoints(dataframe, proj4string=CRS(data.projection))
-  proj.data <- spTransform(data, Geoproj)
+  data <- sp::SpatialPoints(dataframe, proj4string=CRS(data.projection))
+  proj.data <- sp::spTransform(data, Geoproj)
 
   # Plot points on map of Wards in Tanzania
   plot(shapefile)

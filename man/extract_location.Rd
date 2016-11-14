@@ -2,19 +2,33 @@
 % Please edit documentation in R/extract_location.R
 \name{extract_location}
 \alias{extract_location}
-\title{** FUNCTION to extract the location information from a set of coordinates**
-Arguments:
-Return:
-Transform from UTM to latlong
-Extract information on which wards, district and region data is from
-Remove duplicated rows}
+\title{extract_location / Extract the location information from a set of coordinates}
 \usage{
 extract_location(dataframe, shapefile, data.projection)
 }
+\arguments{
+\item{dataframe}{- coordinates in two seperate columns (unfortunately labelled
+X.UTM" and "Y.UTM")}
+
+\item{shapefile}{- shapefile object of "TANZANIA_VILLAGES.shp" in the project
+projction ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")}
+
+\item{data.projection}{- an object containing the projection that the data
+is currently in.}
+}
+\value{
+a plot overlaying the location of all data points over Village
+polygons in Tanzania, and a dataframe object listing location information that
+can be easily exported as .csv.
+}
 \description{
-** FUNCTION to extract the location information from a set of coordinates**
-Arguments:
-Return:
+Extracts village, ward, district and region information for each data point
+as a data frame if coordinates are correct. Coordinates do not need to be in
+UTM format, but the columns containing coordinates currently need to be
+labelled as "X.UTM" and "Y.UTM".
+}
+\examples{
+#
 Transform from UTM to latlong
 Extract information on which wards, district and region data is from
 Remove duplicated rows
