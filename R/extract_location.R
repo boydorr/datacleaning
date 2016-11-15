@@ -6,18 +6,21 @@
 #' "X.UTM" and "Y.UTM".
 #'
 #' @param dataframe - coordinates in two seperate columns labelled "X.UTM" and
-#' "Y.UTM"
+#' "Y.UTM".
 #' @param shapefile - shapefile object of "TANZANIA_VILLAGES.shp" in the
-#' LongLat WGS84 projection
+#' LongLat WGS84 projection.
 #' ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 #' @param data.projection - an object containing the projection that the data
 #' is currently in.
 #'
 #' @return A plot overlaying the location of all data points over Village
 #' polygons in Tanzania, and a dataframe object listing location information that
-#' can be easily exported as .csv.
+#' can be easily exported as a .csv.
 #'
 #' @export
+#'
+#' @details A warning message will be produced if NAs are present in the
+#' resulting dataframe.
 #'
 #' @examples
 #' #
@@ -47,6 +50,9 @@ extract_location <- function(dataframe, shapefile, data.projection)
   names(location_df)[names(location_df)=="location.District_N"] <- "District"
   names(location_df)[names(location_df)=="location.Ward_Name"] <- "Ward"
   names(location_df)[names(location_df)=="location.Vil_Mtaa_N"] <- "Village"
+
+  # Trigger warning message if NAs are present
+  if(any(is.na(location_df))) warning('NAs present in dataframe')
 
   # Remove duplicated rows
   location_df <- unique(location_df)
