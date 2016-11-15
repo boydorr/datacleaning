@@ -35,7 +35,7 @@ extract_location <- function(dataframe, shapefile, data.projection)
   points(proj.data$X.UTM, proj.data$Y.UTM, pch=16, col="tomato")
 
   #' Extract information on which wards, district and region data is from
-  location <- over(proj.data, shapefile)
+  location <- sp::over(proj.data, shapefile)
 
   # Save location information in new data frame
   location_df <- data.frame(location$Vil_Mtaa_N, location$Ward_Name,
