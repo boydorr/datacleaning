@@ -13,7 +13,6 @@
 #'
 #' @import sp
 #' @import rgdal
-#' @import maptools
 #'
 #' @author
 #' Richard Reeve, Rachel Steenson, Francesco Ventura

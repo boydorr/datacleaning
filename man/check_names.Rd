@@ -14,17 +14,17 @@ check_names(dataframe, label, legal_names)
 \item{legal_names}{- a vector containing the legal village/ward/district/region names specified by the shapefile}
 }
 \value{
-a list with two slots. The first slot contains a TRUE/FALSE statement: 
+a list with two slots. The first slot contains a TRUE/FALSE statement:
 if TRUE, it means that there are no misspellings; if FALSE, there are still misspellings.
 The second slot stores the misspelled names.
 }
 \description{
-Checks that the village/ward/district/region names in the project dataset are 
+Checks that the village/ward/district/region names in the project dataset are
 correct based on the legal village/ward/district/region names specified by the shapefile.
 }
 \details{
-\code{check_names} checks that there are no misspellings in the project dataset 
-by comparing the names stored in the dataset with the legal names contained in the 
+\code{check_names} checks that there are no misspellings in the project dataset
+by comparing the names stored in the dataset with the legal names contained in the
 shapefile
 }
 \examples{
