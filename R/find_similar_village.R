@@ -103,6 +103,7 @@ find_similar_village <- function(dataframe, label, label_higher_level,
   respective_vill <- ((dataframe[[label]])[miss_vill_index])
   respective_vill <- as.character(respective_vill)
   
+  
   if(higher_level=="Ward")
   {
     wrd <- unique(dataframe[[label_higher_level]])
@@ -127,6 +128,10 @@ find_similar_village <- function(dataframe, label, label_higher_level,
     ## generate empty list for similar results
     Tot_misspell <- nrow(check_df)
     mylist_similar_villages <- vector('list', Tot_misspell)
+    
+    ## initialise the real_typo vector
+    real_typo <- c(rep(NA, Tot_misspell))
+    real_typo <- as.character(real_typo)
     
     ## only consider alphanumeric characters of the misspelled/correct village names.
     ## same names' indices
@@ -159,12 +164,14 @@ find_similar_village <- function(dataframe, label, label_higher_level,
           number <- which(c_sub_v %in% m_v[q])
           mylist_similar_villages[[q]] <- number
           mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
+          real_typo[q] <- FALSE
           
         } else {
           
           ##find the similar ward names within the subset
           mylist_similar_villages[[q]] <- agrep(m_v[q], c_sub_v, max.distance = distnc)
-          mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
+          mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])
+          real_typo[q] <- TRUE
         }
         
       } else {
@@ -174,12 +181,14 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         {
           number <- which(c_v %in% m_v[q])
           mylist_similar_villages[[q]] <- number
-          mylist_similar_villages[[q]] <- unique(vll_correct[mylist_similar_villages[[q]]])  
+          mylist_similar_villages[[q]] <- unique(vll_correct[mylist_similar_villages[[q]]]) 
+          real_typo[q] <- FALSE
         } else {
           # if there are no case insensitive matches 
           ##look for similar village names in the whole correct village list
           mylist_similar_villages[[q]] <- agrep(m_v[q], c_v, max.distance = distnc)
           mylist_similar_villages[[q]] <- unique(vll_correct[mylist_similar_villages[[q]]])
+          real_typo[q] <- TRUE
         }
       }
     }
@@ -206,13 +215,17 @@ find_similar_village <- function(dataframe, label, label_higher_level,
     Ward <- check_df$respective_ward
     corrections <- cbind(corrections, Ward)
     
+    ## cbind the real_typo column
+    real_typo <- as.character(real_typo)
+    corrections <- cbind(corrections, real_typo)
+    
+    
   } else {
     
     if(higher_level=="District")
     {
       if (!is.na(only_in_distr))
       {
-        
         only_in_distr <- as.character(only_in_distr)
         
         ## respective_vill: the misspelled village names
@@ -224,8 +237,11 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         ## generate empty list for similar results
         Tot_misspell <- length(respective_vill)
         mylist_similar_villages <- vector('list', Tot_misspell)
-        
         mylist_respective_districts <- vector('list', Tot_misspell)
+        
+        ## initialise the real_typo vector
+        real_typo <- c(rep(NA, Tot_misspell))
+        real_typo <- as.character(real_typo)
         
         ##find the similar village names within the subset
         correct_subset <- dplyr::filter(fullset, District_N%in%only_in_distr)
@@ -246,6 +262,8 @@ find_similar_village <- function(dataframe, label, label_higher_level,
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[m] %in% c_sub_v)==T) 
           {
+            real_typo[m] <- FALSE
+            
             number <- which(c_sub_v %in% m_v[m])
             mylist_similar_villages[[m]] <- number
             mylist_similar_villages[[m]] <- correct_subset_vill[mylist_similar_villages[[m]]]  
@@ -261,13 +279,15 @@ find_similar_village <- function(dataframe, label, label_higher_level,
             
           } else {
             
+            real_typo[m] <- TRUE
+            
             ##find the similar village names within the subset
             number <- agrep(m_v[m], c_sub_v, max.distance = distnc)
             mylist_similar_villages[[m]] <- number
             mylist_similar_villages[[m]] <- correct_subset_vill[mylist_similar_villages[[m]]]  
             mylist_respective_districts[[m]] <- number
             mylist_respective_districts[[m]] <- correct_subset_dis[mylist_respective_districts[[m]]]
-          
+            
             unique_vill <- !duplicated(mylist_similar_villages[[m]])
             unique_ind <- seq_along(mylist_similar_villages[[m]])[unique_vill]
             
@@ -287,7 +307,6 @@ find_similar_village <- function(dataframe, label, label_higher_level,
           colnames(villages_correct_name)[l] <- newname
         }
         
-        
         misspelled_villages <- respective_vill
         misspelled_villages <- as.character(misspelled_villages)
         
@@ -297,6 +316,7 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         districts_identified <- plyr::ldply(mylist_respective_districts, rbind)
         districts_correct_name <- districts_identified
         totcol_discorrname <- length(districts_correct_name)
+        
         for(Q in 1:totcol_discorrname)
         {
           newname <- paste("Respective_District_", Q, sep="")
@@ -304,6 +324,10 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         }
         
         corrections <- cbind(corrections, districts_correct_name)
+        
+        ## cbind the real_typo column
+        real_typo <- as.character(real_typo)
+        corrections <- cbind(corrections, real_typo)
         
       } else {
         
@@ -329,6 +353,10 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         ## generate empty list for similar results
         Tot_misspell <- nrow(check_df)
         mylist_similar_villages <- vector('list', Tot_misspell)
+        
+        ## initialise the real_typo vector
+        real_typo <- c(rep(NA, Tot_misspell))
+        real_typo <- as.character(real_typo)
         
         ## only consider alphanumeric characters of the misspelled/correct village names.
         ## same names' indices
@@ -357,12 +385,13 @@ find_similar_village <- function(dataframe, label, label_higher_level,
             ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
             if((m_v[q] %in% c_sub_v)==T) 
             {
+              real_typo[q] <- FALSE
               number <- which(c_sub_v %in% m_v[q])
               mylist_similar_villages[[q]] <- number
               mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
               
             } else {
-              
+              real_typo[q] <- TRUE
               ##find the similar village names within the subset
               mylist_similar_villages[[q]] <- agrep(m_v[q], c_sub_v, max.distance = distnc)
               mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
@@ -372,10 +401,12 @@ find_similar_village <- function(dataframe, label, label_higher_level,
             ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
             if((m_v[q] %in% c_v)==T) 
             {
+              real_typo[q] <- FALSE
               number <- which(c_v %in% m_v[q])
               mylist_similar_villages[[q]] <- number
               mylist_similar_villages[[q]] <- unique(vll_correct[mylist_similar_villages[[q]]])  
             } else {
+              real_typo[q] <- TRUE
               # if there are no case insensitive matches 
               ##look for similar village names in the whole correct village list
               mylist_similar_villages[[q]] <- agrep(m_v[q], c_v, max.distance = distnc)
@@ -404,8 +435,12 @@ find_similar_village <- function(dataframe, label, label_higher_level,
         ## cbind the District
         District <- check_df$respective_district
         corrections <- cbind(corrections, District)
+        
+        ## cbind the real_typo column
+        real_typo <- as.character(real_typo)
+        corrections <- cbind(corrections, real_typo)
+        
       }
-      
       
     } else {
       
@@ -433,6 +468,10 @@ find_similar_village <- function(dataframe, label, label_higher_level,
       Tot_misspell <- nrow(check_df)
       mylist_similar_villages <- vector('list', Tot_misspell)
       
+      ## initialise the real_typo vector
+      real_typo <- c(rep(NA, Tot_misspell))
+      real_typo <- as.character(real_typo)
+      
       ## only consider alphanumeric characters of the misspelled/correct village names.
       ## same names' indices
       m_v <- gsub("[^[:alnum:]]", "", tolower(check_df$respective_vill)) 
@@ -459,12 +498,13 @@ find_similar_village <- function(dataframe, label, label_higher_level,
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[q] %in% c_sub_v)==T) 
           {
+            real_typo[q] <- FALSE
             number <- which(c_sub_v %in% m_v[q])
             mylist_similar_villages[[q]] <- number
             mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
             
           } else {
-            
+            real_typo[q] <- TRUE
             ##find the similar village names within the subset
             mylist_similar_villages[[q]] <- agrep(m_v[q], c_sub_v, max.distance = distnc)
             mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])  
@@ -475,10 +515,12 @@ find_similar_village <- function(dataframe, label, label_higher_level,
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[q] %in% c_v)==T) 
           {
+            real_typo[q] <- FALSE
             number <- which(c_v %in% m_v[q])
             mylist_similar_villages[[q]] <- number
             mylist_similar_villages[[q]] <- unique(vll_correct[mylist_similar_villages[[q]]])  
           } else {
+            real_typo[q] <- TRUE
             # if there are no case insensitive matches 
             ##look for similar village names in the whole correct village list
             mylist_similar_villages[[q]] <- agrep(m_v[q], c_v, max.distance = distnc)
@@ -509,8 +551,18 @@ find_similar_village <- function(dataframe, label, label_higher_level,
       Region <- check_df$respective_region
       corrections <- cbind(corrections, Region)
       
+      ## cbind the real_typo column
+      real_typo <- as.character(real_typo)
+      corrections <- cbind(corrections, real_typo)
+      
     }
   }
+  
+  tot_obs <- nrow(corrections)
+  typo_level <- c()
+  typo_level <- as.character(typo_level)
+  typo_level <- rep("Village", tot_obs)
+  corrections <- cbind(corrections, typo_level)
   
   return(corrections)
 }

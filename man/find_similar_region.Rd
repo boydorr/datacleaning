@@ -7,7 +7,7 @@
 Identifies the misspelled region names in the project dataset and proposes a 
 set of similar correct region names.}
 \usage{
-find_similar_region(dataframe, label, legal_names, distnc, shapefile,
+find_similar_region(dataframe, label, distnc, shapefile,
   additional_places = NA)
 }
 \arguments{
@@ -15,9 +15,9 @@ find_similar_region(dataframe, label, legal_names, distnc, shapefile,
 
 \item{label}{- the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
 
-\item{legal_names}{- a vector containing the legal region names specified by the shapefile}
-
 \item{distnc}{- Numeric value indicating the maximum distance allowed for a match (see ?agrep)}
+
+\item{shapefile}{- the shapefile object used to retrieve the legal names}
 
 \item{additional_places}{- Optional. A dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile}
 }

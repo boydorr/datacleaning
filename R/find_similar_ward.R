@@ -120,8 +120,11 @@ find_similar_ward <- function(dataframe, label,
       ## generate empty list for similar results
       Tot_misspell <- length(respective_ward)
       mylist_similar_wards <- vector('list', Tot_misspell)
-      
       mylist_respective_districts <- vector('list', Tot_misspell)
+      
+      ## initialise the real_typo vector
+      real_typo <- c(rep(NA, Tot_misspell))
+      real_typo <- as.character(real_typo)
       
       ##find the similar ward names within the subset
       correct_subset <- dplyr::filter(fullset, District_N%in%only_in_distr)
@@ -142,6 +145,7 @@ find_similar_ward <- function(dataframe, label,
         ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
         if((m_v[m] %in% c_sub_v)==T) 
         {
+          real_typo[m] <- FALSE
           number <- which(c_sub_v %in% m_v[m])
           mylist_similar_wards[[m]] <- number
           mylist_similar_wards[[m]] <- correct_subset_ward[mylist_similar_wards[[m]]]
@@ -153,9 +157,9 @@ find_similar_ward <- function(dataframe, label,
           
           mylist_similar_wards[[m]] <- mylist_similar_wards[[m]][unique_ind]
           mylist_respective_districts[[m]] <- mylist_respective_districts[[m]][unique_ind]
-      
-        } else {
           
+        } else {
+          real_typo[m] <- TRUE
           ##find the similar ward names within the subset
           number <- agrep(m_v[m], c_sub_v, max.distance = distnc)
           mylist_similar_wards[[m]] <- number
@@ -201,7 +205,11 @@ find_similar_ward <- function(dataframe, label,
       
       corrections <- cbind(corrections, districts_correct_name)
       
-    } else {
+      ## cbind the real_typo column
+      real_typo <- as.character(real_typo)
+      corrections <- cbind(corrections, real_typo)
+      
+    } else { 
       ## i.e. if the argument only_in_distr is NA
       
       ds <- unique(dataframe[[label_higher_level]])
@@ -226,6 +234,10 @@ find_similar_ward <- function(dataframe, label,
       ## generate empty list for similar results
       Tot_misspell <- nrow(check_df)
       mylist_similar_wards <- vector('list', Tot_misspell)
+      
+      ## initialise the real_typo vector
+      real_typo <- c(rep(NA, Tot_misspell))
+      real_typo <- as.character(real_typo)
       
       ## only consider alphanumeric characters of the misspelled/correct village names.
       ## same names' indices
@@ -254,12 +266,13 @@ find_similar_ward <- function(dataframe, label,
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[q] %in% c_sub_v)==T) 
           {
+            real_typo[q] <- FALSE
             number <- which(c_sub_v %in% m_v[q])
             mylist_similar_wards[[q]] <- number
             mylist_similar_wards[[q]] <- unique(correct_subset_wards[mylist_similar_wards[[q]]])  
             
           } else {
-            
+            real_typo[q] <- TRUE
             ##find the similar village names within the subset
             mylist_similar_wards[[q]] <- agrep(m_v[q], c_sub_v, max.distance = distnc)
             mylist_similar_wards[[q]] <- unique(correct_subset_wards[mylist_similar_wards[[q]]])  
@@ -270,10 +283,12 @@ find_similar_ward <- function(dataframe, label,
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[q] %in% c_v)==T) 
           {
+            real_typo[q] <- FALSE
             number <- which(c_v %in% m_v[q])
             mylist_similar_wards[[q]] <- number
             mylist_similar_wards[[q]] <- unique(wrd_correct[mylist_similar_wards[[q]]])  
           } else {
+            real_typo[q] <- TRUE
             # if there are no case insensitive matches 
             ##look for similar village names in the whole correct village list
             mylist_similar_wards[[q]] <- agrep(m_v[q], c_v, max.distance = distnc)
@@ -303,7 +318,12 @@ find_similar_ward <- function(dataframe, label,
       ## cbind the District
       District <- check_df$respective_district
       corrections <- cbind(corrections, District)
+      
+      ## cbind the real_typo column
+      real_typo <- as.character(real_typo)
+      corrections <- cbind(corrections, real_typo)
     }
+    
   } else {
     ## higher_level = "Region"
     rg <- unique(dataframe[[label_higher_level]])
@@ -328,6 +348,10 @@ find_similar_ward <- function(dataframe, label,
     ## generate empty list for similar results
     Tot_misspell <- nrow(check_df)
     mylist_similar_wards <- vector('list', Tot_misspell)
+    
+    ## initialise the real_typo vector
+    real_typo <- c(rep(NA, Tot_misspell))
+    real_typo <- as.character(real_typo)
     
     ## only consider alphanumeric characters of the misspelled/correct village names.
     ## same names' indices
@@ -355,12 +379,13 @@ find_similar_ward <- function(dataframe, label,
         ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
         if((m_v[q] %in% c_sub_v)==T) 
         {
+          real_typo[q] <- FALSE
           number <- which(c_sub_v %in% m_v[q])
           mylist_similar_wards[[q]] <- number
           mylist_similar_wards[[q]] <- unique(correct_subset_wards[mylist_similar_wards[[q]]])  
           
         } else {
-          
+          real_typo[q] <- TRUE
           ##find the similar names within the subset
           mylist_similar_wards[[q]] <- agrep(m_v[q], c_sub_v, max.distance = distnc)
           mylist_similar_wards[[q]] <- unique(correct_subset_wards[mylist_similar_wards[[q]]])  
@@ -371,10 +396,12 @@ find_similar_ward <- function(dataframe, label,
         ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
         if((m_v[q] %in% c_v)==T) 
         {
+          real_typo[q] <- FALSE
           number <- which(c_v %in% m_v[q])
           mylist_similar_wards[[q]] <- number
           mylist_similar_wards[[q]] <- unique(wrd_correct[mylist_similar_wards[[q]]])  
         } else {
+          real_typo[q] <- TRUE
           # if there are no case insensitive matches 
           ##look for similar village names in the whole correct village list
           mylist_similar_wards[[q]] <- agrep(m_v[q], c_v, max.distance = distnc)
@@ -401,11 +428,20 @@ find_similar_ward <- function(dataframe, label,
       colnames(corrections)[q] <- newname
     }
     
-    ## cbind the District
+    ## cbind the Region
     Region <- check_df$respective_region
     corrections <- cbind(corrections, Region)
     
+    ## cbind the real_typo column
+    real_typo <- as.character(real_typo)
+    corrections <- cbind(corrections, real_typo)
   } 
+  
+  tot_obs <- nrow(corrections)
+  typo_level <- c()
+  typo_level <- as.character(typo_level)
+  typo_level <- rep("Ward", tot_obs)
+  corrections <- cbind(corrections, typo_level)
   return(corrections)
 }
 

@@ -7,8 +7,8 @@
 Identifies the misspelled district names in the project dataset and proposes a 
 set of similar correct district names.}
 \usage{
-find_similar_district(dataframe, label, label_higher_level, legal_names,
-  shapefile, distnc, additional_places = NA)
+find_similar_district(dataframe, label, label_higher_level, shapefile, distnc,
+  additional_places = NA)
 }
 \arguments{
 \item{dataframe}{- the project dataframe with misspelled district names}
@@ -16,8 +16,6 @@ find_similar_district(dataframe, label, label_higher_level, legal_names,
 \item{label}{- the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
 
 \item{label_higher_level}{- the name of the column in the project dataframe storing the CORRECT region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
-
-\item{legal_names}{- a vector containing the legal district names specified by the shapefile}
 
 \item{shapefile}{- the shapefile object used to retrieve the legal names}
 

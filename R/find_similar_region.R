@@ -4,10 +4,10 @@
 #' set of similar correct region names.
 #'
 #' @param dataframe - the project dataframe with misspelled region names
-#' @param  label - the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)
-#' @param  legal_names - a vector containing the legal region names specified by the shapefile 
-#' @param  distnc - Numeric value indicating the maximum distance allowed for a match (see ?agrep)
-#' @param  additional_places - Optional. A dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile 
+#' @param label - the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)
+#' @param distnc - Numeric value indicating the maximum distance allowed for a match (see ?agrep)
+#' @param shapefile - the shapefile object used to retrieve the legal names 
+#' @param additional_places - Optional. A dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile 
 #' 
 #' @details \code{find_similar_region} finds the misspellings in the region column 
 #' in the project dataset, looks for the respective most similar legal names and 
@@ -22,7 +22,7 @@
 #' #
 #' 
 
-find_similar_region <- function(dataframe, label, legal_names, distnc,
+find_similar_region <- function(dataframe, label, distnc,
                                 shapefile, additional_places=NA)
 {
   if(!is.na(additional_places))
@@ -91,6 +91,10 @@ find_similar_region <- function(dataframe, label, legal_names, distnc,
   ## generate empty list for similar results
   mylist_similar_regions <- vector('list', Tot_misspell)
   
+  ## initialise the real_typo vector
+  real_typo <- c(rep(NA, Tot_misspell))
+  real_typo <- as.character(real_typo)
+  
   ## only consider alphanumeric characters of the misspelled/correct region names.
   ## same names' indices
   m_r <- gsub("[^[:alnum:]]", "", tolower(misspelled_regions)) 
@@ -102,10 +106,12 @@ find_similar_region <- function(dataframe, label, legal_names, distnc,
     ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
     if((m_r[j] %in% c_r)==T) 
     {
+      real_typo[j] <- FALSE
       number <- which(c_r %in% m_r[j])
       mylist_similar_regions[[j]] <- number
       
     } else {
+      real_typo[j] <- TRUE
       ## find the similar regions' names
       mylist_similar_regions[[j]] <- agrep(m_r[j], c_r, max.distance = distnc)
       #print(rg_correct[mylist_similar_regions[[j]]])
@@ -134,5 +140,16 @@ find_similar_region <- function(dataframe, label, legal_names, distnc,
   
   corrections <- cbind(misspelled_regions, regions_correct_name)
   corrections <- as.data.frame(corrections)
+  
+  ## cbind the real_typo column
+  real_typo <- as.character(real_typo)
+  corrections <- cbind(corrections, real_typo)
+  
+  tot_obs <- nrow(corrections)
+  typo_level <- c()
+  typo_level <- as.character(typo_level)
+  typo_level <- rep("Region", tot_obs)
+  corrections <- cbind(corrections, typo_level)
+  
   return(corrections)
 }

@@ -6,7 +6,6 @@
 #' @param dataframe - the project dataframe with misspelled district names
 #' @param  label - the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)
 #' @param  label_higher_level - the name of the column in the project dataframe storing the CORRECT region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)
-#' @param  legal_names - a vector containing the legal district names specified by the shapefile 
 #' @param  shapefile - the shapefile object used to retrieve the legal names 
 #' @param  distnc - Numeric value indicating the maximum distance allowed for a match (see ?agrep)
 #' @param  additional_places - Optional. A dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile 
@@ -31,7 +30,7 @@
 #' 
 
 find_similar_district <- function(dataframe, label, label_higher_level, 
-                                  legal_names, shapefile, distnc,
+                                  shapefile, distnc,
                                   additional_places=NA)
 {
   
@@ -110,76 +109,83 @@ find_similar_district <- function(dataframe, label, label_higher_level,
     stop("There are no misspellings") 
     
   } else {
-      
-      ## the misspelled district names
-      respective_district <- ((dataframe[[label]])[miss_dis_index])
-      respective_district <- as.character(respective_district)
-      ## the respective region names
-      respective_region <- ((dataframe[[label_higher_level]])[miss_dis_index])
-      respective_region <- as.character(respective_region)
-      
-      check_df <- cbind(respective_district, respective_region)
-      check_df <- as.data.frame(check_df)
-      check_df <- unique(check_df)
-      
-      check_df$respective_district <- as.character(check_df$respective_district)
-      check_df$respective_region <- as.character(check_df$respective_region)
-      
-      ## generate empty list for similar results
-      Tot_misspell <- nrow(check_df)
-      mylist_similar_districts <- vector('list', Tot_misspell)
-      
-      ## only consider alphanumeric characters of the misspelled/correct district names.
-      ## same names' indices
-      m_d <- gsub("[^[:alnum:]]", "", tolower(check_df$respective_district)) 
-      
-      for(q in 1:Tot_misspell)
+    
+    ## the misspelled district names
+    respective_district <- ((dataframe[[label]])[miss_dis_index])
+    respective_district <- as.character(respective_district)
+    ## the respective region names
+    respective_region <- ((dataframe[[label_higher_level]])[miss_dis_index])
+    respective_region <- as.character(respective_region)
+    
+    check_df <- cbind(respective_district, respective_region)
+    check_df <- as.data.frame(check_df)
+    check_df <- unique(check_df)
+    
+    check_df$respective_district <- as.character(check_df$respective_district)
+    check_df$respective_region <- as.character(check_df$respective_region)
+    
+    ## generate empty list for similar results
+    Tot_misspell <- nrow(check_df)
+    mylist_similar_districts <- vector('list', Tot_misspell)
+    
+    ## initialise the real_typo vector
+    real_typo <- c(rep(NA, Tot_misspell))
+    real_typo <- as.character(real_typo)
+    
+    ## only consider alphanumeric characters of the misspelled/correct district names.
+    ## same names' indices
+    m_d <- gsub("[^[:alnum:]]", "", tolower(check_df$respective_district)) 
+    
+    for(q in 1:Tot_misspell)
+    {
+      if((is.na(check_df$respective_region[q]))==F)
       {
-        if((is.na(check_df$respective_region[q]))==F)
+        study_reg <- check_df$respective_region[q] 
+        study_reg <- as.character(study_reg)
+        
+        ##find the similar district names within the subset
+        correct_subset <- dplyr::filter(fullset, Region_Nam==study_reg)
+        correct_subset_dis <- correct_subset$District_N
+        correct_subset_dis <- as.character(correct_subset_dis)
+        correct_subset_dis <- unique(correct_subset_dis)
+        
+        c_sub_d <- gsub("[^[:alnum:]]", "", tolower(correct_subset_dis))
+        
+        
+        ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
+        if((m_d[q] %in% c_sub_d)==T) 
         {
-          study_reg <- check_df$respective_region[q] 
-          study_reg <- as.character(study_reg)
-          
-          ##find the similar district names within the subset
-          correct_subset <- dplyr::filter(fullset, Region_Nam==study_reg)
-          correct_subset_dis <- correct_subset$District_N
-          correct_subset_dis <- as.character(correct_subset_dis)
-          correct_subset_dis <- unique(correct_subset_dis)
-          
-          c_sub_d <- gsub("[^[:alnum:]]", "", tolower(correct_subset_dis))
-          
-          
-          ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
-          if((m_d[q] %in% c_sub_d)==T) 
-          {
-            number <- which(c_sub_d %in% m_d[q])
-            mylist_similar_districts[[q]] <- number
-            mylist_similar_districts[[q]] <- unique(correct_subset_dis[mylist_similar_districts[[q]]])  
-          } else {
-            
-            ##find the similar district names within the subset
-            mylist_similar_districts[[q]] <- agrep(m_d[q], c_sub_d, max.distance = distnc)
-            #print(correct_subset_dis[mylist_similar_districts[[q]]])
-            mylist_similar_districts[[q]] <- unique(correct_subset_dis[mylist_similar_districts[[q]]])  
-          }
+          real_typo[q] <- FALSE
+          number <- which(c_sub_d %in% m_d[q])
+          mylist_similar_districts[[q]] <- number
+          mylist_similar_districts[[q]] <- unique(correct_subset_dis[mylist_similar_districts[[q]]])  
         } else {
-          
-          ## if there is no region information
-          ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
-          if((m_d[q] %in% c_d)==T) 
-          {
-            number <- which(c_d %in% m_d[q])
-            mylist_similar_districts[[q]] <- number
-            mylist_similar_districts[[q]] <- unique(ds_correct[mylist_similar_districts[[q]]])  
-          } else {
-            # if there are no case insensitive matches 
-            ##look for similar district names in the whole correct names list
-            mylist_similar_districts[[q]] <- agrep(m_d[q], c_d, max.distance = distnc)
-            mylist_similar_districts[[q]] <- unique(ds_correct[mylist_similar_districts[[q]]])
-          }
+          real_typo[q] <- TRUE
+          ##find the similar district names within the subset
+          mylist_similar_districts[[q]] <- agrep(m_d[q], c_sub_d, max.distance = distnc)
+          #print(correct_subset_dis[mylist_similar_districts[[q]]])
+          mylist_similar_districts[[q]] <- unique(correct_subset_dis[mylist_similar_districts[[q]]])  
+        }
+      } else {
+        
+        ## if there is no region information
+        ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
+        if((m_d[q] %in% c_d)==T) 
+        {
+          real_typo[q] <- FALSE
+          number <- which(c_d %in% m_d[q])
+          mylist_similar_districts[[q]] <- number
+          mylist_similar_districts[[q]] <- unique(ds_correct[mylist_similar_districts[[q]]])  
+        } else {
+          real_typo[q] <- TRUE
+          # if there are no case insensitive matches 
+          ##look for similar district names in the whole correct names list
+          mylist_similar_districts[[q]] <- agrep(m_d[q], c_d, max.distance = distnc)
+          mylist_similar_districts[[q]] <- unique(ds_correct[mylist_similar_districts[[q]]])
         }
       }
     }
+  }
   
   districts_identified <- plyr::ldply(mylist_similar_districts, rbind)
   districts_correct_name <- districts_identified
@@ -204,8 +210,16 @@ find_similar_district <- function(dataframe, label, label_higher_level,
   Region <- as.character(Region)
   
   corrections <- cbind(corrections, Region)
-  #corrections <- as.data.frame(corrections)
   
+  ## cbind the real_typo column
+  real_typo <- as.character(real_typo)
+  corrections <- cbind(corrections, real_typo)
+  
+  tot_obs <- nrow(corrections)
+  typo_level <- c()
+  typo_level <- as.character(typo_level)
+  typo_level <- rep("District", tot_obs)
+  corrections <- cbind(corrections, typo_level)
   return(corrections)
 }
 
