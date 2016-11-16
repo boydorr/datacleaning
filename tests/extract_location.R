@@ -52,13 +52,13 @@ extract_location <- function(dataframe, shapefile, data.projection)
 # Testing the Function
 #-------------------------------------------------------------------------------
 
-source("Extract Location Function.R")
+source("extract_location.R")
 
 # Import dataset
 data <- read.csv("RiverAndWater.csv")
 
 # Import the Villages Shapefile
-vill_geoproj <- readShapePoly("TANZANIA_VILLAGES.shp", 
+vill_geoproj <- readShapePoly("TANZANIA_VILLAGES.shp",
                               proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
 # Select only columns containing coordinates

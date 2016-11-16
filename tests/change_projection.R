@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------#
 
 # Load Function
-source("Change_projection Function.R")
+source("Change_projection.R")
 
 # Set intended projection
 Geoproj <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
@@ -29,5 +29,4 @@ plot(tanz, col="blanchedalmond", axes=TRUE)
 plot(proj.shapefile, col="tomato", lwd=4, add=TRUE)
 
 # Save newly projected shapefile
-rgdal::writeOGR(ITEM TO BE SAVED, dsn = "FOLDER NAME",
-                "FILE NAME", driver="ESRI Shapefile")
+# rgdal::writeOGR(ITEM TO BE SAVED, dsn = "FOLDER NAME", "FILE NAME", driver="ESRI Shapefile")
