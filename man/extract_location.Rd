@@ -29,8 +29,18 @@ UTM format, but the columns containing coordinates need to be labelled as
 "X.UTM" and "Y.UTM".
 }
 \details{
-A warning message will be produced if NAs are present in the
-resulting dataframe.
+This function creates a spatial object, and will transform this to 
+that of 'Geoproj' - if already in this projection, it passess to the next 
+stage without change. A message will advise of which step was taken upon 
+running the function. 
+
+Each pair of coordinates will be plotted over a shapefile image of Tanzania 
+to check that they are plotting in the expected area.
+
+Finally, a data frame is produced with location information seperated into 
+four columns (Village, Ward, District and Region). This information is not 
+a complete list, but a set of unique locations. A warning message will be 
+produced if NAs are present in this resulting dataframe.
 }
 \examples{
 #

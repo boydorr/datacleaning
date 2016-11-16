@@ -19,8 +19,18 @@
 #'
 #' @export
 #'
-#' @details A warning message will be produced if NAs are present in the
-#' resulting dataframe.
+#' @details This function creates a spatial object, and will transform this to 
+#' that of 'Geoproj' - if already in this projection, it passess to the next 
+#' stage without change. A message will advise of which step was taken upon 
+#' running the function. 
+#' 
+#' Each pair of coordinates will be plotted over a shapefile image of Tanzania 
+#' to check that they are plotting in the expected area.
+#' 
+#' Finally, a data frame is produced with location information seperated into 
+#' four columns (Village, Ward, District and Region). This information is not 
+#' a complete list, but a set of unique locations. A warning message will be 
+#' produced if NAs are present in this resulting dataframe.
 #'
 #' @examples
 #' #
@@ -30,9 +40,19 @@ extract_location <- function(dataframe, shapefile, data.projection)
   # Set shapefile projetion
   Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-  # Transform from UTM to latlong
+  # Create spatial object
   data <- sp::SpatialPoints(dataframe, proj4string=CRS(data.projection))
-  proj.data <- sp::spTransform(data, Geoproj)
+  
+  # If projection is different from Geoproj, transform. If not, then pass to 
+  # object of the same name.
+  if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  {
+    print("Tranformed to 'Geogproj'")
+    proj.data <- sp::spTransform(data, Geoproj)
+  } else {
+    print("Not transformed: In Geoproj already")
+    proj.data <-  data
+  }
 
   # Plot points on map of Wards in Tanzania
   plot(shapefile)
