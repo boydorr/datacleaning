@@ -1,9 +1,10 @@
-#' extract_location / Extract the location information from a set of coordinates
+
+#' @title Extract the location information from a set of coordinates
 #'
-#' Extracts village, ward, district and region information for each data point
-#' as a data frame if coordinates are correct. Coordinates do not need to be in
-#' UTM format, but the columns containing coordinates need to be labelled as
-#' "X.UTM" and "Y.UTM".
+#' @description Extracts village, ward, district and region information for each
+#' data point as a data frame if coordinates are correct. The coordinates do not
+#' need to be in UTM format, but the columns containing coordinates need to be
+#' labelled as "X.UTM" and "Y.UTM".
 #'
 #' @param dataframe - coordinates in two seperate columns labelled "X.UTM" and
 #' "Y.UTM".
@@ -19,17 +20,17 @@
 #'
 #' @export
 #'
-#' @details This function creates a spatial object, and will transform this to 
-#' that of 'Geoproj' - if already in this projection, it passess to the next 
-#' stage without change. A message will advise of which step was taken upon 
-#' running the function. 
-#' 
-#' Each pair of coordinates will be plotted over a shapefile image of Tanzania 
+#' @details This function creates a spatial object, and will transform this to
+#' that of 'Geoproj' - if already in this projection, it passess to the next
+#' stage without change. A message will advise of which step was taken upon
+#' running the function.
+#'
+#' Each pair of coordinates will be plotted over a shapefile image of Tanzania
 #' to check that they are plotting in the expected area.
-#' 
-#' Finally, a data frame is produced with location information seperated into 
-#' four columns (Village, Ward, District and Region). This information is not 
-#' a complete list, but a set of unique locations. A warning message will be 
+#'
+#' Finally, a data frame is produced with location information seperated into
+#' four columns (Village, Ward, District and Region). This information is not
+#' a complete list, but a set of unique locations. A warning message will be
 #' produced if NAs are present in this resulting dataframe.
 #'
 #' @examples
@@ -42,8 +43,8 @@ extract_location <- function(dataframe, shapefile, data.projection)
 
   # Create spatial object
   data <- sp::SpatialPoints(dataframe, proj4string=CRS(data.projection))
-  
-  # If projection is different from Geoproj, transform. If not, then pass to 
+
+  # If projection is different from Geoproj, transform. If not, then pass to
   # object of the same name.
   if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
   {

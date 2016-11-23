@@ -1,7 +1,7 @@
-#' datacleaning
+#' @title datacleaning
 #'
-#' The \code{datacleaning} package provides a variety of cleaning functions for
-#' datasets generated in Tanzania.
+#' @description The \code{datacleaning} package provides a variety of cleaning
+#' functions for datasets generated in Tanzania.
 #'
 #' This package cleans up Tanzanian datasets that include information about
 #' villages, wards and districts, checking spelling, and generating shape files
@@ -9,6 +9,7 @@
 #' information from the locations covered.
 #'
 #' @name datacleaning-package
+#' @aliases datacleaning
 #' @docType package
 #'
 #' @import sp

@@ -2,7 +2,7 @@
 % Please edit documentation in R/change_projection.R
 \name{change_projection}
 \alias{change_projection}
-\title{change_projection / Change the projection of a shapefile to LongLat WGS84}
+\title{Change the projection of a shapefile to LongLat WGS84}
 \usage{
 change_projection(shapefile)
 }

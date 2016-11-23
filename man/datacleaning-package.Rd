@@ -2,13 +2,13 @@
 % Please edit documentation in R/datacleaning-package.R
 \docType{package}
 \name{datacleaning-package}
+\alias{datacleaning}
 \alias{datacleaning-package}
 \title{datacleaning}
 \description{
-The \code{datacleaning} package provides a variety of cleaning functions for
-datasets generated in Tanzania.
-}
-\details{
+The \code{datacleaning} package provides a variety of cleaning
+functions for datasets generated in Tanzania.
+
 This package cleans up Tanzanian datasets that include information about
 villages, wards and districts, checking spelling, and generating shape files
 of the areas covered. It also handles GPS data, inferring village
