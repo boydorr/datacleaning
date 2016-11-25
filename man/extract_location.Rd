@@ -7,14 +7,14 @@
 extract_location(dataframe, shapefile, data.projection)
 }
 \arguments{
-\item{dataframe}{- coordinates in two seperate columns labelled "X.UTM" and
+\item{dataframe}{coordinates in two seperate columns labelled "X.UTM" and
 "Y.UTM".}
 
-\item{shapefile}{- shapefile object of "TANZANIA_VILLAGES.shp" in the
+\item{shapefile}{shapefile object of "TANZANIA_VILLAGES.shp" in the
 LongLat WGS84 projection.
 ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")}
 
-\item{data.projection}{- an object containing the projection that the data
+\item{data.projection}{an object containing the projection that the data
 is currently in.}
 }
 \value{
@@ -29,9 +29,9 @@ need to be in UTM format, but the columns containing coordinates need to be
 labelled as "X.UTM" and "Y.UTM".
 }
 \details{
-This function creates a spatial object, and will transform this to
-that of 'Geoproj' - if already in this projection, it passess to the next
-stage without change. A message will advise of which step was taken upon
+\code{extract_location} creates a spatial object, and will transform
+this to that of 'Geoproj' - if already in this projection, it passess to the
+next stage without change. A message will advise of which step was taken upon
 running the function.
 
 Each pair of coordinates will be plotted over a shapefile image of Tanzania

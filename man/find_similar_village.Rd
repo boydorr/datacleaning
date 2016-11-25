@@ -2,53 +2,48 @@
 % Please edit documentation in R/find_similar_village.R
 \name{find_similar_village}
 \alias{find_similar_village}
-\title{find_similar_village / Find similar village names 
- 
-Identifies the misspelled village names in the project dataset and proposes a 
-set of similar correct village names.}
+\title{Find similar village names}
 \usage{
 find_similar_village(dataframe, label, label_higher_level, higher_level,
   shapefile, only_in_distr = NA, distnc, additional_places = NA)
 }
 \arguments{
-\item{dataframe}{- the project dataframe with misspelled village names}
+\item{dataframe}{the project dataframe with misspelled village names}
 
-\item{label}{- the name of the column in the project dataframe storing the village names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
+\item{label}{the name of the column in the project dataframe storing the village names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
 
-\item{label_higher_level}{- the name of the column in the project dataframe storing the CORRECT ward/district/region names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
+\item{label_higher_level}{the name of the column in the project dataframe storing the CORRECT ward/district/region names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
 
-\item{higher_level}{- MUST be one of the following: "Ward", District" or "Region".}
+\item{higher_level}{MUST be one of the following: "Ward", District" or "Region".}
 
-\item{shapefile}{- the shapefile object used to retrieve the legal names}
+\item{shapefile}{the shapefile object used to retrieve the legal names}
 
-\item{only_in_distr}{- Optional. A character vector containing the names of the districts in which the study took place. Default = NA}
+\item{only_in_distr}{(optional) a character vector containing the names of the districts in which the study took place. Default = NA}
 
-\item{distnc}{- Numeric value indicating the maximum distance allowed for a match (see ?agrep)}
+\item{distnc}{numeric value indicating the maximum distance allowed for a match (see ?agrep)}
 
-\item{additional_places}{- Optional. A dataframe containing the additional names of the new villages (post 2012 census). Default = NA. NOTE: The village/ward/district/region column of this dataframe must be called like the @data slot in the village shapefile}
+\item{additional_places}{(optional) a dataframe containing the additional names of the new villages (post 2012 census). Default = NA. NOTE: The village/ward/district/region column of this dataframe must be called like the @data slot in the village shapefile}
 }
 \value{
-a new dataframe with: i) the village misspellings, stored in the first 
+a new dataframe with: i) the village misspellings, stored in the first
 column; ii) all the similar matches, each one stored under a separate column;
-iii) the Ward/District/Region where the misspelled village and the respective similar 
-villages are (if the Ward/District/Region information is not available, the column will 
+iii) the Ward/District/Region where the misspelled village and the respective similar
+villages are (if the Ward/District/Region information is not available, the column will
 contain NAs).
 }
 \description{
-find_similar_village / Find similar village names 
- 
-Identifies the misspelled village names in the project dataset and proposes a 
-set of similar correct village names.
+Identifies the misspelled village names in the project dataset
+and proposes a set of similar correct village names.
 }
 \details{
-\code{find_similar_village} finds the misspellings in the village column 
-in the project dataset, looks for the respective most similar legal names and 
-proposes them as potential corrections to the typos. The arguments "higher_level" 
-and label_higher_level" allow for narrowing down the search to the similar 
-villages contained in the ward, district or region specified in the dataset. 
-NOTE: these two arguments must be provided even if there is no ward/district/region  
-information (in that case, the function will look for similar matches in 
-the whole list of legal village names). The typos dataframe produced by this 
+\code{find_similar_village} finds the misspellings in the village column
+in the project dataset, looks for the respective most similar legal names and
+proposes them as potential corrections to the typos. The arguments "higher_level"
+and label_higher_level" allow for narrowing down the search to the similar
+villages contained in the ward, district or region specified in the dataset.
+NOTE: these two arguments must be provided even if there is no ward/district/region
+information (in that case, the function will look for similar matches in
+the whole list of legal village names). The typos dataframe produced by this
 function can be used as argument of fix_typos.
 }
 \examples{

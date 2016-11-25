@@ -2,47 +2,38 @@
 % Please edit documentation in R/find_similar_district.R
 \name{find_similar_district}
 \alias{find_similar_district}
-\title{find_similar_district / Find similar district names 
- 
-Identifies the misspelled district names in the project dataset and proposes a 
-set of similar correct district names.}
+\title{Find similar district names}
 \usage{
 find_similar_district(dataframe, label, label_higher_level, shapefile, distnc,
   additional_places = NA)
 }
 \arguments{
-\item{dataframe}{- the project dataframe with misspelled district names}
+\item{dataframe}{the project dataframe with misspelled district names}
 
-\item{label}{- the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
+\item{label}{the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
 
-\item{label_higher_level}{- the name of the column in the project dataframe storing the CORRECT region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
+\item{label_higher_level}{the name of the column in the project dataframe storing the CORRECT region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
 
-\item{shapefile}{- the shapefile object used to retrieve the legal names}
+\item{shapefile}{the shapefile object used to retrieve the legal names}
 
-\item{distnc}{- Numeric value indicating the maximum distance allowed for a match (see ?agrep)}
+\item{distnc}{numeric value indicating the maximum distance allowed for a match (see ?agrep)}
 
-\item{additional_places}{- Optional. A dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile}
+\item{additional_places}{(optional) a dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile}
 }
 \value{
-a new dataframe with: i) the district misspellings, stored in the first 
+a new dataframe with: i) the district misspellings, stored in the first
 column; ii) all the similar matches, each one stored under a separate column;
-iii) the Region where the misspelled district and the respective similar districts 
+iii) the Region where the misspelled district and the respective similar districts
 are (if the information is not available, the column will contain NAs).
 }
-\description{
-find_similar_district / Find similar district names 
- 
-Identifies the misspelled district names in the project dataset and proposes a 
-set of similar correct district names.
-}
 \details{
-\code{find_similar_district} finds the misspellings in the district column 
-in the project dataset, looks for the respective most similar legal names and 
+\code{find_similar_district} finds the misspellings in the district column
+in the project dataset, looks for the respective most similar legal names and
 proposes them as potential corrections to the typos. The argument "label_higher_level"
-allows for narrowing down the search to the similar districts contained in the 
-region specified in the dataset. NOTE: it must be provided even if there is no 
-region information (in that case, the function will look for similar matches in 
-the whole list of legal district names). The typos dataframe produced by this 
+allows for narrowing down the search to the similar districts contained in the
+region specified in the dataset. NOTE: it must be provided even if there is no
+region information (in that case, the function will look for similar matches in
+the whole list of legal district names). The typos dataframe produced by this
 function can be used as argument of fix_typos.
 }
 \examples{

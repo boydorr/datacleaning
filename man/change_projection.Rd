@@ -7,13 +7,14 @@
 change_projection(shapefile)
 }
 \arguments{
-\item{shapefile}{- a shapefile object loaded in the original projection.}
+\item{shapefile}{a shapefile object loaded in the original projection.}
 }
 \value{
 a shapefile object in the LongLat WGS84 projection.
 }
 \description{
-Alters the projection of a shapefile to that of the entire project
+\code{change_projection} alters the projection of a shapefile to
+that of the entire project
 (+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0).
 }
 \examples{

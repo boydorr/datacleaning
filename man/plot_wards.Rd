@@ -2,35 +2,35 @@
 % Please edit documentation in R/plot_wards.R
 \name{plot_wards}
 \alias{plot_wards}
-\title{plot_wards / Create and plot a SpatialPolygonsDataFrame object of the wards of interest}
+\title{Create and plot a SpatialPolygonsDataFrame object of the wards of interest}
 \usage{
 plot_wards(dataframe, label_ward, label_dis, label_reg, shapefile)
 }
 \arguments{
-\item{dataframe}{- the project dataframe with the ward/district/region names}
+\item{dataframe}{the project dataframe with the ward/district/region names}
 
-\item{label_ward}{- the name of the column in the project dataframe storing the ward names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
+\item{label_ward}{the name of the column in the project dataframe storing the ward names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
 
-\item{label_dis}{- the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
+\item{label_dis}{the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
 
-\item{label_reg}{- the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
+\item{label_reg}{the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
 
-\item{shapefile}{- the shapefile object with Tanzania wards, districts and regions}
+\item{shapefile}{the shapefile object with Tanzania wards, districts and regions}
 }
 \value{
-a SpatialPolygonsDataframe object (that can be easily exported as shapefile) 
+a SpatialPolygonsDataframe object (that can be easily exported as shapefile)
 and a plot of the wards of interest. The "@data" slot in the SpatialPolygonsDataframe
 only stores the information about the ward/district/region.
 }
 \description{
-If each ward/district/region combination in the project dataset is correct 
-and not ambiguous, it creates and plot a SpatialPolygonsDataFrame object of 
-the wards in the project dataset.
+If each ward/district/region combination in the project dataset
+is correct and not ambiguous, it creates and plot a SpatialPolygonsDataFrame
+object of the wards in the project dataset.
 }
 \details{
-\code{plot_wards} uses the ward/district/region information 
-in the project dataset to create a a SpatialPolygonsDataFrame object of the 
-wards. The function only includes the ward/district/region 
+\code{plot_wards} uses the ward/district/region information
+in the project dataset to create a a SpatialPolygonsDataFrame object of the
+wards. The function only includes the ward/district/region
 combinations that are both CORRECT (no mismatches, i.e. the ward is
 in that district and region) and UNIQUE (no ambiguity, i.e. there is only
 one ward with that name within that district and region). The boundaries

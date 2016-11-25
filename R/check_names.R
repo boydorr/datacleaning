@@ -1,11 +1,12 @@
-#' check_names / Check that the names in the project dataset are correct
+#' @title Check that names in the project dataset are correct
 #'
-#' Checks that the village/ward/district/region names in the project dataset are
-#' correct based on the legal village/ward/district/region names specified by the shapefile.
+#' @description Checks that the village/ward/district/region names in the project
+#' dataset are correct based on the legal village/ward/district/region names
+#' specified by the shapefile.
 #'
-#' @param dataframe - the project dataframe with the names that need to be checked
-#' @param  label - the name of the column in the project dataframe storing the village/ward/district/region names that need to be checked. NOTE: The label must be specified as "label" (i.e. "village", for instance)
-#' @param  legal_names - a vector containing the legal village/ward/district/region names specified by the shapefile
+#' @param dataframe the project dataframe with the names that need to be checked
+#' @param  label the name of the column in the project dataframe storing the village/ward/district/region names that need to be checked. NOTE: The label must be specified as "label" (i.e. "village", for instance)
+#' @param  legal_names a vector containing the legal village/ward/district/region names specified by the shapefile
 #'
 #' @details \code{check_names} checks that there are no misspellings in the project dataset
 #' by comparing the names stored in the dataset with the legal names contained in the
@@ -71,8 +72,3 @@ check_names <- function(dataframe, label, legal_names)
 
   return(check_list)
 }
-
-
-
-
-

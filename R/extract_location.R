@@ -1,4 +1,3 @@
-
 #' @title Extract the location information from a set of coordinates
 #'
 #' @description Extracts village, ward, district and region information for each
@@ -6,23 +5,17 @@
 #' need to be in UTM format, but the columns containing coordinates need to be
 #' labelled as "X.UTM" and "Y.UTM".
 #'
-#' @param dataframe - coordinates in two seperate columns labelled "X.UTM" and
+#' @param dataframe coordinates in two seperate columns labelled "X.UTM" and
 #' "Y.UTM".
-#' @param shapefile - shapefile object of "TANZANIA_VILLAGES.shp" in the
+#' @param shapefile shapefile object of "TANZANIA_VILLAGES.shp" in the
 #' LongLat WGS84 projection.
 #' ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-#' @param data.projection - an object containing the projection that the data
+#' @param data.projection an object containing the projection that the data
 #' is currently in.
 #'
-#' @return A plot overlaying the location of all data points over Village
-#' polygons in Tanzania, and a dataframe object listing location information that
-#' can be easily exported as a .csv.
-#'
-#' @export
-#'
-#' @details This function creates a spatial object, and will transform this to
-#' that of 'Geoproj' - if already in this projection, it passess to the next
-#' stage without change. A message will advise of which step was taken upon
+#' @details \code{extract_location} creates a spatial object, and will transform
+#' this to that of 'Geoproj' - if already in this projection, it passess to the
+#' next stage without change. A message will advise of which step was taken upon
 #' running the function.
 #'
 #' Each pair of coordinates will be plotted over a shapefile image of Tanzania
@@ -32,6 +25,12 @@
 #' four columns (Village, Ward, District and Region). This information is not
 #' a complete list, but a set of unique locations. A warning message will be
 #' produced if NAs are present in this resulting dataframe.
+#'
+#' @return A plot overlaying the location of all data points over Village
+#' polygons in Tanzania, and a dataframe object listing location information that
+#' can be easily exported as a .csv.
+#'
+#' @export
 #'
 #' @examples
 #' #

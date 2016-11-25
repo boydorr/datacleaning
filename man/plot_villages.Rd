@@ -2,38 +2,38 @@
 % Please edit documentation in R/plot_villages.R
 \name{plot_villages}
 \alias{plot_villages}
-\title{plot_villages / Create and plot a SpatialPolygonsDataFrame object of the villages of interest}
+\title{Create and plot a SpatialPolygonsDataFrame object of the villages of interest}
 \usage{
 plot_villages(dataframe, label_vill, label_ward, label_dis, label_reg,
   shapefile)
 }
 \arguments{
-\item{dataframe}{- the project dataframe with the village/ward/district/region names}
+\item{dataframe}{the project dataframe with the village/ward/district/region names}
 
-\item{label_vill}{- the name of the column in the project dataframe storing the village names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
+\item{label_vill}{the name of the column in the project dataframe storing the village names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
 
-\item{label_ward}{- the name of the column in the project dataframe storing the ward names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
+\item{label_ward}{the name of the column in the project dataframe storing the ward names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
 
-\item{label_dis}{- the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
+\item{label_dis}{the name of the column in the project dataframe storing the district names. NOTE: The label must be specified as "label" (i.e. "district", for instance)}
 
-\item{label_reg}{- the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
+\item{label_reg}{the name of the column in the project dataframe storing the region names. NOTE: The label must be specified as "label" (i.e. "region", for instance)}
 
-\item{shapefile}{- the shapefile object with Tanzania villages, wards, districts and regions}
+\item{shapefile}{the shapefile object with Tanzania villages, wards, districts and regions}
 }
 \value{
-a SpatialPolygonsDataframe object (that can be easily exported as shapefile) 
+a SpatialPolygonsDataframe object (that can be easily exported as shapefile)
 and a plot of the villages of interest. The "@data" slot in the SpatialPolygonsDataframe
 stores the information about the village/ward/district/region.
 }
 \description{
-If each village/ward/district/region combination in the project dataset is correct 
-and not ambiguous, it creates and plot a SpatialPolygonsDataFrame object of 
-the villages in the project dataset.
+If each village/ward/district/region combination in the project
+dataset is correct and not ambiguous, it creates and plot a SpatialPolygonsDataFrame
+object of the villages in the project dataset.
 }
 \details{
-\code{plot_villages} uses the village/ward/district/region information 
-in the project dataset to create a a SpatialPolygonsDataFrame object of the 
-villages. The function only includes the village/ward/district/region 
+\code{plot_villages} uses the village/ward/district/region information
+in the project dataset to create a a SpatialPolygonsDataFrame object of the
+villages. The function only includes the village/ward/district/region
 combinations that are both CORRECT (no mismatches, i.e. the village is
 in that ward,district and region) and UNIQUE (no ambiguity, i.e. there is only
 one village with that name within that ward,district and region). The boundaries

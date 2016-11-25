@@ -14,6 +14,8 @@
 #'
 #' @import sp
 #' @import rgdal
+#' @import plyr
+#' @import dplyr
 #'
 #' @author
 #' Richard Reeve, Rachel Steenson, Francesco Ventura
