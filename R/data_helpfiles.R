@@ -1,0 +1,24 @@
+## Description for each dataset in /data
+
+#' @name example_utm_coordinates
+#' @title Example UTM Coordinate Set
+#' @description This is an example set of UTM coordinates based in Tanzania.
+#' @docType data
+#' @format A Dataframe
+NULL
+
+#' @name village_2012
+#' @title Example Village Spatial Polygon Dataframe
+#' @description This is an example Spatial Polygon Dataframe containing
+#' information on villages based in Tanzania.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name ward_2012
+#' @title Example Ward Spatial Polygon Dataframe
+#' @description This is an example Spatial Polygon Dataframe containing
+#' information on wards based in Tanzania.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
