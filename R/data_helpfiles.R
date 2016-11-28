@@ -32,11 +32,17 @@ NULL
 #' @format A Dataframe
 NULL
 
+<<<<<<< .merge_file_jVgIuD
 #' @name example_typos
 #' @title Example typos dataset
 #' @description This is an example typos dataset containing a set of misspelled
 #' village names. This is designed to have mis-spellings and corrections, mainly 
 #' for use in "Data_processing_example_full" and "Data_processing_example_short".
+=======
+#' @name example_region_typos
+#' @title Example typos for two locations
+#' @description Typos for Coast and morogoro
+>>>>>>> .merge_file_PqD0K7
 #' @docType data
 #' @format A Dataframe
 NULL
