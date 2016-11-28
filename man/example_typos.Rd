@@ -8,6 +8,6 @@
 \description{
 This is an example typos dataset containing a set of misspelled
 village names. This is designed to have mis-spellings and corrections, mainly
-for use in "Data_processing_example_full" and "Data_processing_example_short".
+for use in "data_processing_example_full" and "data_processing_example_short".
 }
 
