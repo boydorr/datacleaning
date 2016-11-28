@@ -1,6 +1,6 @@
 #' @title Find similar district names
 #'
-#' @descrition Identifies the misspelled district names in the project dataset
+#' @description Identifies the misspelled district names in the project dataset
 #' and proposes a set of similar correct district names.
 #'
 #' @param dataframe the project dataframe with misspelled district names
