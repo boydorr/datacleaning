@@ -42,33 +42,24 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
   Correct <- as.character(Correct)
 
   ## loop through the rows of the dataframe
-  for(i in 1:ntot)
+  for (i in 1:ntot)
   {
-    ## if in the dataframe there is a legal name, copy it
-    if((df_name[i] %in% legal_names)==T)
-    {
-      Correct[i] <- df_name[i]
-
-    } else { # otherwise, check in the typo dataset for the correct name
-      if((is.na(df_name[i]))==T)
+    if (df_name[i] %in% name_typo)
+    { # if the name in the dataframe is also in the typos dataframe
+      ## find the row number of the typo in the typo dataframe
+      typo_index <- which(name_typo %in% df_name[i])
+      Correct[i] <- name_correct[typo_index]
+    } else { # if in the dataframe there is a legal name, copy it
+      if (df_name[i] %in% legal_names)
       {
-        Correct[i] <- NA
+        Correct[i] <- df_name[i]
       } else {
-
-        if((df_name[i] %in% name_typo)==T) # if the name in the dataframe is also in the typos dataframe
-        {
-          ## find the row number of the typo in the typo dataframe
-          typo_index <- which(name_typo %in% df_name[i])
-          Correct[i] <- name_correct[typo_index]
-        } else {
-          Correct[i] <- NA
-        }
-
+        Correct[i] <- NA
       }
     }
   }
 
-    ## append the correct region names to the dataframe as a new column
+  ## append the correct region names to the dataframe as a new column
   new_df <- cbind(dataframe, Correct)
 
   ## the right name for the column
