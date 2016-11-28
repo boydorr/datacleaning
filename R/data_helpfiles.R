@@ -22,3 +22,12 @@ NULL
 #' @docType data
 #' @format A Spatial Polygon Dataframe
 NULL
+
+#' @name example_locations
+#' @title Example Location Name Dataframe
+#' @description This is an example Dataframe containing a range of possible
+#' location data at village, ward, district and region level. This is designed
+#' to have mis-spellings and mistakes, mainly for use in "demo1".
+#' @docType data
+#' @format A Dataframe
+NULL
