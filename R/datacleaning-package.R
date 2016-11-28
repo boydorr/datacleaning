@@ -14,7 +14,6 @@
 #'
 #' @import sp
 #' @import rgdal
-#' @import plyr
 #' @import dplyr
 #'
 #' @author

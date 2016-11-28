@@ -14,6 +14,7 @@ Description: This package contains the useful helper functions that we are using
 License: What license is it under?
 LazyData: TRUE
 RoxygenNote: 5.0.1
-Imports: maptools,
+Imports: dplyr,
     rgdal,
-    sp
+    sp,
+    tibble
