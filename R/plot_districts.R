@@ -98,5 +98,6 @@ plot_districts <- function(dataframe, label_dis, label_reg,
   vill_subset$Region_Nam <- as.character(vill_subset$Region_Nam)
   vill_subset$Region_Nam <- as.factor(vill_subset$Region_Nam)
 
+  plot(vill_subset)
   return(vill_subset)
 }
