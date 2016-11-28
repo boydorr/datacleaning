@@ -31,3 +31,10 @@ NULL
 #' @docType data
 #' @format A Dataframe
 NULL
+
+#' @name example_region_typos
+#' @title Example typos for two locations
+#' @description Typos for Coast and morogoro
+#' @docType data
+#' @format A Dataframe
+NULL
