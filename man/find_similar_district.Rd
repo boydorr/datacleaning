@@ -26,6 +26,10 @@ column; ii) all the similar matches, each one stored under a separate column;
 iii) the Region where the misspelled district and the respective similar districts
 are (if the information is not available, the column will contain NAs).
 }
+\description{
+Identifies the misspelled district names in the project dataset
+and proposes a set of similar correct district names.
+}
 \details{
 \code{find_similar_district} finds the misspellings in the district column
 in the project dataset, looks for the respective most similar legal names and
