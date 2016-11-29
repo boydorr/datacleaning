@@ -1,5 +1,5 @@
 ################################################################################
-#################        Data Processing - CARE dataset      ###################
+############       Data Processing - demo 2.2 (short version)       ############
 ################################################################################
 
 #-------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ data("example_typos")
 #'**Data processing**
 #-------------------------------------------------------------------------------
 
-## Since the village typo dataframe is already available, I can simply: 
+## Since the village typo dataframe is already available, I can simply:
 
 ## 1) get the real ("legal") names, i.e. the names in the village shapefile
 real_vill_names <- village_2012$Vil_Mtaa_N

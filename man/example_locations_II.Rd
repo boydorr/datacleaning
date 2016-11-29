@@ -7,8 +7,8 @@
 \format{A Dataframe}
 \description{
 This is an example Dataframe containing a range of possible
-location data at village and district level. Wards and regions are NAs. 
+location data at village and district level. Wards and regions are NAs.
 This is designed to have mis-spellings and mistakes, mainly
-for use in "data_processing_example_full" and "data_processing_example_short".
+for use in "demo2.1" and "demo2.2".
 }
 
