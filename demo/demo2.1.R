@@ -12,7 +12,7 @@ library(datacleaning)
 #'**Import research project csv and the typos list for the regions**
 #-------------------------------------------------------------------------------
 
-data("example_locations_II")
+example_locations_II <- readr::read_csv(system.file("extdata", "example_locations_II.csv", package="datacleaning"))
 
 ## Data Processing
 
@@ -31,6 +31,8 @@ doublecheck_dis <- check_names(dataframe=example_locations_II, label = "District
 
 ## The district information is correct.
 ## We can now move to the village level.
+
+readline("1st step completed. Hit RETURN to move to the 2nd step.")
 
 #-------------------------------------------------------------------------------
 #'** VILLAGES **
@@ -67,12 +69,15 @@ new_typos_vill <- find_similar_village(dataframe = example_locations_II,
                                        distnc = 0.2,
                                        only_in_distr = stud_distr)
 
+
+readline("2nd step completed. Hit RETURN to move to the 3rd step.")
+
 ## Manually check the typos and select the right answer. In this example:
 ## Manzese C = Manzese A
 ## Masugu = Masugu Kati
 
 ## The processed typo dataset:
-data("example_typos")
+example_typos <- readr::read_csv(system.file("extdata", "example_typos.csv", package="datacleaning"))
 
 ## (iii) fix the misspellings
 corrected_df_vill <- fix_typos(dataframe=example_locations_II, typo_df = example_typos,
@@ -87,6 +92,8 @@ doublecheck_vill <- check_names(dataframe=corrected_df_vill,
                                 legal_names=real_vill_names)
 
 ## There are no misspellings.
+
+readline("3rd step completed. Hit RETURN to move to the 4th step.")
 
 #-------------------------------------------------------------------------------
 #'** MISMATCHES **
@@ -114,6 +121,8 @@ updated_names <- fill_names(dataframe=corrected_df_vill, df_vill="Correct_Villag
                             df_reg="Region", legal_names_vill=real_vill,
                             legal_names_ward=real_ward, legal_names_distr=real_dis,
                             legal_names_reg=real_reg)
+
+readline("4th step completed. Hit RETURN to move to the 5th step.")
 
 #-------------------------------------------------------------------------------
 #'** Produce the shapefile at the village/ward/district/region levels **
