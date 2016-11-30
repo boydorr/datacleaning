@@ -43,6 +43,13 @@ a complete list, but a set of unique locations. A warning message will be
 produced if NAs are present in this resulting dataframe.
 }
 \examples{
-#
+# Load in example dataset
+data("example_utm_coordinates")
+
+# Run function
+extract_location(dataframe=example_utm_coordinates, shapefile=village_2012, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
+
+# This can then be saved for external use by saving as an object, then using:
+# write.csv(data_location, file = "X.csv", row.names=FALSE)
 }
 
