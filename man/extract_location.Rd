@@ -4,15 +4,11 @@
 \alias{extract_location}
 \title{Extract the location information from a set of coordinates}
 \usage{
-extract_location(dataframe, shapefile, data.projection)
+extract_location(dataframe, data.projection)
 }
 \arguments{
 \item{dataframe}{coordinates in two seperate columns labelled "X.UTM" and
 "Y.UTM".}
-
-\item{shapefile}{shapefile object of "TANZANIA_VILLAGES.shp" in the
-LongLat WGS84 projection.
-("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")}
 
 \item{data.projection}{an object containing the projection that the data
 is currently in.}
@@ -47,9 +43,6 @@ produced if NAs are present in this resulting dataframe.
 data("example_utm_coordinates")
 
 # Run function
-extract_location(dataframe=example_utm_coordinates, shapefile=village_2012, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
-
-# This can then be saved for external use by saving as an object, then using:
-# write.csv(data_location, file = "X.csv", row.names=FALSE)
+extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
 }
 

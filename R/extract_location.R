@@ -7,9 +7,6 @@
 #'
 #' @param dataframe coordinates in two seperate columns labelled "X.UTM" and
 #' "Y.UTM".
-#' @param shapefile shapefile object of "TANZANIA_VILLAGES.shp" in the
-#' LongLat WGS84 projection.
-#' ("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 #' @param data.projection an object containing the projection that the data
 #' is currently in.
 #'
@@ -37,12 +34,8 @@
 #' data("example_utm_coordinates")
 #'
 #' # Run function
-#' extract_location(dataframe=example_utm_coordinates, shapefile=village_2012, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
-#'
-#' # This can then be saved for external use by saving as an object, then using:
-#' # write.csv(data_location, file = "X.csv", row.names=FALSE)
-
-extract_location <- function(dataframe, shapefile, data.projection)
+#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
+extract_location <- function(dataframe, data.projection)
 {
   # Set shapefile projetion
   Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
@@ -62,11 +55,11 @@ extract_location <- function(dataframe, shapefile, data.projection)
   }
 
   # Plot points on map of Wards in Tanzania
-  plot(shapefile)
+  plot(ward_2012)
   points(proj.data$X.UTM, proj.data$Y.UTM, pch=16, col="tomato")
 
-  # Extract information on which wards, district and region data is from
-  location <- sp::over(proj.data, shapefile)
+  # Extract information on which Village, ward, district and region data is from
+  location <- sp::over(proj.data, village_2012)
 
   # Save location information in new data frame
   location_df <- data.frame(location$Vil_Mtaa_N, location$Ward_Name,
