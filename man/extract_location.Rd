@@ -4,27 +4,31 @@
 \alias{extract_location}
 \title{Extract the location information from a set of coordinates}
 \usage{
-extract_location(dataframe, data.projection, shapefile = village_2012)
+extract_location(dataframe, data.projection, shapefile = village_2012,
+  x_label = "X.UTM", y_label = "Y.UTM")
 }
 \arguments{
-\item{dataframe}{coordinates in two seperate columns labelled "X.UTM" and
-"Y.UTM".}
+\item{dataframe}{a dataframe which contains coordinates in two seperate
+columns.}
 
 \item{data.projection}{the projection that the data is currently in.}
 
-\item{shapfile}{this will automaticaly plot on the village_2012 shapfile as
+\item{shapefile}{(Optional) this will use the village_2012 shapefile as
 default, but will accept an alternative if provided.}
+
+\item{x_label}{(Optional) this is automatically recognised as "X.UTM", but an
+alternative column name will be accepted if provided.}
+
+\item{y_label}{(Optional) this is automatically recognised as "Y.UTM", but an
+alternative column name will be accepted if provided.}
 }
 \value{
-A plot overlaying the location of all data points over Village
-polygons in Tanzania, and a dataframe object listing location information that
-can be easily exported as a .csv.
+a dataframe object listing location information that can be easily
+exported as a .csv.
 }
 \description{
 Extracts village, ward, district and region information for each
-data point as a data frame if coordinates are correct. The coordinates do not
-need to be in UTM format, but the columns containing coordinates need to be
-labelled as "X.UTM" and "Y.UTM".
+data point as a data frame if coordinates are correct.
 }
 \details{
 \code{extract_location} creates a spatial object, and will transform
@@ -32,13 +36,10 @@ this to that of 'Geoproj' - if already in this projection, it passess to the
 next stage without change. A message will advise of which step was taken upon
 running the function.
 
-Each pair of coordinates will be plotted over a shapefile image of Tanzania
-to check that they are plotting in the expected area.
-
-Finally, a data frame is produced with location information seperated into
-four columns (Village, Ward, District and Region). This information is not
-a complete list, but a set of unique locations. A warning message will be
-produced if NAs are present in this resulting dataframe.
+A data frame is produced with location information seperated into four columns
+(Village, Ward, District and Region). This information is not a complete list,
+but a set of unique locations. A warning message will be produced if NAs are
+present in this resulting dataframe.
 }
 \examples{
 # Load in example dataset
