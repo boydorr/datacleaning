@@ -4,14 +4,16 @@
 \alias{extract_location}
 \title{Extract the location information from a set of coordinates}
 \usage{
-extract_location(dataframe, data.projection)
+extract_location(dataframe, data.projection, shapefile = village_2012)
 }
 \arguments{
 \item{dataframe}{coordinates in two seperate columns labelled "X.UTM" and
 "Y.UTM".}
 
-\item{data.projection}{an object containing the projection that the data
-is currently in.}
+\item{data.projection}{the projection that the data is currently in.}
+
+\item{shapfile}{this will automaticaly plot on the village_2012 shapfile as
+default, but will accept an alternative if provided.}
 }
 \value{
 A plot overlaying the location of all data points over Village
@@ -44,5 +46,6 @@ data("example_utm_coordinates")
 
 # Run function
 extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
+# RUN AS update=TRUE and update=FALSE
 }
 

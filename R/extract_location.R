@@ -7,8 +7,9 @@
 #'
 #' @param dataframe coordinates in two seperate columns labelled "X.UTM" and
 #' "Y.UTM".
-#' @param data.projection an object containing the projection that the data
-#' is currently in.
+#' @param data.projection the projection that the data is currently in.
+#' @param shapfile this will automaticaly plot on the village_2012 shapfile as
+#' default, but will accept an alternative if provided.
 #'
 #' @details \code{extract_location} creates a spatial object, and will transform
 #' this to that of 'Geoproj' - if already in this projection, it passess to the
@@ -34,7 +35,7 @@
 #' data("example_utm_coordinates")
 #'
 #' # Run function
-#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
+#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
 #' # RUN AS update=TRUE and update=FALSE
 
 # Change Column names: cols=c(X="X.UTM", y="Y.UTM") -> Reference in function as dataframe[[cols$X]]
@@ -59,11 +60,6 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012)
     print("Not transformed: In Geoproj already")
     proj.data <-  data
   }
-
-  # GET RID OF PLOT - STICK IN EXAMPLE
-  # Plot points on map of Wards in Tanzania
-  plot(ward_2012)
-  points(proj.data$X.UTM, proj.data$Y.UTM, pch=16, col="tomato")
 
   # Extract information on which Village, ward, district and region data is from
   location <- sp::over(proj.data, shapefile)
