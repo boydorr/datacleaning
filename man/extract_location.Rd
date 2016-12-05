@@ -32,7 +32,7 @@ data point as a data frame if coordinates are correct.
 }
 \details{
 \code{extract_location} creates a spatial object, and will transform
-this to that of 'Geoproj' - if already in this projection, it passess to the
+to the 'Geoproj' projecion - if already in this projection, it passess to the
 next stage without change. A message will advise of which step was taken upon
 running the function.
 

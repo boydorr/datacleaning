@@ -14,7 +14,7 @@
 #' alternative column name will be accepted if provided.
 #'
 #' @details \code{extract_location} creates a spatial object, and will transform
-#' this to that of 'Geoproj' - if already in this projection, it passess to the
+#' to the 'Geoproj' projecion - if already in this projection, it passess to the
 #' next stage without change. A message will advise of which step was taken upon
 #' running the function.
 #'
@@ -36,17 +36,16 @@
 #' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
 #' # RUN AS update=TRUE and update=FALSE
 
-# Change Column names:  -> Reference in function as dataframe[[cols$X]]
 # Add locations to original dataframe: update.df=FALSE -> If TRUE, cbind to original dataframe
 extract_location <- function(dataframe, data.projection, shapefile=village_2012,
                              x_label="X.UTM", y_label="Y.UTM")
 {
   # Seperate out the two columns containing coordinates
-  col1 <- dataframe[[x_label]]
-  col2 <- dataframe[[y_label]]
+  Longitude <- dataframe[[x_label]]
+  Latitude <- dataframe[[y_label]]
 
   # Bind the two coordinate objects into a data frame
-  coord_data <- cbind(col1, col2)
+  coord_data <- cbind(Longitude, Latitude)
 
   # Set shapefile projetion
   Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
@@ -60,10 +59,19 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   {
     print("Tranformed to 'Geogproj'")
     proj.data <- sp::spTransform(data, Geoproj)
-    # SAVE UPDATED COORDINATES TO CBIND, change column names to GEOGRAPHIC
+    new.coord <- as.data.frame(proj.data)
   } else {
     print("Not transformed: In Geoproj already")
     proj.data <-  data
+  }
+
+  # Add new coordinates to original dataframe if transformed to Geographic WGS84
+  if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  {
+    print("Geograhic WGS84 coordinates added'")
+    dataframe <- cbind(dataframe, new.coord)
+  } else {
+    print("Dataframe coordinates already in Geographic WGS84")
   }
 
   # Extract information on which Village, ward, district and region data is from
@@ -82,8 +90,8 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   # Trigger warning message if NAs are present
   if(any(is.na(location_df))) warning('NAs present in dataframe')
 
-  # Remove duplicated rows
-  location_df <- unique(location_df)
+  # Remove duplicated rows to produce unique list
+  unique_location_df <- unique(location_df)
 
-  return(location_df)
-}
+  return(unique_location_df)
+  }
