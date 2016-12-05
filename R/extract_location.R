@@ -34,9 +34,14 @@
 #' data("example_utm_coordinates")
 #'
 #' # Run function
-#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
-extract_location <- function(dataframe, data.projection)
+#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
+#' # RUN AS update=TRUE and update=FALSE
+
+# Change Column names: cols=c(X="X.UTM", y="Y.UTM") -> Reference in function as dataframe[[cols$X]]
+# Add locations to original dataframe: update.df=FALSE -> If TRUE, cbind to original dataframe
+extract_location <- function(dataframe, data.projection, shapefile=village_2012)
 {
+  # SAVE OBJECT TO REDUCE TO TWO COLUMNS PRIOR TO TRANFORMING
   # Set shapefile projetion
   Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
@@ -49,17 +54,19 @@ extract_location <- function(dataframe, data.projection)
   {
     print("Tranformed to 'Geogproj'")
     proj.data <- sp::spTransform(data, Geoproj)
+    # SAVE UPDATED COORDINATES TO CBIND, change column names to GEOGRAPHIC
   } else {
     print("Not transformed: In Geoproj already")
     proj.data <-  data
   }
 
+  # GET RID OF PLOT - STICK IN EXAMPLE
   # Plot points on map of Wards in Tanzania
   plot(ward_2012)
   points(proj.data$X.UTM, proj.data$Y.UTM, pch=16, col="tomato")
 
   # Extract information on which Village, ward, district and region data is from
-  location <- sp::over(proj.data, village_2012)
+  location <- sp::over(proj.data, shapefile)
 
   # Save location information in new data frame
   location_df <- data.frame(location$Vil_Mtaa_N, location$Ward_Name,
