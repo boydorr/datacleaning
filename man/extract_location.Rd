@@ -5,7 +5,7 @@
 \title{Extract the location information from a set of coordinates}
 \usage{
 extract_location(dataframe, data.projection, shapefile = village_2012,
-  x_label = "X.UTM", y_label = "Y.UTM")
+  x_label = "X.UTM", y_label = "Y.UTM", update.df = FALSE)
 }
 \arguments{
 \item{dataframe}{a dataframe which contains coordinates in two seperate
@@ -22,10 +22,14 @@ alternative column name will be accepted if provided.}
 
 \item{y_label}{(Optional) this is automatically recognised as "Y.UTM", but an
 alternative column name will be accepted if provided.}
+
+\item{update.df}{(Optional) this is FALSE by default; if "TRUE", the original
+dataframe will be updated with new columns providing the Village, District,
+District and Region names for each row.}
 }
 \value{
-a dataframe object listing location information that can be easily
-exported as a .csv.
+a dataframe object listing unique location information that can be
+easily exported as a .csv.
 }
 \description{
 Extracts village, ward, district and region information for each
@@ -46,8 +50,10 @@ present in this resulting dataframe.
 # Load in example dataset
 data("example_utm_coordinates")
 
-# Run function
+# Run function without updating dataframe with locations
 extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
-# RUN AS update=TRUE and update=FALSE
+
+# Run function with update of dataframe with locations
+extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
 }
 

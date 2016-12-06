@@ -13,6 +13,9 @@
 #' alternative column name will be accepted if provided.
 #' @param y_label (Optional) this is automatically recognised as "Y.UTM", but an
 #' alternative column name will be accepted if provided.
+#' @param update.df (Optional) this is FALSE by default; if "TRUE", the original
+#' dataframe will be updated with new columns providing the Village, District,
+#' District and Region names for each row.
 #'
 #' @details \code{extract_location} creates a spatial object, and will transform
 #' to the 'Geoproj' projecion - if already in this projection, it passess to the
@@ -24,8 +27,8 @@
 #' but a set of unique locations. A warning message will be produced if NAs are
 #' present in this resulting dataframe.
 #'
-#' @return a dataframe object listing location information that can be easily
-#' exported as a .csv.
+#' @return a dataframe object listing unique location information that can be
+#' easily exported as a .csv.
 #'
 #' @export
 #'
@@ -33,13 +36,15 @@
 #' # Load in example dataset
 #' data("example_utm_coordinates")
 #'
-#' # Run function
+#' # Run function without updating dataframe with locations
 #' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84")
-#' # RUN AS update=TRUE and update=FALSE
+#'
+#' # Run function with update of dataframe with locations
+#' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
 
-# Add locations to original dataframe: update.df=FALSE -> If TRUE, cbind to original dataframe
+
 extract_location <- function(dataframe, data.projection, shapefile=village_2012,
-                             x_label="X.UTM", y_label="Y.UTM")
+                             x_label="X.UTM", y_label="Y.UTM", update.df=FALSE)
 {
   # Seperate out the two columns containing coordinates
   Longitude <- dataframe[[x_label]]
@@ -89,6 +94,16 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
 
   # Remove duplicated rows to produce unique list
   unique_location_df <- unique(location_df)
+
+  # Create if() loop to recognise if data needs to be updated
+  if(update.df==TRUE)
+  {
+    print("Village, Ward, District and Region columns added to dataframe")
+    # Bind columns detailing Village, Ward, District and Region to original dataframe
+    dataframe <- cbind(dataframe, location_df)
+  } else {
+    print("Dataframe not updated")
+  }
 
   return(unique_location_df)
   }
