@@ -33,7 +33,7 @@
 #' @export
 #'
 #' @examples
-#' # Load in example dataset
+#' # Load in example UTM coordinate dataset
 #' data("example_utm_coordinates")
 #'
 #' # Run function without updating dataframe with locations
@@ -41,6 +41,12 @@
 #'
 #' # Run function with update of dataframe with locations
 #' extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
+#'
+#' # Load in example Geographic WGS84 coordinate dataset
+#' data("example_geog_coordinates")
+#'
+#' # Run function without updating dataframe with locations
+#' extract_location(dataframe=example_geog_coordinates, data.projection="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", x_label="Longitude", y_label="Latitude")
 
 
 extract_location <- function(dataframe, data.projection, shapefile=village_2012,

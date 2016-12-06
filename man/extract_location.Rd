@@ -47,7 +47,7 @@ but a set of unique locations. A warning message will be produced if NAs are
 present in this resulting dataframe.
 }
 \examples{
-# Load in example dataset
+# Load in example UTM coordinate dataset
 data("example_utm_coordinates")
 
 # Run function without updating dataframe with locations
@@ -55,5 +55,11 @@ extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +
 
 # Run function with update of dataframe with locations
 extract_location(dataframe=example_utm_coordinates, data.projection="+proj=utm +zone=36 +south +datum=WGS84", update.df=TRUE)
+
+# Load in example Geographic WGS84 coordinate dataset
+data("example_geog_coordinates")
+
+# Run function without updating dataframe with locations
+extract_location(dataframe=example_geog_coordinates, data.projection="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", x_label="Longitude", y_label="Latitude")
 }
 

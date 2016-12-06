@@ -57,3 +57,12 @@ NULL
 #' @docType data
 #' @format A Dataframe
 NULL
+
+#' @name example_geog_coordinates
+#' @title Example Geographic Coordinate Set
+#' @description This is an example set of Geographic WGS84 coordinates based in
+#' Tanzania.
+#' @docType data
+#' @format A Dataframe
+NULL
+
