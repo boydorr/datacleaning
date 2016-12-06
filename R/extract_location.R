@@ -4,7 +4,8 @@
 #' data point as a data frame if coordinates are correct.
 #'
 #' @param dataframe a dataframe which contains coordinates in two seperate
-#' columns.
+#' columns - this dataframe can include other columns which are not used by this
+#' function.
 #' @param data.projection the projection that the data is currently in.
 #' @param shapefile (Optional) this will use the village_2012 shapefile as
 #' default, but will accept an alternative if provided.
@@ -53,25 +54,21 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   # Create spatial object
   data <- sp::SpatialPoints(coord_data, proj4string=CRS(data.projection))
 
-  # If projection is different from Geoproj then transform, else pass to
-  # object of the same name.
+  # Create if() loop to recognise if data needs to be transformed
   if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
   {
+    # If projection is different from Geoproj -> transform
     print("Tranformed to 'Geogproj'")
     proj.data <- sp::spTransform(data, Geoproj)
     new.coord <- as.data.frame(proj.data)
-  } else {
-    print("Not transformed: In Geoproj already")
-    proj.data <-  data
-  }
 
-  # Add new coordinates to original dataframe if transformed to Geographic WGS84
-  if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  {
+    # Add transformed coordinates to original dataframe
     print("Geograhic WGS84 coordinates added'")
     dataframe <- cbind(dataframe, new.coord)
   } else {
-    print("Dataframe coordinates already in Geographic WGS84")
+    # Else pass to object of the same name.
+    print("Not transformed: In Geoproj already")
+    proj.data <-  data
   }
 
   # Extract information on which Village, ward, district and region data is from

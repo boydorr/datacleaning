@@ -9,7 +9,8 @@ extract_location(dataframe, data.projection, shapefile = village_2012,
 }
 \arguments{
 \item{dataframe}{a dataframe which contains coordinates in two seperate
-columns.}
+columns - this dataframe can include other columns which are not used by this
+function.}
 
 \item{data.projection}{the projection that the data is currently in.}
 
