@@ -66,3 +66,10 @@ NULL
 #' @format A Dataframe
 NULL
 
+#' @name example_utm36S_shapefile
+#' @title Example Shapefile in the UTM 36S Projection
+#' @description This is an example Shapefile within Tanzania with a UTM 36S
+#' projection.
+#' @docType data
+#' @format A Dataframe
+NULL
