@@ -45,5 +45,13 @@ create_keyword_df <- function(dataframe)
   # Set column names
   colnames(keyword.df) <- c("keyword", "unique.tag")
 
+  # Are any datasets missing their keywords?
+  if(any(keyword.df$keyword==" "))
+  {
+    missing.keyword <- subset(keyword.df, keyword==" ")
+    missing.keyword <- as.vector(missing.keyword)
+    print(paste0("Missing keyword entry: ", missing.keyword$unique.tag))
+  }
+
   return(keyword.df)
 }
