@@ -27,10 +27,14 @@ series of tests to be run on each before it is joined to the grouped dataframe.
 Each test will flag a warning or stop the function if a file is missing or
 mis-named. These checks include:
 
-* Check there is only one project per Metadata sheet
+* Check there is only one project per Metadata sheet.
 
-* Check the dataset folder and file names are correct
+* Check the dataset folder and file names are correct, and present in the
+directory.
 
-* Check the dataset files exist in both the Raw and Processed folders
+* Check the dataset files exist in both the Raw and Processed folders in the
+directory.
+
+* Check the location file is not N/A, and exists in the directory.
 }
 

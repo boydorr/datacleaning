@@ -98,7 +98,7 @@ check.dataset.name.processed <- function(pathway, metadata)
   processed.paths <- paste(pathway, metadata$project.folder, metadata$dataset.folder,
                  "Processed", unique(metadata$dataset.name), sep="/")
 
-  # Go through each dataset and check for 'existence', with stop if dataset missing
+  # Go through each dataset and check for 'existence', with warning if dataset missing
   for(i in 1:length(processed.paths))
   {
     if(file.exists(processed.paths[i])==FALSE)
@@ -107,6 +107,7 @@ check.dataset.name.processed <- function(pathway, metadata)
     }
   }
 }
+
 
 #' @title create.unique.tag
 #' @description Creates a unique tag for each dataset by stringing together the
@@ -124,7 +125,7 @@ create.unique.tag <- function(metadata)
 
   # Create unique string tag - project.folder-dataset.folder-dataset.name
   metadata$unique.tag<- with(metadata,
-                  paste(project.folder, dataset.folder, dataset.name, sep="-"))
+                  paste(project.folder, dataset.folder, dataset.name, sep="--"))
 
   # Remove file extensions from unique tag
   metadata$unique.tag <- gsub("\\..*$", "", metadata$unique.tag)
@@ -133,3 +134,39 @@ create.unique.tag <- function(metadata)
   return(metadata)
 }
 
+
+#' @title check.dataset.location.file
+#' @description Checks for the presence of missing location files in the Metadata,
+#' highlighting when this is the case; if a location file is present, checks
+#' that the file exists in the directory by matching them to names in the
+#' Metadata spreadsheet. This function does not need to be attached to an object.
+#' @inheritParams check.dataset.folder
+#' @return A printed message informing the user if the location entry in the
+#' Metadata is missing, or if the Metadata entry is missing from the directory.
+
+check.dataset.location.file <- function(pathway, metadata)
+{
+  # Get full path names to location file names
+  location.paths <- paste(pathway, metadata$project.folder, "Metadata",
+                          unique(metadata$dataset.location.file), sep="/")
+
+  location.paths <- unique(location.paths)
+
+  # Are any datasets missing their location sets?
+  if(any(grepl('/N/A$', location.paths))==TRUE)
+  {
+    print(paste0("Missing Location file entry: ", location.paths))
+  } else {
+    # For those with Location sets, does the Metadata match the directory?
+    # Go through each dataset and check for 'existence', with message if dataset missing
+    for(i in 1:length(location.paths))
+    {
+      if(file.exists(location.paths[i])==FALSE)
+      {
+        print(paste0("Location file does not exist in Metadata Folder: ",
+                       location.paths[i]))
+      }
+    }
+  }
+
+}

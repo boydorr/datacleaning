@@ -14,11 +14,15 @@
 #' Each test will flag a warning or stop the function if a file is missing or
 #' mis-named. These checks include:
 #'
-#' * Check there is only one project per Metadata sheet
+#' * Check there is only one project per Metadata sheet.
 #'
-#' * Check the dataset folder and file names are correct
+#' * Check the dataset folder and file names are correct, and present in the
+#' directory.
 #'
-#' * Check the dataset files exist in both the Raw and Processed folders
+#' * Check the dataset files exist in both the Raw and Processed folders in the
+#' directory.
+#'
+#' * Check the location file is not N/A, and exists in the directory.
 #'
 #' @return A single dataframe containing all of the individual Metadata sheets
 #' for each project bound together.
@@ -61,6 +65,7 @@ load_metadata <- function(pathway)
     datacleaning:::check.dataset.name.processed(pathway, correct.metadata)
 
     # Does LOCATION.csv exist? #
+    datacleaning:::check.dataset.location.file(pathway, correct.metadata)
 
     # Does SHAPEFILE exist? #
 
