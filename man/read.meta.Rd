@@ -4,11 +4,11 @@
 \alias{read.meta}
 \title{read.meta}
 \usage{
-read.meta(file.list)
+read.meta(filename)
 }
 \arguments{
-\item{file.list}{a list containing the directory paths to each Metadata file
-(produced in the \code{load_metadata} Function).}
+\item{filename}{an object containing the ith directory path to each Metadata
+file (produced in the \code{load_metadata} Function).}
 }
 \value{
 a dataframe containing a single Metadata spreadsheet.

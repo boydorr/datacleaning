@@ -42,35 +42,27 @@ load_metadata <- function(pathway)
   for(i in 1:length(file.list))
   {
     # Read in metadata
-    # metadata <- read.meta(file.list)
-    # This creates an error (Can't find object [i]) so run manually below.
-
-    # Read in Metadata spreadsheet
-    metadata <- xlsx::read.xlsx(file.list[i], sheetIndex=1,
-                                startRow=2, header=TRUE)
-
-    # Remove column description Row
-    correct.metadata <- metadata[-1,]
+    metadata <- read.meta(filename=file.list[i])
 
     # Fix issue of dates being read in wrong #
 
     # Check number of project.folders is correct
-    datacleaning:::check.project.folder(correct.metadata)
+    datacleaning:::check.project.folder(metadata)
 
     # Check dataset.folders are correct
-    datacleaning:::check.dataset.folder(pathway, correct.metadata)
+    datacleaning:::check.dataset.folder(pathway, metadata)
 
     # Check datasets are correct
-    datacleaning:::check.dataset.name.raw(pathway, correct.metadata)
-    datacleaning:::check.dataset.name.processed(pathway, correct.metadata)
+    datacleaning:::check.dataset.name.raw(pathway, metadata)
+    datacleaning:::check.dataset.name.processed(pathway, metadata)
 
     # Does LOCATION.csv exist? #
-    datacleaning:::check.dataset.location.file(pathway, correct.metadata)
+    datacleaning:::check.dataset.location.file(pathway, metadata)
 
     # Does SHAPEFILE exist? #
 
     # Create unique tag for each dataset
-    tagged.metadata <- datacleaning:::create.unique.tag(correct.metadata)
+    tagged.metadata <- datacleaning:::create.unique.tag(metadata)
 
     # Bind data to dataframes
     metadata.df <- rbind(metadata.df, tagged.metadata)

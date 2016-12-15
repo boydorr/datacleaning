@@ -3,20 +3,21 @@
 #' @description Reads in Metadata spreadsheets in the .xlsx format, and removes
 #' the uneccessary rows which form part of the headers; designed to be used
 #' within the for() loop in the \code{load_metadata} Function.
-#' @param file.list a list containing the directory paths to each Metadata file
-#' (produced in the \code{load_metadata} Function).
+#' @param filename an object containing the ith directory path to each Metadata
+#' file (produced in the \code{load_metadata} Function).
 #' @return a dataframe containing a single Metadata spreadsheet.
 
-read.meta <- function(file.list)
+read.meta <- function(filename)
 {
   # Read in Metadata spreadsheet
-  metadata <- xlsx::read.xlsx(file.list[i], sheetIndex=1,
+  metadata <- xlsx::read.xlsx(filename, sheetIndex=1,
                               startRow=2, header=TRUE)
 
   # Remove column description Row
   correct.metadata <- metadata[-1,]
 
   # FIX HOW ISO DATES ARE READ IN!
+  return(correct.metadata)
 }
 
 #' @title check.project.folder
@@ -36,7 +37,7 @@ check.project.folder <- function(metadata)
   print(paste0("Current Project being assessed: ", project.folder))
 
   # Is there only one project folder?
-  if(!length(project.folder)==1)
+  if(length(project.folder)!=1)
   {
     stop("Number of Project Folders is Incorrect")
   }
