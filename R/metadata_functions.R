@@ -110,32 +110,6 @@ check.dataset.name.processed <- function(pathway, metadata)
 }
 
 
-#' @title create.unique.tag
-#' @description Creates a unique tag for each dataset by stringing together the
-#' Project Name, Dataset Folder and Dataset Name, and removes any file extensions.
-#' @inheritParams check.project.folder
-#' @return a new column in the Metadata dataframe containing the unique tag for
-#' each row
-
-create.unique.tag <- function(metadata)
-{
-  # Read columns as character strings
-  metadata$project.folder <- as.character(metadata$project.folder)
-  metadata$dataset.folder <- as.character(metadata$dataset.folder)
-  metadata$dataset.name <- as.character(metadata$dataset.name)
-
-  # Create unique string tag - project.folder-dataset.folder-dataset.name
-  metadata$unique.tag<- with(metadata,
-                  paste(project.folder, dataset.folder, dataset.name, sep="--"))
-
-  # Remove file extensions from unique tag
-  metadata$unique.tag <- gsub("\\..*$", "", metadata$unique.tag)
-  # Replace space with -
-
-  return(metadata)
-}
-
-
 #' @title check.dataset.location.file
 #' @description Checks for the presence of missing location files in the Metadata,
 #' highlighting when this is the case; if a location file is present, checks
@@ -154,7 +128,7 @@ check.dataset.location.file <- function(pathway, metadata)
   location.paths <- unique(location.paths)
 
   # Are any datasets missing their location sets?
-  if(any(grepl('/N/A$', location.paths))==TRUE)
+  if(any(grepl('/NA$', location.paths))==TRUE)
   {
     print(paste0("Missing Location file entry: ", location.paths))
   } else {
@@ -170,4 +144,56 @@ check.dataset.location.file <- function(pathway, metadata)
     }
   }
 
+}
+
+
+#' @title create.unique.tag
+#' @description Creates a unique tag for each dataset by stringing together the
+#' Project Name, Dataset Folder and Dataset Name, and removes any file extensions.
+#' @inheritParams check.project.folder
+#' @return a new column in the Metadata dataframe containing the unique tag for
+#' each row
+
+create.unique.tag <- function(metadata)
+{
+  # Read columns as character strings
+  metadata$project.folder <- as.character(metadata$project.folder)
+  metadata$dataset.folder <- as.character(metadata$dataset.folder)
+  metadata$dataset.name <- as.character(metadata$dataset.name)
+
+  # Create unique string tag - project.folder-dataset.folder-dataset.name
+  metadata$unique.tag<- with(metadata,
+                             paste(project.folder, dataset.folder, dataset.name, sep="--"))
+
+  # Remove file extensions from unique tag
+  metadata$unique.tag <- gsub("\\..*$", "", metadata$unique.tag)
+  # Replace space with -
+
+  return(metadata)
+}
+
+
+#' @title create.location.tag
+#' @description Creates a location tag for each dataset by stringing together
+#' the Project Name and Dataset Location File name, and removes any file
+#' extensions.
+#' @inheritParams check.project.folder
+#' @return a new column in the Metadata dataframe containing the location tag for
+#' each row
+
+create.location.tag <- function(metadata)
+{
+  # Read columns as character strings
+  metadata$project.folder <- as.character(metadata$project.folder)
+  metadata$dataset.location.file <- as.character(metadata$dataset.location.file)
+
+  # Create unique string tag - project.folder-dataset.folder-dataset.name
+  metadata$location.tag<- with(metadata,
+                             paste(project.folder, dataset.location.file, sep="--"))
+
+  # Remove file extensions from unique tag
+  metadata$location.tag <- gsub("\\..*$", "", metadata$location.tag)
+  # Replace space with -
+
+  return(metadata)
 }

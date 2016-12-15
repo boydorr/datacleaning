@@ -64,6 +64,9 @@ load_metadata <- function(pathway)
     # Create unique tag for each dataset
     tagged.metadata <- datacleaning:::create.unique.tag(metadata)
 
+    # Create location tag for each dataset
+    tagged.metadata <- datacleaning:::create.location.tag(tagged.metadata)
+
     # Bind data to dataframes
     metadata.df <- rbind(metadata.df, tagged.metadata)
   }
