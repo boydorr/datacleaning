@@ -73,3 +73,11 @@ NULL
 #' @docType data
 #' @format A Dataframe
 NULL
+
+#' @name example_utm_coordinates2
+#' @title Example UTM Coordinate Set 2
+#' @description This is an example set of UTM coordinates based in Tanzania with
+#' some NAs present.
+#' @docType data
+#' @format A Dataframe
+NULL
