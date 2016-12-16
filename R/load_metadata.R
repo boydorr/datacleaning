@@ -24,6 +24,10 @@
 #'
 #' * Check the location file is not N/A, and exists in the directory.
 #'
+#' * Adds two new columns, containing a unique tag
+#' (Project.Folder--Dataset.Folder--Dataset.Name) and a location tag
+#' (Project.Folder--Dataset.Location.Name).
+#'
 #' @return A single dataframe containing all of the individual Metadata sheets
 #' for each project bound together.
 #'

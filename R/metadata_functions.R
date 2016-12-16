@@ -2,7 +2,9 @@
 #' @title read.meta
 #' @description Reads in Metadata spreadsheets in the .xlsx format, and removes
 #' the uneccessary rows which form part of the headers; designed to be used
-#' within the for() loop in the \code{load_metadata} Function.
+#' within the for() loop in the \code{load_metadata} Function. It also fixes
+#' dates which are originally loaded incorrectly, presenting them in the ISO
+#' format (yyyy-mm-dd).
 #' @param filename an object containing the ith directory path to each Metadata
 #' file (produced in the \code{load_metadata} Function).
 #' @return a dataframe containing a single Metadata spreadsheet.
@@ -16,7 +18,18 @@ read.meta <- function(filename)
   # Remove column description Row
   correct.metadata <- metadata[-1,]
 
-  # FIX HOW ISO DATES ARE READ IN!
+  # Read date colums as numeic rather than character string
+  correct.metadata$project.start.date <- as.numeric(as.character(correct.metadata$project.start.date))
+  correct.metadata$project.end.date <- as.numeric(as.character(correct.metadata$project.end.date))
+  correct.metadata$relevant.start.date <- as.numeric(as.character(correct.metadata$relevant.start.date))
+  correct.metadata$relevant.end.date <- as.numeric(as.character(correct.metadata$relevant.end.date))
+
+  # Fix dates to read in ISO rather than Julian
+  correct.metadata$project.start.date <- as.Date(correct.metadata$project.start.date, origin="1899-12-30")
+  correct.metadata$project.end.date <- as.Date(correct.metadata$project.end.date, origin="1899-12-30")
+  correct.metadata$relevant.start.date <- as.Date(correct.metadata$relevant.start.date, origin="1899-12-30")
+  correct.metadata$relevant.end.date <- as.Date(correct.metadata$relevant.end.date, origin="1899-12-30")
+
   return(correct.metadata)
 }
 
