@@ -12,6 +12,8 @@
 #'## Setup ##
 #-------------------------------------------------------------------------------
 
+library(datacleaning)
+
 # Load in example dataset
 data("example_locations")
 
