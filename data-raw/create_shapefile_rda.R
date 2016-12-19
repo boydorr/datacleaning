@@ -23,6 +23,20 @@ ward_2012 <-sp::spTransform(ward_2012, Geoproj)
 # export it and save it as a .rda object in the "data" folder
 devtools::use_data(ward_2012, overwrite = TRUE)
 
+# districts shapefile
+district_2012 <- rgdal::readOGR(".","TZ_District_2012")
+# transform to geo projection (lat long)
+district_2012 <-sp::spTransform(district_2012, Geoproj)
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(district_2012, overwrite = TRUE)
+
+# regions shapefile
+region_2012 <- rgdal::readOGR(".","TZ_Region_2012")
+# transform to geo projection (lat long)
+region_2012 <-sp::spTransform(region_2012, Geoproj)
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(region_2012, overwrite = TRUE)
+
 # Now move to the root of the package
 devtools::wd(".")
 
