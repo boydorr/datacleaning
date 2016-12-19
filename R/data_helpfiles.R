@@ -23,6 +23,22 @@ NULL
 #' @format A Spatial Polygon Dataframe
 NULL
 
+#' @name district_2012
+#' @title Example District Spatial Polygon Dataframe
+#' @description This is an example Spatial Polygon Dataframe containing
+#' information on districts based in Tanzania.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name region_2012
+#' @title Example Region Spatial Polygon Dataframe
+#' @description This is an example Spatial Polygon Dataframe containing
+#' information on wards based in Tanzania.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
 #' @name example_locations
 #' @title Example Location Name Dataframe
 #' @description This is an example Dataframe containing a range of possible
