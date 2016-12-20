@@ -7,6 +7,6 @@
 \format{A Spatial Polygon Dataframe}
 \description{
 This is an example Spatial Polygon Dataframe containing
-information on wards based in Tanzania.
+information on regions based in Tanzania.
 }
 
