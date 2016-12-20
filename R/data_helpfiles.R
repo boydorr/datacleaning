@@ -34,7 +34,15 @@ NULL
 #' @name region_2012
 #' @title Example Region Spatial Polygon Dataframe
 #' @description This is an example Spatial Polygon Dataframe containing
-#' information on wards based in Tanzania.
+#' information on regions based in Tanzania.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name TZ_outline
+#' @title Example Tanzania Outline Spatial Polygon Dataframe
+#' @description This is an example Spatial Polygon Dataframe to be used for quick
+#' plotting of the Tanzania outline.
 #' @docType data
 #' @format A Spatial Polygon Dataframe
 NULL

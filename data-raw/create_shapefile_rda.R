@@ -37,6 +37,14 @@ region_2012 <-sp::spTransform(region_2012, Geoproj)
 # export it and save it as a .rda object in the "data" folder
 devtools::use_data(region_2012, overwrite = TRUE)
 
+# Tanzania outline shapefile
+TZ_outline <- rgdal::readOGR(".","Outline")
+# transform to geo projection (lat long)
+sp::proj4string(TZ_outline) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_outline, overwrite = TRUE)
+
+
 # Now move to the root of the package
 devtools::wd(".")
 
