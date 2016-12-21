@@ -10,14 +10,14 @@ WD <- getwd()
 devtools::wd(".", "data-raw/Tanzania/reference")
 
 # village shapefile
-village_2012 <- rgdal::readOGR(".","Tanzania-village-2012")
+village_2012 <- rgdal::readOGR(".","TZ_Village_2012")
 # transform to geo projection (lat long)
 village_2012 <-sp::spTransform(village_2012, Geoproj)
 # export it and save it as a .rda object in the "data" folder
 devtools::use_data(village_2012, overwrite = TRUE)
 
 # wards shapefile
-ward_2012 <- rgdal::readOGR(".","Tanzania-ward-2012")
+ward_2012 <- rgdal::readOGR(".","TZ_Ward_2012")
 # transform to geo projection (lat long)
 ward_2012 <-sp::spTransform(ward_2012, Geoproj)
 # export it and save it as a .rda object in the "data" folder
