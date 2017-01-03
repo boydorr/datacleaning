@@ -48,8 +48,6 @@ load_metadata <- function(pathway)
     # Read in metadata
     metadata <- read.meta(filename=file.list[i])
 
-    # Fix issue of dates being read in wrong #
-
     # Check number of project.folders is correct
     datacleaning:::check.project.folder(metadata)
 
