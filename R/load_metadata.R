@@ -54,14 +54,14 @@ load_metadata <- function(pathway)
     datacleaning:::check.project.folder(metadata)
 
     # Check dataset.folders are correct
-    #datacleaning:::check.dataset.folder(pathway, metadata)
+    datacleaning:::check.dataset.folder(pathway, metadata)
 
     # Check datasets are correct
-    #datacleaning:::check.dataset.name.raw(pathway, metadata)
-    #datacleaning:::check.dataset.name.processed(pathway, metadata)
+    datacleaning:::check.dataset.name.raw(pathway, metadata)
+    datacleaning:::check.dataset.name.processed(pathway, metadata)
 
     # Does LOCATION.csv exist? #
-    #datacleaning:::check.dataset.location.file(pathway, metadata)
+    datacleaning:::check.dataset.location.file(pathway, metadata)
 
     # Does SHAPEFILE exist? #
 
