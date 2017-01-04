@@ -78,7 +78,7 @@ check.dataset.folder <- function(pathway, metadata)
   {
     if(file.exists(project.paths[i])==FALSE)
     {
-      stop(paste0("Project Folder does not exist: ", project.paths[i]))
+      print(paste0("Project Folder does not exist: ", project.paths[i]))
     }
   }
 }
@@ -97,7 +97,7 @@ check.dataset.name.raw <- function(pathway, metadata)
   {
     if(file.exists(raw.paths[i])==FALSE)
     {
-      warning(paste0("Dataset does not exist in Raw: ", raw.paths[i]))
+      print(paste0("Dataset does not exist in Raw: ", raw.paths[i]))
       }
   }
 }
@@ -117,7 +117,7 @@ check.dataset.name.processed <- function(pathway, metadata)
   {
     if(file.exists(processed.paths[i])==FALSE)
     {
-      warning(paste0("Dataset does not exist in Processed: ", processed.paths[i]))
+      print(paste0("Dataset does not exist in Processed: ", processed.paths[i]))
     }
   }
 }
