@@ -46,6 +46,9 @@ build.tag <- function(filename, location)
   string <- gsub("^(.*)/.*", "\\1", filename)
   project.name <- sub("/.*", "", string)
 
+  # Print message to tell user where the build is
+  print(paste0("Current Project being loaded: ", project.name))
+
   # Extract location file name
   location.name <- gsub(".*/(.*)$", "\\1", filename)
 
