@@ -35,6 +35,9 @@
 
 load_metadata <- function(pathway)
 {
+  # Print message to inform user of progress - the next part takes a while!
+  print("Searching for Metadata...")
+
   # Find metadata locations
   file.list <- list.files(path=pathway, pattern=" Metadata.xlsx$",
                           recursive=TRUE, full.names = TRUE)

@@ -18,6 +18,9 @@
 
 load_locations <- function(pathway)
 {
+  # Print message to inform user of progress - the next part takes a while!
+  print("Searching for Location data...")
+
   # Find location files
   file.list <- list.files(path=pathway, pattern="-Locations.csv$",
                           recursive=TRUE, full.names = TRUE)
