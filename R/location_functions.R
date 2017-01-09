@@ -32,7 +32,7 @@ read.location <- function(filename)
   return(location)
 }
 
-#' @title build.tag
+#' @title build.location.tag
 #' @description Creates a location tag (Project.Name--location.file.name) and
 #' attaches this to the dataframe as a new column.
 #' @param filename an object containing the ith directory path to each location
@@ -40,7 +40,7 @@ read.location <- function(filename)
 #' @param location a dataframe object created in the \code{read_location} function.
 #' @return a dataframe with the location tag attached.
 
-build.tag <- function(filename, location)
+build.location.tag <- function(filename, location)
 {
   # Extract Project name
   string <- gsub("^(.*)/.*", "\\1", filename)
@@ -58,6 +58,37 @@ build.tag <- function(filename, location)
 
   # Remove file extensions from unique tag
   location$location.tag <- gsub("\\..*$", "", location$location.tag)
+
+  return(location)
+}
+
+#' @title build.extra.tags
+#' @description Creates a tag for each location level (i.e. Village, ward,
+#' district and region) in the format of: V--Region--Distict--Ward--Village;
+#' W--Region--Distict--Ward etc... These are then attached to the dataframe as
+#' new columns.
+#' @param filename an object containing the ith directory path to each location
+#' file (produced in the \code{load_locations} function).
+#' @param location a dataframe object created in the \code{read_location} function.
+#' @return a dataframe with the extra location tags attached.
+
+build.extra.tags <- function(filename, location)
+{
+  # Create Village tag
+  location$village.tag<- with(location,
+                              paste("V", Region, District, Ward, Village, sep="--"))
+
+  # Create Ward tag
+  location$ward.tag<- with(location,
+                              paste("W", Region, District, Ward, sep="--"))
+
+  # Create District tag
+  location$district.tag<- with(location,
+                              paste("D", Region, District, sep="--"))
+
+  # Create Region tag
+  location$region.tag<- with(location,
+                              paste("R", Region, sep="--"))
 
   return(location)
 }
