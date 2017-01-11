@@ -67,7 +67,7 @@ load_metadata <- function(pathway)
     # Does SHAPEFILE exist? #
 
     # Create unique tag for each dataset
-    tagged.metadata <- datacleaning:::create.unique.tag(metadata)
+    tagged.metadata <- datacleaning:::create.project.tag(metadata)
 
     # Create location tag for each dataset
     tagged.metadata <- datacleaning:::create.location.tag(tagged.metadata)

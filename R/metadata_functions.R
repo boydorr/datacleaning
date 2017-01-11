@@ -160,14 +160,14 @@ check.dataset.location.file <- function(pathway, metadata)
 }
 
 
-#' @title create.unique.tag
-#' @description Creates a unique tag for each dataset by stringing together the
+#' @title create.project.tag
+#' @description Creates a project tag for each dataset by stringing together the
 #' Project Name, Dataset Folder and Dataset Name, and removes any file extensions.
 #' @inheritParams check.project.folder
 #' @return a new column in the Metadata dataframe containing the unique tag for
 #' each row
 
-create.unique.tag <- function(metadata)
+create.project.tag <- function(metadata)
 {
   # Read columns as character strings
   metadata$project.folder <- as.character(metadata$project.folder)
@@ -175,11 +175,11 @@ create.unique.tag <- function(metadata)
   metadata$dataset.name <- as.character(metadata$dataset.name)
 
   # Create unique string tag - project.folder-dataset.folder-dataset.name
-  metadata$unique.tag<- with(metadata,
+  metadata$project.tag<- with(metadata,
                              paste(project.folder, dataset.folder, dataset.name, sep="--"))
 
   # Remove file extensions from unique tag
-  metadata$unique.tag <- gsub("\\..*$", "", metadata$unique.tag)
+  metadata$project.tag <- gsub("\\..*$", "", metadata$project.tag)
   # Replace space with -
 
   return(metadata)
