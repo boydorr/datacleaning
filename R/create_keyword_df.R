@@ -21,7 +21,8 @@ create_keyword_df <- function(dataframe)
 
   # Change class of required column
   keywords <- as.character(dataframe$keywords)
-  unique.tag <- as.character(dataframe$unique.tag)
+  project.tag <- as.character(dataframe$project.tag)
+  location.tag <- as.character(dataframe$location.tag)
 
   # Write loop to create dataframes, then rbind as it goes to empty dataframe
   for(i in 1:length(keywords))
@@ -31,26 +32,29 @@ create_keyword_df <- function(dataframe)
     split.keywords <- strsplit(fixed.keywords, ";")
     split.keyword.df <- as.data.frame(split.keywords)
 
-    # Extract unique tag
-    unique.tag.df <- as.data.frame(unique.tag[i])
+    # Extract project tag
+    project.tag.df <- as.data.frame(project.tag[i])
 
-    # Attach unique tag to new dataframe
-    complete.keyword.df <- cbind(split.keyword.df, unique.tag.df,
-                                 deparse.level=0)
+    # Extract location tag
+    location.tag.df <- as.data.frame(location.tag[i])
+
+    # Attach project and location tags to new dataframe
+    complete.keyword.df <- cbind(split.keyword.df, project.tag.df,
+                                 location.tag.df, deparse.level=0)
 
     colnames(complete.keyword.df) <- colnames(keyword.df)
     keyword.df <- rbind(keyword.df, complete.keyword.df)
   }
 
   # Set column names
-  colnames(keyword.df) <- c("keyword", "unique.tag")
+  colnames(keyword.df) <- c("keyword", "project.tag", "location.tag")
 
   # Are any datasets missing their keywords?
   if(any(keyword.df$keyword==" "))
   {
     missing.keyword <- subset(keyword.df, keyword==" ")
     missing.keyword <- as.vector(missing.keyword)
-    print(paste0("Missing keyword entry: ", missing.keyword$unique.tag))
+    print(paste0("Missing keyword entry: ", missing.keyword$project.tag))
   }
 
   return(keyword.df)
