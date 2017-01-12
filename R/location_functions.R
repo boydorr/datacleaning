@@ -74,21 +74,21 @@ build.location.tag <- function(filename, location)
 
 build.extra.tags <- function(filename, location)
 {
-  # Create Village tag
-  location$village.tag<- with(location,
-                              paste("Village", Region, District, Ward, Village, sep="-"))
-
-  # Create Ward tag
-  location$ward.tag<- with(location,
-                              paste("Ward", Region, District, Ward, sep="-"))
+  # Create Region tag
+  location$Region_ID<- with(location,
+                            paste("Region", Region, sep="-"))
 
   # Create District tag
-  location$district.tag<- with(location,
+  location$District_ID<- with(location,
                               paste("District", Region, District, sep="-"))
 
-  # Create Region tag
-  location$region.tag<- with(location,
-                              paste("Region", Region, sep="-"))
+  # Create Ward tag
+  location$Ward_ID<- with(location,
+                          paste("Ward", Region, District, Ward, sep="-"))
+
+  # Create Village tag
+  location$Village_ID<- with(location,
+                              paste("Village", Region, District, Ward, Village, sep="-"))
 
   return(location)
 }

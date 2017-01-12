@@ -43,8 +43,8 @@ load_locations <- function(pathway)
                                                          location)
 
     # Reorder columns
-    location.ordered <- location.tagged[,c("location.tag", "Village",
-                                           "Ward", "District", "Region")]
+    location.ordered <- location.tagged[,c("location.tag", "Region",
+                                           "District", "Ward", "Village")]
 
     # Add additional tags
     location.complete <- datacleaning:::build.extra.tags(filename=file.names[i],
