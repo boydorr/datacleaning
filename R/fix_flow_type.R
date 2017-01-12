@@ -53,5 +53,8 @@ fix_flow_type <- function(dataframe, column)
   dataframe[[column]][dataframe[[column]] == "dry"] <- "Dry"
   dataframe[[column]][dataframe[[column]] == "dry "] <- "Dry"
 
+  # Reformat as factors
+  dataframe[[column]] <- as.factor(dataframe[[column]])
+
   return(dataframe)
 }

@@ -149,5 +149,8 @@ fix_river_names <- function(dataframe, column, remove.unknown=TRUE)
     dataframe[[column]][dataframe[[column]] == "Unknown"] <- ""
   }
 
+  # Reformat as factors
+  dataframe[[column]] <- as.factor(dataframe[[column]])
+
   return(dataframe)
 }

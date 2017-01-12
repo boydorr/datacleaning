@@ -42,5 +42,8 @@ fix_fieldsite_names <- function(dataframe, column)
   dataframe[[column]][dataframe[[column]] == "TAWIRI RESEARCH STATION"] <- "Tawiri Research Station"
   dataframe[[column]][dataframe[[column]] == "NGORONGORO OLDUVAI RANGER POST"] <- "Ngorongoro Olduvai Ranger Post"
 
+  # Reformat as factors
+  dataframe[[column]] <- as.factor(dataframe[[column]])
+
   return(dataframe)
 }

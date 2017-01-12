@@ -69,5 +69,8 @@ fix_waterbody_type <- function(dataframe, column)
   # Fix extra errors
   dataframe[[column]][dataframe[[column]] == "Bologonja"] <- ""
 
+  # Reformat as factors
+  dataframe[[column]] <- as.factor(dataframe[[column]])
+
   return(dataframe)
 }
