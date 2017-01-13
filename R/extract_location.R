@@ -52,12 +52,16 @@
 extract_location <- function(dataframe, data.projection, shapefile=village_2012,
                              x_label="X.UTM", y_label="Y.UTM", update.df=FALSE)
 {
-  # Seperate out the two columns containing coordinates
-  Longitude <- dataframe[[x_label]]
-  Latitude <- dataframe[[y_label]]
+  # Remove rows with NA values
+  data <- dataframe[!is.na(dataframe[[x_label]]),]
+  data <- data[!is.na(data[[y_label]]),]
+
+  # Re-class as numeric
+  data[[x_label]] <- as.numeric(data[[x_label]])
+  data[[y_label]] <- as.numeric(data[[y_label]])
 
   # Bind the two coordinate objects into a data frame
-  coord_data <- cbind(Longitude, Latitude)
+  coord_data <- data.frame(data[[x_label]], data[[y_label]])
 
   # Set shapefile projetion
   Geoproj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
@@ -96,10 +100,13 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   names(location_df)[names(location_df)=="location.Vil_Mtaa_N"] <- "Village"
 
   # Trigger warning message if NAs are present
-  if(any(is.na(location_df))) warning('NAs present in dataframe')
+  if(any(is.na(location_df))) print('NAs present in dataframe')
 
   # Remove duplicated rows to produce unique list
   unique_location_df <- unique(location_df)
+
+  # Remove NAs
+  complete_location_df <- unique_location_df[complete.cases(unique_location_df),]
 
   # Create if() loop to recognise if data needs to be updated
   if(update.df==TRUE)
@@ -111,5 +118,5 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
     print("Dataframe not updated")
   }
 
-  return(unique_location_df)
+  return(complete_location_df)
   }
