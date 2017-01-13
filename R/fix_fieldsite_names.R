@@ -19,28 +19,87 @@ fix_fieldsite_names <- function(dataframe, column)
   # Reformat as characters
   dataframe[[column]] <- as.character(dataframe[[column]])
 
-  # Fix differences in names
+  # Fix differences in names (fixes are grouped)
   dataframe[[column]][dataframe[[column]] == "BUSHTOPS CAMP / KITALO"] <- "Bushtops Camp - Kitalo"
+
   dataframe[[column]][dataframe[[column]] == "BUSHTOPS CAMP"] <- "Bushtops Camp"
+
   dataframe[[column]][dataframe[[column]] == "Ft. Ikoma Bridge / Grumeti River"] <- "Fort Ikoma Bridge - Grumeti River"
+
   dataframe[[column]][dataframe[[column]] == "IKOMA GATE"] <- "Ikoma Gate"
+
   dataframe[[column]][dataframe[[column]] == "KIFARU CAMP (NDASIATA)"] <- "Kifaru camp (Ndasiata)"
+
   dataframe[[column]][dataframe[[column]] == "KIRAWIRA B RANGER POST"] <- "Kirawira B Ranger Post"
+
   dataframe[[column]][dataframe[[column]] == "LERAI FOREST / Ngare Nanyuki River"] <- "Lerai Forest - Ngare Nanyuki River"
+
   dataframe[[column]][dataframe[[column]] == "Makao boundary"] <- "Makao Boundary"
+
   dataframe[[column]][dataframe[[column]] == "MBUZI MAWE"] <- "Mbuzi Mawe"
+
   dataframe[[column]][dataframe[[column]] == "MORU RANGER POST"] <- "Moru Ranger Post"
+
   dataframe[[column]][dataframe[[column]] == "NAABI GATE"] <- "Naabi Gate"
+
   dataframe[[column]][dataframe[[column]] == "NAMIRI SPRING"] <- "Namiri Spring"
+
   dataframe[[column]][dataframe[[column]] == "NDUTU RANGER POST"] <- "Ndutu Ranger Post"
+
   dataframe[[column]][dataframe[[column]] == "Nyabogati Bridge/Hippo Pool"] <- "Nyabogati Bridge - Hippo Pool"
+
   dataframe[[column]][dataframe[[column]] == "OLDUVAI RANGER POST"] <- "Olduvai Ranger Post"
+
   dataframe[[column]][dataframe[[column]] == "OLDUVAI RIVER"] <- "Olduvai River"
+
   dataframe[[column]][dataframe[[column]] == "SIMIYU RANGER POST"] <- "Simiyu Ranger Post"
+
   dataframe[[column]][dataframe[[column]] == "SOIT LEMOTONYI/ ASILIA CAMP"] <- "Soit Lemotonyi - Asila Camp"
+
   dataframe[[column]][dataframe[[column]] == "SOIT LEMOTONYI"] <- "Soit Lemotonyi"
+
   dataframe[[column]][dataframe[[column]] == "TAWIRI RESEARCH STATION"] <- "Tawiri Research Station"
+
   dataframe[[column]][dataframe[[column]] == "NGORONGORO OLDUVAI RANGER POST"] <- "Ngorongoro Olduvai Ranger Post"
+
+  dataframe[[column]][dataframe[[column]] == "AirStrip-Olduvai"] <- "Airstrip-Olduvai"
+  dataframe[[column]][dataframe[[column]] == "AirSrip-Olduvai"] <- "Airstrip-Olduvai"
+  dataframe[[column]][dataframe[[column]] == "AirStirp-Olduvai"] <- "Airstrip-Olduvai"
+  dataframe[[column]][dataframe[[column]] == "Airstrip-olduvai"] <- "Airstrip-Olduvai"
+
+  dataframe[[column]][dataframe[[column]] == "banagi-lobo"] <- "Banagi-Lobo"
+
+  dataframe[[column]][dataframe[[column]] == "barafu-golini"] <- "Barafu-Golini"
+
+  dataframe[[column]][dataframe[[column]] == "Baundary-Simba"] <- "Boundary-Simba"
+  dataframe[[column]][dataframe[[column]] == "Simba-Baundary"] <- "Boundary-Simba"
+
+  dataframe[[column]][dataframe[[column]] == "Baundary-SimbaKopje"] <- "Boundary-SimbaKopje"
+
+  dataframe[[column]][dataframe[[column]] == "hipopool-rongai"] <- "Hippo Pool-Rongai"
+  dataframe[[column]][dataframe[[column]] == "HipoPool-Rongai"] <- "Hippo Pool-Rongai"
+  dataframe[[column]][dataframe[[column]] == "hippo pull-rongai"] <- "Hippo Pool-Rongai"
+  dataframe[[column]][dataframe[[column]] == "Hippo pull-rongai"] <- "Hippo Pool-Rongai"
+  dataframe[[column]][dataframe[[column]] == "HippoPool-Rongai"] <- "Hippo Pool-Rongai"
+
+  dataframe[[column]][dataframe[[column]] == "Ser-IkomaGate"] <- "Seronera-Ikoma Gate"
+  dataframe[[column]][dataframe[[column]] == "Sero-IkomaGate"] <- "Seronera-Ikoma Gate"
+  dataframe[[column]][dataframe[[column]] == "seonera-ikoma gate"] <- "Seronera-Ikoma Gate"
+  dataframe[[column]][dataframe[[column]] == "Seronera-IkomaGate"] <- "Seronera-Ikoma Gate"
+  dataframe[[column]][dataframe[[column]] == "sero-ikoma gate"] <- "Seronera-Ikoma Gate"
+
+  dataframe[[column]][dataframe[[column]] == "sero-Musabi"] <- "Seronera-Musabi"
+  dataframe[[column]][dataframe[[column]] == "Sero-Musabi"] <- "Seronera-Musabi"
+  dataframe[[column]][dataframe[[column]] == "sero-musabi"] <- "Seronera-Musabi"
+
+  dataframe[[column]][dataframe[[column]] == "SopaBridge-Junction"] <- "Sopa Bridge-Junction"
+  dataframe[[column]][dataframe[[column]] == "SopBridge-Junction"] <- "Sopa Bridge-Junction"
+  dataframe[[column]][dataframe[[column]] == "Sopa bridge-junction"] <- "Sopa Bridge-Junction"
+  dataframe[[column]][dataframe[[column]] == "sopabridge-junction"] <- "Sopa Bridge-Junction"
+  dataframe[[column]][dataframe[[column]] == "SopaBridge-Junction"] <- "Sopa Bridge-Junction"
+
+  dataframe[[column]][dataframe[[column]] == "Swrc-Barafu"] <- "SWRC-Barafu"
+  dataframe[[column]][dataframe[[column]] == "SWRC-BARAFU"] <- "SWRC-Barafu"
 
   # Reformat as factors
   dataframe[[column]] <- as.factor(dataframe[[column]])
