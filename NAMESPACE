@@ -2,6 +2,7 @@
 
 export(change_projection)
 export(check_names)
+export(create_final_df)
 export(create_keyword_df)
 export(extract_location)
 export(fill_names)
