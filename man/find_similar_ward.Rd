@@ -25,11 +25,26 @@ find_similar_ward(dataframe, label, higher_level, label_higher_level, shapefile,
 \item{additional_places}{(optional) a dataframe containing the additional names of the new wards (post 2012 census). Default = NA. NOTE: The ward/district/region column of this dataframe must be called like the @data slot in the wards shapefile}
 }
 \value{
-a new dataframe with: i) the ward misspellings, stored in the first
-column; ii) all the similar matches, each one stored under a separate column;
-iii) the District/Region where the misspelled ward and the respective similar
-wards are (if the District/Region information is not available, the column will
-contain NAs).
+a new dataframe with:
+i) the ward misspellings, stored in the first column ("misspelled_wards");
+
+ii) all the similar matches, each one stored under a separate column
+("Correct_Name_1", "Correct_Name_2", etc.);
+
+iii) a column storing the region/district information in the project dataframe associated
+to the misspelled district ("Region_in_df" or "District_in_df"), depending on
+the higher_level argument specified in the function call;
+
+iv) a column specifying whether the misspelling is a real alphanumeric typo
+or not ("real_typo);
+
+v) a column specifying the level of the proposed correction ("correction_level");
+
+vi) a series of columns (one for each similar match found) specifying the
+region/district in the shapefile where each proposed correction
+is located ("Name_1_in_Region"/"Name_1_in_District", etc.);
+
+vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 }
 \description{
 Identifies the misspelled ward names in the project dataset and

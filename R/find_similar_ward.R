@@ -22,11 +22,26 @@
 #' the whole list of legal ward names). The typos dataframe produced by this
 #' function can be used as argument of fix_typos.
 #'
-#' @return a new dataframe with: i) the ward misspellings, stored in the first
-#' column; ii) all the similar matches, each one stored under a separate column;
-#' iii) the District/Region where the misspelled ward and the respective similar
-#' wards are (if the District/Region information is not available, the column will
-#' contain NAs).
+#' @return a new dataframe with:
+#' i) the ward misspellings, stored in the first column ("misspelled_wards");
+#'
+#' ii) all the similar matches, each one stored under a separate column
+#' ("Correct_Name_1", "Correct_Name_2", etc.);
+#'
+#' iii) a column storing the region/district information in the project dataframe associated
+#' to the misspelled district ("Region_in_df" or "District_in_df"), depending on
+#' the higher_level argument specified in the function call;
+#'
+#' iv) a column specifying whether the misspelling is a real alphanumeric typo
+#' or not ("real_typo);
+#'
+#' v) a column specifying the level of the proposed correction ("correction_level");
+#'
+#' vi) a series of columns (one for each similar match found) specifying the
+#' region/district in the shapefile where each proposed correction
+#' is located ("Name_1_in_Region"/"Name_1_in_District", etc.);
+#'
+#' vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 #'
 #' @export
 #'
@@ -43,7 +58,7 @@ find_similar_ward <- function(dataframe, label,
 
   if(!is.na(additional_places))
   {
-    shp_df <- select(shapefile@data, Ward_Name, District_N, Region_Nam)
+    shp_df <- dplyr::select(shapefile@data, Ward_Name, District_N, Region_Nam)
     shp_df$Ward_Name <- as.character(shp_df$Ward_Name)
     shp_df$District_N <- as.character(shp_df$District_N)
     shp_df$Region_Nam <- as.character(shp_df$Region_Nam)
@@ -52,7 +67,7 @@ find_similar_ward <- function(dataframe, label,
 
   } else {
     legal_names <- shapefile@data$Ward_Name
-    fullset <- select(shapefile@data, Ward_Name, District_N, Region_Nam)
+    fullset <- dplyr::select(shapefile@data, Ward_Name, District_N, Region_Nam)
   }
 
   ## the number of observation in the project dataset
@@ -63,14 +78,17 @@ find_similar_ward <- function(dataframe, label,
 
   ## number of wards
   ward_length <- length(wrd)
+
   ## generate empty list for results
   mylist_wards <- vector('list', ward_length)
 
   wrd_correct <- legal_names
   wrd_correct <- as.character(legal_names)
+
+  ## the correct wards: consider only alphanumeric characters, case insensitive
   c_v <- gsub("[^[:alnum:]]", "", tolower(wrd_correct))
 
-  ## initiate vector with the wrong names in the csv file
+  ## initiate vector with the wrong ward names in the csv file
   misspelled_wards <- c()
 
   ## loop through the unique wards
@@ -107,12 +125,12 @@ find_similar_ward <- function(dataframe, label,
 
   if(higher_level=="District")
   {
+    ## If the study districts are specified in the "only_in_distr" vector
     if (!is.na(only_in_distr))
     {
-
       only_in_distr <- as.character(only_in_distr)
 
-      ## respective_ward: the misspelled village names
+      ## respective_ward: the misspelled ward names
 
       ## the respective district name
       respective_district <- c()
@@ -127,9 +145,8 @@ find_similar_ward <- function(dataframe, label,
       real_typo <- c(rep(NA, Tot_misspell))
       real_typo <- as.character(real_typo)
 
-      ##find the similar ward names within the subset
+      ##find the similar ward names within the district subset
       correct_subset <- dplyr::filter(fullset, District_N%in%only_in_distr)
-      #correct_subset <- correct_subset[unique(correct_subset$Vil_Mtaa_N),]
 
       correct_subset_ward <- correct_subset$Ward_Name
       correct_subset_ward <- as.character(correct_subset_ward)
@@ -137,7 +154,7 @@ find_similar_ward <- function(dataframe, label,
       correct_subset_dis <- correct_subset$District_N
       correct_subset_dis <- as.character(correct_subset_dis)
 
-      ## only consider alphanumeric characters of the misspelled/correct village names.
+      ## only consider alphanumeric characters of the misspelled/correct ward names.
       m_v <- gsub("[^[:alnum:]]", "", tolower(respective_ward))
       c_sub_v <- gsub("[^[:alnum:]]", "", tolower(correct_subset_ward))
 
@@ -146,6 +163,7 @@ find_similar_ward <- function(dataframe, label,
         ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
         if((m_v[m] %in% c_sub_v)==T)
         {
+          # it is not a real typo
           real_typo[m] <- FALSE
           number <- which(c_sub_v %in% m_v[m])
           mylist_similar_wards[[m]] <- number
@@ -159,9 +177,12 @@ find_similar_ward <- function(dataframe, label,
           mylist_similar_wards[[m]] <- mylist_similar_wards[[m]][unique_ind]
           mylist_respective_districts[[m]] <- mylist_respective_districts[[m]][unique_ind]
 
-        } else {
+        } else { # if there are no case insensitive alphanumeric matches
+
+          # it is a real typo
           real_typo[m] <- TRUE
-          ##find the similar ward names within the subset
+
+          ## find the similar ward names within the subset
           number <- agrep(m_v[m], c_sub_v, max.distance = distnc)
           mylist_similar_wards[[m]] <- number
           mylist_similar_wards[[m]] <- correct_subset_ward[mylist_similar_wards[[m]]]
@@ -183,10 +204,9 @@ find_similar_ward <- function(dataframe, label,
 
       for(l in 1:totcol_wrdcorrname)
       {
-        newname <- paste("Correct_Ward_", l, sep="")
+        newname <- paste("Correct_Name_", l, sep="")
         colnames(wards_correct_name)[l] <- newname
       }
-
 
       misspelled_wards <- respective_ward
       misspelled_wards <- as.character(misspelled_wards)
@@ -200,7 +220,7 @@ find_similar_ward <- function(dataframe, label,
 
       for(Q in 1:totcol_discorrname)
       {
-        newname <- paste("Respective_District_", Q, sep="")
+        newname <- paste("Name_", Q, "_in_District", sep="")
         colnames(districts_correct_name)[Q] <- newname
       }
 
@@ -210,8 +230,7 @@ find_similar_ward <- function(dataframe, label,
       real_typo <- as.character(real_typo)
       corrections <- cbind(corrections, real_typo)
 
-    } else {
-      ## i.e. if the argument only_in_distr is NA
+    } else { ## if the argument only_in_distr is NA
 
       ds <- unique(dataframe[[label_higher_level]])
       ds <- as.character(ds)
@@ -246,7 +265,7 @@ find_similar_ward <- function(dataframe, label,
 
       for(q in 1:Tot_misspell)
       {
-        if((is.na(check_df$respective_district[q]))==F)
+        if((is.na(check_df$respective_district[q]))==F) ## if there is district information
         {
           study_district <- check_df$respective_district[q]
           study_district <- as.character(study_district)
@@ -281,14 +300,18 @@ find_similar_ward <- function(dataframe, label,
 
         } else {
           ## if there is no district information
+
           ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
           if((m_v[q] %in% c_v)==T)
           {
+            ## If there are matches, it is not a real typo
             real_typo[q] <- FALSE
             number <- which(c_v %in% m_v[q])
             mylist_similar_wards[[q]] <- number
             mylist_similar_wards[[q]] <- unique(wrd_correct[mylist_similar_wards[[q]]])
+
           } else {
+            ## If there are not matches, it is a real typo
             real_typo[q] <- TRUE
             # if there are no case insensitive matches
             ##look for similar village names in the whole correct village list
@@ -312,21 +335,21 @@ find_similar_ward <- function(dataframe, label,
 
       for(q in 2:totcol)
       {
-        newname <- paste("Correct_Ward_", q-1, sep="")
+        newname <- paste("Correct_Name_", q-1, sep="")
         colnames(corrections)[q] <- newname
       }
 
       ## cbind the District
-      District <- check_df$respective_district
-      corrections <- cbind(corrections, District)
+      District_in_df <- check_df$respective_district
+      corrections <- cbind(corrections, District_in_df)
 
       ## cbind the real_typo column
       real_typo <- as.character(real_typo)
       corrections <- cbind(corrections, real_typo)
     }
 
-  } else {
-    ## higher_level = "Region"
+  } else { ## higher_level = "Region"
+
     rg <- unique(dataframe[[label_higher_level]])
     rg <- as.character(rg)
 
@@ -425,13 +448,13 @@ find_similar_ward <- function(dataframe, label,
 
     for(q in 2:totcol)
     {
-      newname <- paste("Correct_Ward_", q-1, sep="")
+      newname <- paste("Correct_Name_", q-1, sep="")
       colnames(corrections)[q] <- newname
     }
 
     ## cbind the Region
-    Region <- check_df$respective_region
-    corrections <- cbind(corrections, Region)
+    Region_in_df <- check_df$respective_region
+    corrections <- cbind(corrections, Region_in_df)
 
     ## cbind the real_typo column
     real_typo <- as.character(real_typo)
@@ -439,9 +462,149 @@ find_similar_ward <- function(dataframe, label,
   }
 
   tot_obs <- nrow(corrections)
-  typo_level <- c()
-  typo_level <- as.character(typo_level)
-  typo_level <- rep("Ward", tot_obs)
-  corrections <- cbind(corrections, typo_level)
-  return(corrections)
+  correction_level <- c()
+  correction_level <- as.character(correction_level)
+  correction_level <- rep("Ward", tot_obs)
+  corrections <- cbind(corrections, correction_level)
+
+
+  ##############################################################################
+  ##############################################################################
+  ##############################################################################
+
+  ## If the "only_in_distr" argument is not NA
+  if (!is.na(only_in_distr))
+  {
+    corrections_II <- as.data.frame(wards_correct_name)
+    totcol <- length(corrections_II)
+
+    mylist_resp_code <- vector('list', totcol)
+
+    for(w in 1:totcol)
+    {
+      corr_ward <- corrections_II[,w]
+      corr_ward <- as.character(corr_ward)
+
+      Loc_ID <- rep(NA, length(corr_ward))
+      Loc_ID <- as.character(Loc_ID)
+
+      for(b in 1:length(corr_ward))
+      {
+        sub_set <- dplyr::filter(shapefile@data, Ward_Name == corr_ward[b])
+
+        if(nrow(sub_set)>0)
+        {
+          Loc_ID[b] <- as.character(sub_set$Loc_ID)
+
+        } else {
+          Loc_ID[b] <- as.character(NA)
+        }
+      }
+
+      mylist_resp_code[[w]] <- Loc_ID
+
+    }
+
+    code_identified <- as.data.frame(mylist_resp_code)
+
+    ## rename the columns
+    totcol <- length(code_identified)
+    for(O in 1:totcol)
+    {
+      newname <- paste("Loc_ID_", O, sep="")
+      colnames(code_identified)[O] <- newname
+    }
+
+    corrections_III <- cbind(corrections, code_identified)
+    corrections_III <- as.data.frame(corrections_III)
+
+  } else {
+    ## If the "only_in_distr" argument is NA
+    corrections_II <- as.data.frame(wards_correct_name)
+    totcol <- length(corrections_II)
+
+    mylist_resp_higher <- vector('list', totcol)
+    mylist_resp_code <- vector('list', totcol)
+
+    for(w in 1:totcol)
+    {
+      corr_ward <- corrections_II[,w]
+      corr_ward <- as.character(corr_ward)
+
+      highername <- rep(NA, length(corr_ward))
+      highername <- as.character(highername)
+
+      Loc_ID <- rep(NA, length(corr_ward))
+      Loc_ID <- as.character(Loc_ID)
+
+      for(b in 1:length(corr_ward))
+      {
+        sub_set <- dplyr::filter(shapefile@data, Ward_Name == corr_ward[b])
+
+        if(nrow(sub_set)>0)
+        {
+          if(higher_level=="District")
+          {
+            highername[b] <- as.character(sub_set$District_N)
+
+          } else {
+            highername[b] <- as.character(sub_set$Region_Nam)
+          }
+
+          Loc_ID[b] <- as.character(sub_set$Loc_ID)
+
+        } else {
+
+          highername[b] <- as.character(NA)
+          Loc_ID[b] <- as.character(NA)
+        }
+      }
+
+
+      mylist_resp_higher[[w]] <- highername
+      mylist_resp_code[[w]] <- Loc_ID
+
+    }
+
+    higher_correct_name <- as.data.frame(mylist_resp_higher)
+    code_identified <- as.data.frame(mylist_resp_code)
+
+    ## rename the higher level columns
+    totcol <- length(higher_correct_name)
+
+    if(higher_level=="District")
+    {
+      for(o in 1:totcol)
+      {
+        newname <- paste("Name_", o, "_in_District", sep="")
+        colnames(higher_correct_name)[o] <- newname
+      }
+
+    } else {
+      for(o in 1:totcol)
+      {
+        newname <- paste("Name_", o, "_in_Region", sep="")
+        colnames(higher_correct_name)[o] <- newname
+      }
+    }
+
+    ## rename the code columns
+    totcol <- length(code_identified)
+    for(O in 1:totcol)
+    {
+      newname <- paste("Loc_ID_", O, sep="")
+      colnames(code_identified)[O] <- newname
+    }
+
+
+    corrections_II <- cbind(higher_correct_name, code_identified)
+    corrections_II <- as.data.frame(corrections_II)
+
+    corrections_III <- cbind(corrections, corrections_II)
+    corrections_III <- as.data.frame(corrections_III)
+
+  }
+
+  return(corrections_III)
+
 }
