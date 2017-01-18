@@ -4,17 +4,18 @@
 \alias{find_similar_village}
 \title{Find similar village names}
 \usage{
-find_similar_village(dataframe, label, label_higher_level, higher_level,
-  shapefile, only_in_distr = NA, distnc, additional_places = NA)
+find_similar_village(dataframe, label, higher_level, label_higher_level,
+  shapefile, only_in_distr = NA, distnc, additional_places = NA,
+  look_ward = F, ward_shapefile = NA)
 }
 \arguments{
 \item{dataframe}{the project dataframe with misspelled village names}
 
 \item{label}{the name of the column in the project dataframe storing the village names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
 
-\item{label_higher_level}{the name of the column in the project dataframe storing the CORRECT ward/district/region names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
+\item{higher_level}{MUST be one of the following: "Ward", District" or "Region". If "Ward", the argument look_ward must be FALSE.}
 
-\item{higher_level}{MUST be one of the following: "Ward", District" or "Region".}
+\item{label_higher_level}{the name of the column in the project dataframe storing the CORRECT ward/district/region names. NOTE: The label must be specified as "label" (i.e. "ward", for instance)}
 
 \item{shapefile}{the shapefile object used to retrieve the legal names}
 
@@ -23,13 +24,33 @@ find_similar_village(dataframe, label, label_higher_level, higher_level,
 \item{distnc}{numeric value indicating the maximum distance allowed for a match (see ?agrep)}
 
 \item{additional_places}{(optional) a dataframe containing the additional names of the new villages (post 2012 census). Default = NA. NOTE: The village/ward/district/region column of this dataframe must be called like the @data slot in the village shapefile}
+
+\item{look_ward}{(default = FALSE) logical, "TRUE" or "FALSE". If a misspelled village is found and look_ward = TRUE, the function will propose corrections by looking for similar names within both the legal village and ward names. If higher_level = "Ward", look_ward must be set to FALSE}
+
+\item{ward_shapefile}{(optional) The ward shapefile, to use only when look_ward = TRUE . Default = NA.}
 }
 \value{
-a new dataframe with: i) the village misspellings, stored in the first
-column; ii) all the similar matches, each one stored under a separate column;
-iii) the Ward/District/Region where the misspelled village and the respective similar
-villages are (if the Ward/District/Region information is not available, the column will
-contain NAs).
+a new dataframe with:  
+  
+i) the village misspellings, stored in the first column ("misspelled_villages");
+   
+ii) a column specifying the level of the proposed correction ("correction_level");
+   
+iii) all the similar matches, each one stored under a separate column
+("Correct_Name_1", "Correct_Name_2", etc.);
+
+iv) a column storing the region/district/ward information in the project dataframe associated
+to the misspelled village ("Region_in_df", "District_in_df" or "Ward_in_df"),
+depending on the higher_level argument specified in the function call;    
+     
+v) a series of columns (one for each similar match found) specifying the
+region/district/ward in the shapefile where each proposed correction
+is located ("Name_1_in_Region"/"Name_1_in_District"/"Name_1_in_Ward", etc.);   
+   
+vi) a column specifying whether the misspelling is a real alphanumeric typo
+or not ("real_typo);    
+   
+vii) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 }
 \description{
 Identifies the misspelled village names in the project dataset
