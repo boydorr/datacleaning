@@ -30,7 +30,7 @@
 #' ("Correct_Name_1", "Correct_Name_2", etc.);
 #'
 #' iii) a column storing the region/district information in the project dataframe associated
-#' to the misspelled district ("Region_in_df" or "District_in_df"), depending on
+#' to the misspelled ward ("Region_in_df" or "District_in_df"), depending on
 #' the higher_level argument specified in the function call;
 #'
 #' iv) a column specifying whether the misspelling is a real alphanumeric typo
