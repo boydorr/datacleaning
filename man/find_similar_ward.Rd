@@ -26,6 +26,7 @@ find_similar_ward(dataframe, label, higher_level, label_higher_level, shapefile,
 }
 \value{
 a new dataframe with:
+
 i) the ward misspellings, stored in the first column ("misspelled_wards");
 
 ii) all the similar matches, each one stored under a separate column

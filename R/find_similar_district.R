@@ -20,6 +20,7 @@
 #' function can be used as argument of fix_typos.
 #'
 #' @return a new dataframe with:
+#'
 #' i) the district misspellings, stored in the first column ("misspelled_districts");
 #'
 #' ii) all the similar matches, each one stored under a separate column

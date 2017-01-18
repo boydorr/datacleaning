@@ -14,7 +14,8 @@
 #' proposes them as potential corrections to the typos. The typos dataframe produced
 #' by this function can be used as argument of fix_typos.
 #'
-#' @return a new dataframe with:
+#' @return a new dataframe with:  
+#'   
 #' i) the region misspellings, stored in the first column ("misspelled_regions");
 #'
 #' ii) all the similar matches, each one stored under a separate column
