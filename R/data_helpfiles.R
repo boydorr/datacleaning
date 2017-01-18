@@ -47,6 +47,13 @@ NULL
 #' @format A Spatial Polygon Dataframe
 NULL
 
+#' @name Location_ID_df
+#' @title The location IDs dataframe
+#' @description This dataframe stores all the location IDs for each village, ward, district and region
+#' @docType data
+#' @format A dataframe
+NULL
+
 #' @name example_locations
 #' @title Example Location Name Dataframe
 #' @description This is an example Dataframe containing a range of possible
