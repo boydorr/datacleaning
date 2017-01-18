@@ -25,7 +25,7 @@
 #' @return a new dataframe with 4 columns, in which each column stores the matching
 #' village, ward, district and region. The rows with all NAs are rows where there
 #' is a mismatch. The rows with some NAs are the rows in which it was not possible
-#' to retrieve the nformation for the village, ward, ... from the original dataset.
+#' to retrieve the information for the village, ward, ... from the original dataset.
 #'
 #' @export
 #'
@@ -263,13 +263,18 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
     }
   }
 
-  Updated_Villages <- as.character(Updated_Villages)
-  Updated_Wards <- as.character(Updated_Wards)
-  Updated_Districts <- as.character(Updated_Districts)
-  Updated_Regions <- as.character(Updated_Regions)
+  Village <- Updated_Villages
+  Ward <- Updated_Wards
+  District <- Updated_Districts
+  Region <- Updated_Regions
+  
+  Village <- as.character(Village)
+  Ward <- as.character(Ward)
+  District <- as.character(District)
+  Region <- as.character(Region)
 
-  updated_df <- cbind(Updated_Villages, Updated_Wards,
-                      Updated_Districts, Updated_Regions)
+  updated_df <- cbind(Village, Ward,
+                      District, Region)
 
   updated_df <- as.data.frame(updated_df)
 

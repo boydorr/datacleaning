@@ -32,7 +32,7 @@ fill_names(dataframe, df_vill, df_ward, df_distr, df_reg, legal_names_vill,
 a new dataframe with 4 columns, in which each column stores the matching
 village, ward, district and region. The rows with all NAs are rows where there
 is a mismatch. The rows with some NAs are the rows in which it was not possible
-to retrieve the nformation for the village, ward, ... from the original dataset.
+to retrieve the information for the village, ward, ... from the original dataset.
 }
 \description{
 Identifies the unique village/ward/district/region combination
