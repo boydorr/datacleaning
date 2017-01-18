@@ -23,15 +23,21 @@ find_similar_district(dataframe, label, label_higher_level, shapefile, distnc,
 \value{
 a new dataframe with:
 i) the district misspellings, stored in the first column ("misspelled_districts");
+
 ii) all the similar matches, each one stored under a separate column
 ("Correct_Name_1", "Correct_Name_2", etc.);
+
 iii) a column storing the region information in the project dataframe associated
 to the misspelled district ("Region_in_df");
+
 iv) a column specifying whether the misspelling is a real alphanumeric typo
 or not ("real_typo);
+
 v) a column specifying the level of the proposed correction ("correction_level");
-vi) a column specifying the region in the shapefile where each proposed correction
-is located ("Name_1_in_Region", "Name_2_in_Region", etc.);
+
+vi) a series of columns (one for each similar match found) specifying the
+region in the shapefile where each proposed correction is located ("Name_1_in_Region", "Name_2_in_Region", etc.);
+
 vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 }
 \description{

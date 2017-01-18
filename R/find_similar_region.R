@@ -16,11 +16,15 @@
 #'
 #' @return a new dataframe with:
 #' i) the region misspellings, stored in the first column ("misspelled_regions");
+#'
 #' ii) all the similar matches, each one stored under a separate column
 #' ("Correct_Name_1", "Correct_Name_2", etc.);
+#'
 #' iii) a column specifying whether the misspelling is a real alphanumeric typo
 #' or not ("real_typo);
+#'
 #' iv) a column specifying the level of the proposed correction ("correction_level");
+#'
 #' v) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 #'
 #' @export
