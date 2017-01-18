@@ -19,8 +19,14 @@ find_similar_region(dataframe, label, distnc, shapefile,
 \item{additional_places}{(oOptional) a dataframe containing the additional names of the new districts (post 2012 census). Default = NA. NOTE: The district/region column of this dataframe must be called like the @data slot in the wards shapefile}
 }
 \value{
-a new dataframe with: i) the region misspellings, stored in the first
-column; ii) all the similar matches, each one stored under a separate column.
+a new dataframe with: 
+- i) the region misspellings, stored in the first column ("misspelled_regions");   
+- ii) all the similar matches, each one stored under a separate column 
+("Correct_Name_1", "Correct_Name_2", etc.); 
+- iii) a column specifying whether the misspelling is a real alphanumeric typo 
+or not ("real_typo);    
+- iv) a column specifying the level of the proposed correction ("correction_level");  
+- v) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 }
 \description{
 Identifies the misspelled region names in the project dataset
