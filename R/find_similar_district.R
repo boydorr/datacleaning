@@ -19,10 +19,18 @@
 #' the whole list of legal district names). The typos dataframe produced by this
 #' function can be used as argument of fix_typos.
 #'
-#' @return a new dataframe with: i) the district misspellings, stored in the first
-#' column; ii) all the similar matches, each one stored under a separate column;
-#' iii) the Region where the misspelled district and the respective similar districts
-#' are (if the information is not available, the column will contain NAs).
+#' @return a new dataframe with:
+#' i) the district misspellings, stored in the first column ("misspelled_districts");
+#' ii) all the similar matches, each one stored under a separate column
+#' ("Correct_Name_1", "Correct_Name_2", etc.);
+#' iii) a column storing the region information in the project dataframe associated
+#' to the misspelled district ("Region_in_df");
+#' iv) a column specifying whether the misspelling is a real alphanumeric typo
+#' or not ("real_typo);
+#' v) a column specifying the level of the proposed correction ("correction_level");
+#' vi) a column specifying the region in the shapefile where each proposed correction
+#' is located ("Name_1_in_Region", "Name_2_in_Region", etc.);
+#' vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
 #'
 #' @export
 #'
@@ -37,7 +45,7 @@ find_similar_district <- function(dataframe, label, label_higher_level,
 
   if(!is.na(additional_places))
   {
-    shp_df <- select(shapefile@data, District_N, Region_Nam)
+    shp_df <- dplyr::select(shapefile@data, District_N, Region_Nam)
     shp_df$District_N <- as.character(shp_df$District_N)
     shp_df$Region_Nam <- as.character(shp_df$Region_Nam)
     legal_names <- c(shp_df$District_N, additional_places$District_N)
@@ -45,20 +53,18 @@ find_similar_district <- function(dataframe, label, label_higher_level,
 
   } else {
     legal_names <- shapefile@data$District_N
-    fullset <- select(shapefile@data, District_N, Region_Nam)
+    fullset <- dplyr::select(shapefile@data, District_N, Region_Nam)
   }
 
   ## the number of observation in the project dataset
   ntot <- nrow(dataframe)
-
-  #wrd <- dataframe$Ward
-  #wrd <- as.character(wrd)
 
   ds <- unique(dataframe[[label]])
   ds <- as.character(ds)
 
   ds_correct <- legal_names
   ds_correct <- as.character(legal_names)
+
   c_d <- gsub("[^[:alnum:]]", "", tolower(ds_correct))
 
   rg <- unique(dataframe[[label_higher_level]])
@@ -114,6 +120,7 @@ find_similar_district <- function(dataframe, label, label_higher_level,
     ## the misspelled district names
     respective_district <- ((dataframe[[label]])[miss_dis_index])
     respective_district <- as.character(respective_district)
+
     ## the respective region names
     respective_region <- ((dataframe[[label_higher_level]])[miss_dis_index])
     respective_region <- as.character(respective_region)
@@ -202,25 +209,98 @@ find_similar_district <- function(dataframe, label, label_higher_level,
 
   for(q in 2:totcol)
   {
-    newname <- paste("Correct_District_", q-1, sep="")
+    newname <- paste("Correct_Name_", q-1, sep="")
     colnames(corrections)[q] <- newname
   }
 
   ## cbind the region
-  Region <- check_df$respective_region
-  Region <- as.character(Region)
+  Region_in_df <- check_df$respective_region
+  Region_in_df <- as.character(Region_in_df)
 
-  corrections <- cbind(corrections, Region)
+  corrections <- cbind(corrections, Region_in_df)
 
   ## cbind the real_typo column
   real_typo <- as.character(real_typo)
   corrections <- cbind(corrections, real_typo)
 
   tot_obs <- nrow(corrections)
-  typo_level <- c()
-  typo_level <- as.character(typo_level)
-  typo_level <- rep("District", tot_obs)
-  corrections <- cbind(corrections, typo_level)
-  return(corrections)
+  correction_level <- c()
+  correction_level <- as.character(correction_level)
+  correction_level <- rep("District", tot_obs)
+  corrections <- cbind(corrections, correction_level)
+
+
+
+  ##############################################################################
+  ##############################################################################
+  ##############################################################################
+  corrections_II <- as.data.frame(districts_correct_name)
+  totcol <- length(corrections_II)
+
+  mylist_resp_reg <- vector('list', totcol)
+  mylist_resp_code <- vector('list', totcol)
+
+  for(w in 1:totcol)
+  {
+    corr_dis <- corrections_II[,w]
+    corr_dis <- as.character(corr_dis)
+
+    regname <- rep(NA, length(corr_dis))
+    regname <- as.character(regname)
+
+    Loc_ID <- rep(NA, length(corr_dis))
+    Loc_ID <- as.character(Loc_ID)
+
+    for(b in 1:length(corr_dis))
+    {
+      sub_set <- dplyr::filter(shapefile@data, District_N == corr_dis[b])
+
+      if(nrow(sub_set)>0)
+      {
+        regname[b] <- as.character(sub_set$Region_Nam)
+        Loc_ID[b] <- as.character(sub_set$Loc_ID)
+
+      } else {
+        regname[b] <- as.character(NA)
+        Loc_ID[b] <- as.character(NA)
+      }
+    }
+
+
+    mylist_resp_reg[[w]] <- regname
+    mylist_resp_code[[w]] <- Loc_ID
+
+  }
+
+  reg_correct_name <- as.data.frame(mylist_resp_reg)
+  code_identified <- as.data.frame(mylist_resp_code)
+
+  ## rename the columns
+  totcol <- length(reg_correct_name)
+  for(o in 1:totcol)
+  {
+    newname <- paste("Name_", o, "_in_Region",sep="")
+    colnames(reg_correct_name)[o] <- newname
+  }
+
+  ## rename the columns
+  totcol <- length(code_identified)
+  for(O in 1:totcol)
+  {
+    newname <- paste("Loc_ID_", O, sep="")
+    colnames(code_identified)[O] <- newname
+  }
+
+
+  corrections_II <- cbind(reg_correct_name, code_identified)
+  corrections_II <- as.data.frame(corrections_II)
+
+  corrections_III <- cbind(corrections, corrections_II)
+  corrections_III <- as.data.frame(corrections_III)
+
+  return(corrections_III)
 }
+
+
+
 
