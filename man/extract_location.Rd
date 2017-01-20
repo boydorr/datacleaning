@@ -14,8 +14,8 @@ function.}
 
 \item{data.projection}{the projection that the data is currently in.}
 
-\item{shapefile}{(Optional) this will use the village_2012 shapefile as
-default, but will accept an alternative if provided.}
+\item{shapefile}{(Optional) the village_2012 shapefile is used as default, but
+an alternative can be provided.}
 
 \item{x_label}{(Optional) this is automatically recognised as "X.UTM", but an
 alternative column name will be accepted if provided.}

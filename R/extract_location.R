@@ -7,8 +7,8 @@
 #' columns - this dataframe can include other columns which are not used by this
 #' function.
 #' @param data.projection the projection that the data is currently in.
-#' @param shapefile (Optional) this will use the village_2012 shapefile as
-#' default, but will accept an alternative if provided.
+#' @param shapefile (Optional) the village_2012 shapefile is used as default, but
+#' an alternative can be provided.
 #' @param x_label (Optional) this is automatically recognised as "X.UTM", but an
 #' alternative column name will be accepted if provided.
 #' @param y_label (Optional) this is automatically recognised as "Y.UTM", but an
