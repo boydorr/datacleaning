@@ -1,7 +1,8 @@
 #' @title Extract the location information from a set of coordinates
 #'
 #' @description Extracts village, ward, district and region information for each
-#' data point as a data frame if coordinates are correct.
+#' data point as a data frame if coordinates are correct; then produces multiple
+#' dataframes which can be used in future processing.
 #'
 #' @param dataframe a dataframe which contains coordinates in two seperate
 #' columns - this dataframe can include other columns which are not used by this
@@ -17,20 +18,33 @@
 #' dataframe will be updated with new columns providing the Village, District,
 #' District and Region names for each row.
 #' @param add.coords (Optional) this is FALSE by default; if "TRUE", the original
-#' daaframe will be updated with two new columns giving the new coordinates for
+#' dataframe will be updated with two new columns giving the new coordinates for
 #' Latitude and Longitude in the Geographic WGS84 projection.
 #'
 #' @details \code{extract_location} creates a spatial object, and will transform
-#' to the 'Geoproj' projecion - if already in this projection, it passess to the
-#' next stage without change. A message will advise of which step was taken upon
-#' running the function.
+#' to the Geographic WGS84 projecion - if already in this projection, it passess
+#' to the next stage without change. A message will advise of which step was
+#' taken upon running the function.
 #'
-#' A data frame is produced with location information seperated into four columns
-#' (Village, Ward, District and Region). This information is not a complete list,
-#' but a set of unique locations. A warning message will be produced if NAs are
-#' present in this resulting dataframe.
+#' A list is returned containing:
 #'
-#' @return a dataframe object listing unique location information that can be
+#' 1) A data frame with location information seperated into four columns
+#' (Village, Ward, District and Region). This information is a set of unique
+#' locations. A warning message will be produced if NAs are present in this
+#' dataframe.
+#' 2) A dataframe with location information in a setup using unique codes to
+#' identify each location, using three columns (Location, Location_Type and
+#' Loc_ID); This dataframe is used within the Shiny App.
+#'
+#' If \code{update.df} or \code{add.coords} is used in the function call, a
+#' third item is returned:
+#'
+#' 3) The original dataframe with the updates in new columns.
+#'
+#' Each of these can be accessed by calling \code{data_location[[i]]}, where
+#' \code{i} is the number mentioned above.
+#'
+#' @return a list of dataframe objects providing location information that can be
 #' easily exported as a .csv.
 #'
 #' @export
@@ -142,7 +156,7 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
 
   # Create list of returnable items
   if(add.coords==TRUE | update.df==TRUE){
-    final_list <- list(dataframe, complete_location_df, final_location_df)
+    final_list <- list(complete_location_df, final_location_df, dataframe)
   } else {
     final_list <- list(complete_location_df, final_location_df)
   }
