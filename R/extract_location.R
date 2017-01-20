@@ -122,15 +122,24 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   # Remove NAs
   complete_location_df <- unique_location_df[complete.cases(unique_location_df),]
 
-  # Create if() loop to recognise if data needs to be updated
+  # Create Final dataframe of locations
+  print("Create final location dataframe")
+  final_location_df <- datacleaning::create_final_df(complete_location_df,
+                                         corr_df_vill ="Village",
+                                         corr_df_ward="Ward",
+                                         corr_df_distr="District",
+                                         corr_df_reg="Region",
+                                         ID_df=Location_ID_df)
+
   if(update.df==TRUE)
   {
     print("Village, Ward, District and Region columns added to dataframe")
+
     # Bind columns detailing Village, Ward, District and Region to original dataframe
     dataframe <- cbind(dataframe, location_df)
   } else {
     print("Dataframe not updated")
   }
 
-  return(complete_location_df)
+  return(final_location_df)
   }
