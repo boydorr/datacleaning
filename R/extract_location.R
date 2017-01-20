@@ -79,21 +79,6 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
     # If projection is different from Geoproj -> transform
     print("Tranformed to Geograhic WGS84")
     proj.data <- sp::spTransform(data, Geoproj)
-
-    if(add.coords==TRUE)
-    {
-      # View as dataframe
-      new.coord <- as.data.frame(proj.data)
-
-      # Rename columns
-      colnames(new.coord)[1] <- "Latitude"
-      colnames(new.coord)[2] <- "Longitude"
-
-      # Add transformed coordinates to original dataframe
-      print("Geograhic WGS84 coordinates added")
-      dataframe <- cbind(dataframe, new.coord)
-    }
-
   } else {
     # Else pass to object of the same name.
     print("Not transformed: In Geoproj already")
@@ -123,23 +108,44 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   complete_location_df <- unique_location_df[complete.cases(unique_location_df),]
 
   # Create Final dataframe of locations
-  print("Create final location dataframe")
   final_location_df <- datacleaning::create_final_df(complete_location_df,
                                          corr_df_vill ="Village",
                                          corr_df_ward="Ward",
                                          corr_df_distr="District",
                                          corr_df_reg="Region",
                                          ID_df=Location_ID_df)
+  final_location_df <- unique(final_location_df)
 
+  # Make coordinate update to dataframe
+  if(add.coords==TRUE)
+  {
+    # View as dataframe
+    new.coord <- as.data.frame(proj.data)
+
+    # Rename columns
+    colnames(new.coord)[1] <- "Latitude"
+    colnames(new.coord)[2] <- "Longitude"
+
+    # Add transformed coordinates to original dataframe
+    print("Geograhic WGS84 coordinates added")
+    dataframe <- cbind(dataframe, new.coord)
+  }
+
+  # Make location update to dataframe
   if(update.df==TRUE)
   {
     print("Village, Ward, District and Region columns added to dataframe")
 
     # Bind columns detailing Village, Ward, District and Region to original dataframe
     dataframe <- cbind(dataframe, location_df)
-  } else {
-    print("Dataframe not updated")
   }
 
-  return(final_location_df)
+  # Create list of returnable items
+  if(add.coords==TRUE | update.df==TRUE){
+    final_list <- list(dataframe, complete_location_df, final_location_df)
+  } else {
+    final_list <- list(complete_location_df, final_location_df)
+  }
+
+  return(final_list)
   }
