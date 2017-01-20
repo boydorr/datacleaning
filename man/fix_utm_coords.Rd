@@ -4,7 +4,7 @@
 \alias{fix_utm_coords}
 \title{Remove incorrect UTM coordinates from a dataset}
 \usage{
-fix_utm_coords(dataframe, x_label, y_label, remove.extra = FALSE)
+fix_utm_coords(dataframe, x_label, y_label, remove.extra = TRUE)
 }
 \arguments{
 \item{dataframe}{a dataframe containing a column for x- coordinates and
@@ -14,11 +14,10 @@ y-coordinates in the UTM format.}
 
 \item{y_label}{the column header belonging to y-UTM coordinates.}
 
-\item{remove.extra}{(Optional) if \code{TRUE}, either coordinate is replaced
-with NA if the other coordinate exists as NA; this NA will be a result of an
-original missing entry, or fixes done within the function to replace unusual
-coordinates.Using \code{remove.extra=TRUE} enables onward use of other
-coordinate functions within the \code{datacleaning} package.}
+\item{remove.extra}{(Optional) this is TRUE by default; when TRUE, either
+coordinate is replaced with NA if the other coordinate exists as NA. Using
+\code{remove.extra=TRUE} enables onward use of other coordinate functions
+within the \code{datacleaning} package.}
 }
 \value{
 the original dataframe with fixes in place in the X- and y- coordinate
@@ -37,10 +36,10 @@ data("example_utm_coordinates2")
 # View dataframe
 example_utm_coordinates2
 
-# Run without remove.extra
+# Run with remove.extra
 fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label")
 
-# Run with remove.extra
-fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", remove.extra=TRUE)
+# Run without remove.extra
+fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", remove.extra=FALSE)
 }
 

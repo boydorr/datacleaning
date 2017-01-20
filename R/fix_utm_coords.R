@@ -9,11 +9,10 @@
 #' y-coordinates in the UTM format.
 #' @param x_label the column header belonging to x-UTM coordinates.
 #' @param y_label the column header belonging to y-UTM coordinates.
-#' @param remove.extra (Optional) if \code{TRUE}, either coordinate is replaced
-#' with NA if the other coordinate exists as NA; this NA will be a result of an
-#' original missing entry, or fixes done within the function to replace unusual
-#' coordinates.Using \code{remove.extra=TRUE} enables onward use of other
-#' coordinate functions within the \code{datacleaning} package.
+#' @param remove.extra (Optional) this is TRUE by default; when TRUE, either
+#' coordinate is replaced with NA if the other coordinate exists as NA. Using
+#' \code{remove.extra=TRUE} enables onward use of other coordinate functions
+#' within the \code{datacleaning} package.
 #'
 #' @return the original dataframe with fixes in place in the X- and y- coordinate
 #' columns.
