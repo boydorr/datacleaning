@@ -16,6 +16,9 @@
 #' @param update.df (Optional) this is FALSE by default; if "TRUE", the original
 #' dataframe will be updated with new columns providing the Village, District,
 #' District and Region names for each row.
+#' @param add.coords (Optional) this is FALSE by default; if "TRUE", the original
+#' daaframe will be updated with two new columns giving the new coordinates for
+#' Latitude and Longitude in the Geographic WGS84 projection.
 #'
 #' @details \code{extract_location} creates a spatial object, and will transform
 #' to the 'Geoproj' projecion - if already in this projection, it passess to the
@@ -50,7 +53,8 @@
 
 
 extract_location <- function(dataframe, data.projection, shapefile=village_2012,
-                             x_label="X.UTM", y_label="Y.UTM", update.df=FALSE)
+                             x_label="X.UTM", y_label="Y.UTM", update.df=FALSE,
+                             add.coords=FALSE)
 {
   # Remove rows with NA values
   data <- dataframe[!is.na(dataframe[[x_label]]),]
@@ -73,13 +77,23 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   if(!data.projection=="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
   {
     # If projection is different from Geoproj -> transform
-    print("Tranformed to 'Geogproj'")
+    print("Tranformed to Geograhic WGS84")
     proj.data <- sp::spTransform(data, Geoproj)
-    new.coord <- as.data.frame(proj.data)
 
-    # Add transformed coordinates to original dataframe
-    print("Geograhic WGS84 coordinates added'")
-    dataframe <- cbind(dataframe, new.coord)
+    if(add.coords==TRUE)
+    {
+      # View as dataframe
+      new.coord <- as.data.frame(proj.data)
+
+      # Rename columns
+      colnames(new.coord)[1] <- "Latitude"
+      colnames(new.coord)[2] <- "Longitude"
+
+      # Add transformed coordinates to original dataframe
+      print("Geograhic WGS84 coordinates added")
+      dataframe <- cbind(dataframe, new.coord)
+    }
+
   } else {
     # Else pass to object of the same name.
     print("Not transformed: In Geoproj already")

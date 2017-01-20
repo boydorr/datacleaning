@@ -5,7 +5,8 @@
 \title{Extract the location information from a set of coordinates}
 \usage{
 extract_location(dataframe, data.projection, shapefile = village_2012,
-  x_label = "X.UTM", y_label = "Y.UTM", update.df = FALSE)
+  x_label = "X.UTM", y_label = "Y.UTM", update.df = FALSE,
+  add.coords = FALSE)
 }
 \arguments{
 \item{dataframe}{a dataframe which contains coordinates in two seperate
@@ -26,6 +27,10 @@ alternative column name will be accepted if provided.}
 \item{update.df}{(Optional) this is FALSE by default; if "TRUE", the original
 dataframe will be updated with new columns providing the Village, District,
 District and Region names for each row.}
+
+\item{add.coords}{(Optional) this is FALSE by default; if "TRUE", the original
+daaframe will be updated with two new columns giving the new coordinates for
+Latitude and Longitude in the Geographic WGS84 projection.}
 }
 \value{
 a dataframe object listing unique location information that can be
