@@ -27,13 +27,13 @@
 #' # View dataframe
 #' example_utm_coordinates2
 #'
-#' # Run without remove.extra
+#' # Run with remove.extra
 #' fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label")
 #'
-#' # Run with remove.extra
-#' fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", remove.extra=TRUE)
+#' # Run without remove.extra
+#' fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", remove.extra=FALSE)
 
-fix_utm_coords <- function(dataframe, x_label, y_label, remove.extra=FALSE)
+fix_utm_coords <- function(dataframe, x_label, y_label, remove.extra=TRUE)
 {
   # View numbers as such
   dataframe[[x_label]] <- as.numeric(as.character(dataframe[[x_label]]))
