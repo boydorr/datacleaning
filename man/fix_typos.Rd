@@ -5,7 +5,8 @@
 \title{Correct any location typos in the project dataset}
 \usage{
 fix_typos(dataframe, typo_df, dataframe_label, typo_label_wrong,
-  typo_label_correct, legal_names, mixed_typo = F)
+  typo_label_correct, legal_names, mixed_typo = F, dataframe_label_w = NA,
+  legal_names_w = NA)
 }
 \arguments{
 \item{dataframe}{the project dataframe with misspelled names to correct}
@@ -21,6 +22,10 @@ fix_typos(dataframe, typo_df, dataframe_label, typo_label_wrong,
 \item{legal_names}{a vector containing the legal village/ward/district/region names specified by the shapefile}
 
 \item{mixed_typo}{(default = FALSE). logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward}
+
+\item{dataframe_label_w}{(default = NA). The name of the dataframe's column in which to look for the WARD misspellings. It must be used only when mixed_typo is TRUE}
+
+\item{legal_names_w}{(default = NA). A vector containing the legal WARD names specified by the shapefile. It must be used only when mixed_typo is TRUE.}
 }
 \value{
 new data frame where all the original information is preserved and the

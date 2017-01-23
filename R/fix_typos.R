@@ -11,6 +11,8 @@
 #' @param  typo_label_correct the name of the typos dataframe's column with the respective corrections. NOTE: The label must be specified as "label"
 #' @param  legal_names a vector containing the legal village/ward/district/region names specified by the shapefile
 #' @param  mixed_typo (default = FALSE). logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward
+#' @param  dataframe_label_w (default = NA). The name of the dataframe's column in which to look for the WARD misspellings. It must be used only when mixed_typo is TRUE
+#' @param  legal_names_w (default = NA). A vector containing the legal WARD names specified by the shapefile. It must be used only when mixed_typo is TRUE.
 #'
 #' @details \code{fix_typos} corrects the misspellings in a given column - specified by
 #' the argument dataframe_label - of the project dataset based on a typos dataframe
@@ -26,7 +28,8 @@
 #'
 
 fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
-                      typo_label_correct, legal_names, mixed_typo=F)
+                      typo_label_correct, legal_names, mixed_typo=F, 
+                      dataframe_label_w=NA, legal_names_w=NA)
 {
   ## the number of observation in the project dataset
   ntot <- nrow(dataframe)
@@ -75,6 +78,9 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
 
   } else { ## if mixed typo == T
 
+    df_name_w <- dataframe[[dataframe_label_w]]
+    df_name_w <- as.character(df_name_w)
+    
     typo_df_v <- dplyr::filter(typo_df, correction_level=="Village")
     typo_df_w <- dplyr::filter(typo_df, correction_level=="Ward")
 
@@ -107,6 +113,7 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
         ## find the row number of the typo in the typo dataframe
         typo_index <- which(name_typo_v %in% df_name[i])
         Correct_v[i] <- name_correct_v[typo_index]
+        
       } else { # if in the dataframe there is a legal name, copy it
         if (df_name[i] %in% legal_names)
         {
@@ -121,15 +128,15 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
     ## loop through the rows of the dataframe
     for (i in 1:ntot)
     {
-      if (df_name[i] %in% name_typo_w)
+      if (df_name_w[i] %in% name_typo_w)
       { # if the name in the dataframe is also in the typos dataframe
         ## find the row number of the typo in the typo dataframe
-        typo_index <- which(name_typo_w %in% df_name[i])
+        typo_index <- which(name_typo_w %in% df_name_w[i])
         Correct_w[i] <- name_correct_w[typo_index]
       } else { # if in the dataframe there is a legal name, copy it
-        if (df_name[i] %in% legal_names)
+        if (df_name_w[i] %in% legal_names_w)
         {
-          Correct_w[i] <- NA
+          Correct_w[i] <- df_name_w[i]
         } else {
           Correct_w[i] <- NA
         }
