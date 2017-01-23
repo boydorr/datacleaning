@@ -631,7 +631,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           correction_level_v <- c(rep(NA, Tot_misspell))
           correction_level_v <- as.character(correction_level_v)
           
-          correction_level_w <- c(rep(NA, Tot_misspell))
+          correction_level_w <- c(rep("Ward", Tot_misspell))
           correction_level_w <- as.character(correction_level_w)
           
           ##find the similar village names within the subset
@@ -672,6 +672,9 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               mylist_similar_villages[[m]] <- mylist_similar_villages[[m]][unique_ind]
               mylist_respective_districts_v[[m]] <- mylist_respective_districts_v[[m]][unique_ind]
               
+              mylist_similar_wards[[m]] <- NA
+              mylist_respective_districts_w[[m]] <- NA
+              
             } else { # if there are no case insensitive alphanumeric matches
               
               # it is a real typo
@@ -693,11 +696,12 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               mylist_respective_districts_v[[m]] <- mylist_respective_districts_v[[m]][unique_ind_v]
               
               number_w <- agrep(m_v[m], c_sub_w, max.distance = distnc)
+              correction_level_w[m] <- "Ward"
+              
               if(length(number_w)==0)
               {
                 mylist_similar_wards[[m]] <- NA
                 mylist_respective_districts_w[[m]] <- NA
-                correction_level_w[m] <- "Ward"
                 
               } else {
                 mylist_similar_wards[[m]] <- number_w
@@ -713,7 +717,6 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 
                 mylist_respective_districts_w[[m]] <- mylist_respective_districts_w[[m]][unique_ind_w]
               
-                correction_level_w[m] <- "Ward"
               }
             }
           }
@@ -790,7 +793,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           corrections <- plyr::rbind.fill(corrections_v, corrections_w)
          
           ## The final dataframe without the uninformative rows
-          nocol <- c("misspelled_villages", "correction_level", "real_typo")
+          nocol <- c("correction_level", "real_typo")
           nonums <- which(names(corrections) %in% nocol)
           corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
           
@@ -880,6 +883,9 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
                 mylist_respective_districts_v[[q]] <- mylist_respective_districts_v[[q]][unique_ind]
                 
+                mylist_similar_wards[[q]] <- NA
+                mylist_respective_districts_w[[q]] <- NA
+                
               } else {
                 real_typo[q] <- TRUE
                 correction_level_v[q] <- "Village"
@@ -901,14 +907,14 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 
                 ##find the similar ward names within the subset
                 number_w <- agrep(m_v[q], c_sub_w, max.distance = distnc)
+                correction_level_w[q] <- "Ward"
+                
                 if(length(number_w)==0)
                 {
                   mylist_similar_wards[[q]] <- NA
                   mylist_respective_districts_w[[q]] <- NA
-                  correction_level_w[q] <- "Ward"
                   
                 } else {
-                  correction_level_w[q] <- "Ward"
                   mylist_similar_wards[[q]] <- number_w
                   mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                   mylist_respective_districts_w[[q]] <- number_w
@@ -942,8 +948,12 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               {
                 real_typo[q] <- FALSE
                 correction_level_v[q] <- "Village"
+                
                 correction_level_w[q] <- "Ward"
+                mylist_similar_wards[[q]] <- NA
+                
                 number <- which(c_v %in% m_v[q])
+                
                 mylist_similar_villages[[q]] <- number
                 mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])
                 mylist_respective_districts_v[[q]] <- number
@@ -955,6 +965,8 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
                 mylist_respective_districts_v[[q]] <- mylist_respective_districts_v[[q]][unique_ind]
                 
+                mylist_similar_wards[[q]] <- NA
+                mylist_respective_districts_w[[q]] <- NA
                 
               } else {
                 real_typo[q] <- TRUE
@@ -977,14 +989,14 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 
                 ##find the similar ward names within the subset
                 number_w <- agrep(m_v[q], c_w, max.distance = distnc)
+                correction_level_w[q] <- "Ward"
+                
                 if(length(number_w)==0)
                 {
                   mylist_similar_wards[[q]] <- NA
                   mylist_respective_districts_w[[q]] <- NA
-                  correction_level_w[q] <- "Ward"
                   
                 } else {
-                  correction_level_w[q] <- "Ward"
                   mylist_similar_wards[[q]] <- number_w
                   mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                   mylist_respective_districts_w[[q]] <- number_w
@@ -1079,7 +1091,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           corrections <- plyr::rbind.fill(corrections_v, corrections_w)
           
           ## The final dataframe without the uninformative rows
-          nocol <- c("misspelled_villages", "correction_level", "real_typo", "District_in_df")
+          nocol <- c("correction_level", "real_typo", "District_in_df")
           nonums <- which(names(corrections) %in% nocol)
           corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
           
@@ -1335,7 +1347,10 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             {
               real_typo[q] <- FALSE
               correction_level_v[q] <- "Village"
+              
               correction_level_w[q] <- "Ward"
+              mylist_similar_wards[[q]] <- NA
+              
               number <- which(c_sub_v %in% m_v[q])
               mylist_similar_villages[[q]] <- number
               mylist_similar_villages[[q]] <- unique(correct_subset_vill[mylist_similar_villages[[q]]])
@@ -1347,6 +1362,9 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               
               mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
               mylist_respective_regions_v[[q]] <- mylist_respective_regions_v[[q]][unique_ind]
+              
+              mylist_similar_wards[[q]] <- NA
+              mylist_respective_regions_w[[q]] <- NA
               
             } else {
               real_typo[q] <- TRUE
@@ -1366,17 +1384,15 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind_v]
               mylist_respective_regions_v[[q]] <- mylist_respective_regions_v[[q]][unique_ind_v]
               
-              
+              correction_level_w[q] <- "Ward"
               ##find the similar ward names within the subset
               number_w <- agrep(m_v[q], c_sub_w, max.distance = distnc)
               if(length(number_w)==0)
               {
-                correction_level_w[q] <- "Ward"
                 mylist_similar_wards[[q]] <- NA
                 mylist_respective_regions_w[[q]] <- NA
                 
               } else {
-                correction_level_w[q] <- "Ward"
                 mylist_similar_wards[[q]] <- number_w
                 mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                 mylist_respective_regions_w[[q]] <- number_w
@@ -1423,6 +1439,9 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
               mylist_respective_regions_v[[q]] <- mylist_respective_regions_v[[q]][unique_ind]
               
+              mylist_similar_wards[[q]] <- NA
+              mylist_respective_regions_w[[q]] <- NA
+              
             } else {
               
               real_typo[q] <- TRUE
@@ -1441,17 +1460,15 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind_v]
               mylist_respective_regions_v[[q]] <- mylist_respective_regions_v[[q]][unique_ind_v]
               
-              
+              correction_level_w[q] <- "Ward"
               ##find the similar ward names within the subset
               number_w <- agrep(m_v[q], c_w, max.distance = distnc)
               if(length(number_w)==0)
               {
-                correction_level_w[q] <- "Ward"
                 mylist_similar_wards[[q]] <- NA
                 mylist_respective_regions_w[[q]] <- NA
                 
               } else {
-                correction_level_w[q] <- "Ward"
                 mylist_similar_wards[[q]] <- number_w
                 mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                 mylist_respective_regions_w[[q]] <- number_w
@@ -1545,7 +1562,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         corrections <- plyr::rbind.fill(corrections_v, corrections_w)
         
         ## The final dataframe without the uninformative rows
-        nocol <- c("misspelled_villages", "correction_level", "real_typo", "District_in_df")
+        nocol <- c("correction_level", "real_typo", "District_in_df")
         nonums <- which(names(corrections) %in% nocol)
         corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
         
@@ -1603,8 +1620,8 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     correct_villages_proc_df <- dplyr::filter(corrections, correction_level=="Village")
     correct_wards_proc_df <- dplyr::filter(corrections, correction_level=="Ward")
     
-    corr_villages <- correct_villages_proc_df[, grepl("Correct_Name", names(correct_villages_proc_df))]
-    corr_wards <- correct_wards_proc_df[, grepl("Correct_Name", names(correct_wards_proc_df))]
+    corr_villages <- as.data.frame(correct_villages_proc_df[, grepl("Correct_Name", names(correct_villages_proc_df))])
+    corr_wards <- as.data.frame(correct_wards_proc_df[, grepl("Correct_Name", names(correct_wards_proc_df))])
     
     totcol_v <- length(corr_villages)
     ## initialise the list to store the code
@@ -1635,6 +1652,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     }
      
     totcol_w <- length(corr_wards)
+    
     ## initialise the list to store the code
     mylist_resp_code_w <- vector('list', totcol_w)
     
@@ -1663,6 +1681,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     }
     
     code_identified_v <- as.data.frame(mylist_resp_code_v)
+    
     ## rename the columns 
     totcol <- length(code_identified_v)
     for(O in 1:totcol)
