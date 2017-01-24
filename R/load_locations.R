@@ -43,15 +43,10 @@ load_locations <- function(pathway)
                                                          location)
 
     # Reorder columns
-    location.ordered <- location.tagged[,c("location.tag", "Region",
-                                           "District", "Ward", "Village")]
-
-    # Add additional tags
-    location.complete <- datacleaning:::build.extra.tags(filename=file.names[i],
-                                                            location.ordered)
+    location.ordered <- location.tagged[,c("location.tag", "Location", "Location_Type", "Loc_ID")]
 
     # Bind data to dataframes
-    location.df <- rbind(location.df, location.complete)
+    location.df <- rbind(location.df, location.tagged)
   }
 
   # Return unique rows only

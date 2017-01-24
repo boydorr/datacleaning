@@ -11,14 +11,11 @@ read.location(filename)
 file (produced in the \code{load_locations} function).}
 }
 \value{
-a dataframe object containing Village, Ward, District and Region
+a dataframe object containing Location, Location Type and Location ID
 information for each Project.
 }
 \description{
 Reads in location spreadsheets in the .csv format; designed to
-be used within the for() loop in the \code{load_locatino} function. It will
-then check forhe presence of a column for each Village, Ward, District and
-Region - if any are missing, it will create a column labelled appropriately
-which is populated with NAs
+be used within the for() loop in the \code{load_locatino} function.
 }
 

@@ -1,33 +1,15 @@
 #' @title read.location
 #' @description Reads in location spreadsheets in the .csv format; designed to
-#' be used within the for() loop in the \code{load_locatino} function. It will
-#' then check forhe presence of a column for each Village, Ward, District and
-#' Region - if any are missing, it will create a column labelled appropriately
-#' which is populated with NAs
+#' be used within the for() loop in the \code{load_locatino} function.
 #' @param filename an object containing the ith directory path to each location
 #' file (produced in the \code{load_locations} function).
-#' @return a dataframe object containing Village, Ward, District and Region
+#' @return a dataframe object containing Location, Location Type and Location ID
 #' information for each Project.
 
 read.location <- function(filename)
 {
   # Read in Metadata spreadsheet
   location <- read.csv(filename, header=TRUE)
-
-  # Add in column containing NAs if missing from dataframe
-  if("Village" %in% colnames(location)==FALSE)
-  {
-    location$Village <- NA
-  } else if("Ward" %in% colnames(location)==FALSE)
-  {
-    location$Ward <- NA
-  } else if("District" %in% colnames(location)==FALSE)
-  {
-    location$District <- NA
-  } else if("Region" %in% colnames(location)==FALSE)
-  {
-    location$Region <- NA
-  }
 
   return(location)
 }
