@@ -41,6 +41,15 @@ create_keyword_df <- function(dataframe)
     correct.keywords.df <- sub("^[[:blank:]]*(.*[^[:blank:]])[[:blank:]]*$",
                             "\\1", split.keyword.df[[1]])
 
+    # Capitalise keywords which appear in lower case
+    for(i in 1:length(correct.keywords.df))
+    {
+      if(correct.keywords.df[i] == tolower(correct.keywords.df[i]))
+      {
+        correct.keywords.df[i] <- capname(correct.keywords.df[i])
+      }
+    }
+
     # Extract project tag
     project.tag.df <- as.data.frame(project.tag[i])
 
