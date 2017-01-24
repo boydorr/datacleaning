@@ -27,10 +27,19 @@ create_keyword_df <- function(dataframe)
   # Write loop to create dataframes, then rbind as it goes to empty dataframe
   for(i in 1:length(keywords))
   {
-    # Extract keywords
-    fixed.keywords <- sub("^\\s+", "", keywords[i])
+    # Remove extra spaces and characters
+    fixed.keywords <- sub("^[[:blank:];]*(.*[^[:blank:];])[[:blank:];]*$",
+                          "\\1", keywords[i])
+
+    # Extract Keywords
     split.keywords <- strsplit(fixed.keywords, ";")
+
+    # Read as a dataframe
     split.keyword.df <- as.data.frame(split.keywords)
+
+    # Remove extra spaces
+    correct.keywords.df <- sub("^[[:blank:]]*(.*[^[:blank:]])[[:blank:]]*$",
+                            "\\1", split.keyword.df[[1]])
 
     # Extract project tag
     project.tag.df <- as.data.frame(project.tag[i])
@@ -39,7 +48,7 @@ create_keyword_df <- function(dataframe)
     location.tag.df <- as.data.frame(location.tag[i])
 
     # Attach project and location tags to new dataframe
-    complete.keyword.df <- cbind(split.keyword.df, project.tag.df,
+    complete.keyword.df <- cbind(correct.keywords.df, project.tag.df,
                                  location.tag.df, deparse.level=0)
 
     colnames(complete.keyword.df) <- colnames(keyword.df)
