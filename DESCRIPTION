@@ -17,4 +17,5 @@ RoxygenNote: 5.0.1
 Imports: dplyr,
     rgdal,
     sp,
-    tibble
+    tibble,
+    Hmisc

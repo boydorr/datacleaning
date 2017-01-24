@@ -210,3 +210,24 @@ create.location.tag <- function(metadata)
 
   return(metadata)
 }
+
+
+#' @title Capitalise first letter of words in string
+#'
+#' @description
+#' Capitalises first letter of words in string, as for names.
+#'
+#' @param word the word to be capitalised
+#' @param sep separator between words in string
+#'
+#' @return Corrected string
+#'
+#' @export
+capname <- function(name, sep=" ")
+{
+  name <- gsub("[^[:alnum:][:punct:][:space:]]", "", name)
+  name <- gsub("[[:space:]]+", " ", name)
+  paste(sapply(strsplit(tolower(name), sep, fixed=TRUE)[[1]],
+               Hmisc::capitalize),
+        collapse = sep)
+}
