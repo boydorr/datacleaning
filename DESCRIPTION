@@ -18,4 +18,5 @@ Imports: dplyr,
     rgdal,
     sp,
     tibble,
-    Hmisc
+    Hmisc,
+    readr
