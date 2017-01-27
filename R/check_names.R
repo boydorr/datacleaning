@@ -43,7 +43,6 @@ check_names <- function(dataframe, label, legal_names)
     ## if in the dataframe there is a correct region, do nothing
     if((df_name[i] %in% df_name_correct)==T)
     {
-      print(paste("CORRECT name:", df_name[i]))
       misspelled_names[i] <- NA
     }
     else { # otherwise, it is a misspelling
@@ -60,11 +59,12 @@ check_names <- function(dataframe, label, legal_names)
 
   if((length(misspelled_names)==0)==T)
   {
-    print("No misspellings")
+    message("No misspellings")
     t_or_f <- T
 
   } else {
-    print("There are still misspellings. Check the names before continuing the analysis.")
+    message("There are still misspellings. They are stored in the [[misspellings]] slot in the returned list")
+    message("Use the appropriate find_similar_x function before continuing the analysis")
     t_or_f <- F
   }
 
