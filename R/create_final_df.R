@@ -32,6 +32,8 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
                         corr_df_reg, ID_df)
   
 {
+  corrected_df <- unique(corrected_df)
+  
   ## the number of observation in the project dataset
   ntot <- nrow(corrected_df)
   
