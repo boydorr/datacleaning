@@ -97,12 +97,13 @@ find_similar_district <- function(dataframe, label, label_higher_level,
     if((ds[i] %in% ds_correct)==T)
     {
       misspelled_districts[i] <- NA
-      print(paste("CORRECT name for the district:", ds[i]))
-    }
-    else { # otherwise, take note of the misspelling
-
-      print(paste("Looking for similar results because there are no matches for the district:", ds[i]))
-
+    } else { # otherwise, take note of the misspelling
+      
+      no_matches <- as.character("Looking for similar results because there are no matches for the district: ")
+      missp_dis <- as.character(ds[i])
+      
+      message(no_matches, missp_dis)
+      
       ## the misspellings
       misspelled_districts[i] <- ds[i]
     }

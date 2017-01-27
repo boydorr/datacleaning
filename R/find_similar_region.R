@@ -78,13 +78,15 @@ find_similar_region <- function(dataframe, label, distnc,
     ## if in the dataframe there is a correct region, do nothing
     if((rg[i] %in% rg_correct)==T)
     {
-      #print(paste("CORRECT name for the region:", rg[i]))
       misspelled_regions[i] <- NA
     }
     else { # otherwise, take note of the misspelling
 
-      print(paste("Looking for similar results because there are no matches for the region:", rg[i]))
-
+      no_matches <- as.character("Looking for similar results because there are no matches for the region: ")
+      missp_reg <- as.character(rg[i])
+      
+      message(no_matches, missp_reg)
+      
       ## the misspellings
       misspelled_regions[i] <- rg[i]
 

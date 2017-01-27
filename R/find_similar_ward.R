@@ -99,12 +99,14 @@ find_similar_ward <- function(dataframe, label,
     if((wrd[i] %in% wrd_correct)==T)
     {
       misspelled_wards[i] <- NA
-      print(paste("CORRECT name for the ward:", wrd[i]))
 
     } else { # otherwise, take note of the misspelling
 
-      print(paste("Looking for similar results because there are no matches for the ward:", wrd[i]))
-
+      no_matches <- as.character("Looking for similar results because there are no matches for the ward: ")
+      missp_ward <- as.character(wrd[i])
+      
+      message(no_matches, missp_ward)
+      
       ## the misspellings
       misspelled_wards[i] <- wrd[i]
     }

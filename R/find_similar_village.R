@@ -126,11 +126,13 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     if((vll[i] %in% vll_correct)==T)
     {
       misspelled_villages[i] <- NA
-      print(paste("CORRECT name for the village:", vll[i]))
-      
+
     } else { # otherwise, take note of the misspelling
       
-      print(paste("Looking for similar results because there are no matches for the village:", vll[i]))
+      no_matches <- as.character("Looking for similar results because there are no matches for the village: ")
+      missp_vill <- as.character(vll[i])
+      
+      message(no_matches, missp_vill)
       
       ## the misspellings
       misspelled_villages[i] <- vll[i]
@@ -153,6 +155,9 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
   
   if(higher_level=="Ward")
   {
+    look_ward=F
+    ward_shapefile=NA
+    
     wrd <- unique(dataframe[[label_higher_level]])
     wrd <- as.character(wrd)
     
