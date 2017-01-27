@@ -40,54 +40,54 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
 {
   ## the number of observation in the project dataset
   ntot <- nrow(dataframe)
-
+  
   vll <- dataframe[[df_vill]]
   vll <- as.character(vll)
   vll_correct <- legal_names_vill
   vll_correct <- as.character(vll_correct)
-
+  
   wrd <- dataframe[[df_ward]]
   wrd <- as.character(wrd)
   wrd_correct <- legal_names_ward
   wrd_correct <- as.character(wrd_correct)
-
+  
   ds <- dataframe[[df_distr]]
   ds <- as.character(ds)
   ds_correct <- legal_names_distr
   ds_correct <- as.character(ds_correct)
-
+  
   rg <- dataframe[[df_reg]]
   rg <- as.character(rg)
   rg_correct <- legal_names_reg
   rg_correct <- as.character(rg_correct)
-
+  
   ## number of villages
   vill_length <- length(vll)
   ## generate empty list for results
   mylist_villages <- vector('list', vill_length)
-
+  
   ## number of wards
   ward_length <- length(wrd)
   ## generate empty list for results
   mylist_wards <- vector('list', ward_length)
-
+  
   ## number of districts
   dis_length <- length(ds)
   ## generate empty list for results
   mylist_districts <- vector('list', dis_length)
-
+  
   ## number of regions
   reg_length <- length(rg)
   ## generate empty list for results
   mylist_regions <- vector('list', reg_length)
-
+  
   ## list to store the indices
   mylist_nums <- vector('list', ntot)
-
+  
   ## list to store the names
   mylist_names <- vector('list', 4)
-
-  ## write a loop to identify the rows of the shapefile to plot
+  
+  ## write a loop to identify the relevant rows of the shapefile
   for(i in 1:ntot)
   {
     # villages
@@ -98,7 +98,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
     } else {
       mylist_villages[[i]] <- c(1:length(vll_correct))
     }
-
+    
     # ward
     if(is.na(wrd[i])==F)
     {
@@ -106,7 +106,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
     } else {
       mylist_wards[[i]] <- c(1:length(wrd_correct))
     }
-
+    
     # districts
     if (!is.na(only_in_distr))
     {
@@ -119,7 +119,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
         mylist_districts[[i]] <- c(1:length(ds_correct))
       }
     }
-
+    
     # regions
     if(is.na(rg[i])==F)
     {
@@ -127,31 +127,39 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
     } else {
       mylist_regions[[i]] <- c(1:length(rg_correct))
     }
-
+    
     mylist_nums[[i]] <- Reduce(intersect, list(mylist_villages[[i]],
                                                mylist_wards[[i]],
                                                mylist_districts[[i]],
                                                mylist_regions[[i]]))
-
+    
   }
-
+  
   Updated_Villages <- rep(NA, ntot)
   Updated_Wards <- rep(NA, ntot)
   Updated_Districts <- rep(NA, ntot)
   Updated_Regions <- rep(NA, ntot)
-
+  
+  mism_warn <- as.character("Mismatch in the Village-Ward-District-Region ") 
+  
   for(h in 1:ntot)
   {
+    ## if the intersection was of length 0 (i.e. no intersection):
     if(length(mylist_nums[[h]])==0)
     {
+      
+      in_row <- paste("in row", h, ": ")
+      mism_vwdr <- paste(vll[h], wrd[h], ds[h], rg[h]) 
+      warning(mism_warn, in_row, mism_vwdr)
+      
       next
-
+      
     } else {
-
+      
       ## if the intersection comprised only one number:
       if(length(mylist_nums[[h]])==1)
       {
-
+        
         ## if there is no village info in the original dataset
         if(is.na(vll[h])==T)
         {
@@ -161,7 +169,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
           ## otherwise, take note of the village name
           Updated_Villages[h] <- vll_correct[mylist_nums[[h]]]
         }
-
+        
         ## if there is no ward info in the original dataset and no village info
         if(is.na(wrd[h])==T && is.na(vll[h])==T)
         {
@@ -171,7 +179,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
           ## otherwise, take note of the ward name
           Updated_Wards[h] <- wrd_correct[mylist_nums[[h]]]
         }
-
+        
         ## if there is no district info in the original dataset, no ward and no village info
         if(is.na(ds[h])==T && is.na(wrd[h])==T && is.na(vll[h])==T)
         {
@@ -181,7 +189,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
           ## otherwise, take note of the district name
           Updated_Districts[h] <- ds_correct[mylist_nums[[h]]]
         }
-
+        
         ## if there is no region info in the original dataset and no district, no ward and no village info
         if(is.na(rg[h])==T && is.na(ds[h])==T && is.na(wrd[h])==T && is.na(vll[h])==T)
         {
@@ -191,46 +199,46 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
           ## otherwise, take note of the region name
           Updated_Regions[h] <- rg_correct[mylist_nums[[h]]]
         }
-
-
+        
+        
       } else {  ## if the intersection comprised more numbers:
-
+        
         ## if there is no village info in the original dataset
         if(is.na(vll[h])==T)
         {
           ## no chance of retrieving that info
           Updated_Villages[h] <- NA
-
+          
         } else { ## otherwise
           if(length(unique(vll_correct[mylist_nums[[h]]])==1)) ## if multiple numbers indicate the same name
           {
             ## take note of the village name
             Updated_Villages[h] <- unique(vll_correct[mylist_nums[[h]]])
-
+            
           } else { ## if multiple numbers indicate different names
             Updated_Villages[h] <- NA
           }
         }
-
-
+        
+        
         ## if there is no ward info in the original dataset and no village info
         if(is.na(wrd[h])==T && is.na(vll[h])==T)
         {
           ## no chance of retrieving that info
           Updated_Wards[h] <- NA
-
+          
         } else { ## otherwise
           if(length(unique(wrd_correct[mylist_nums[[h]]])==1)) ## if multiple numbers indicate the same name
           {
             ## take note of the ward name
             Updated_Wards[h] <- unique(wrd_correct[mylist_nums[[h]]])
-
+            
           } else { ## if multiple numbers indicate different names
             Updated_Wards[h] <- NA
           }
         }
-
-
+        
+        
         ## if there is no district info in the original dataset, no ward and no village info
         if(is.na(ds[h])==T && is.na(wrd[h])==T && is.na(vll[h])==T)
         {
@@ -244,8 +252,8 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
             Updated_Districts[h] <- NA
           }
         }
-
-
+        
+        
         ## if there is no region info in the original dataset and no district, no ward and no village info
         if(is.na(rg[h])==T && is.na(ds[h])==T && is.na(wrd[h])==T && is.na(vll[h])==T)
         {
@@ -262,7 +270,7 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
       }
     }
   }
-
+  
   Village <- Updated_Villages
   Ward <- Updated_Wards
   District <- Updated_Districts
@@ -272,12 +280,12 @@ fill_names <- function(dataframe, df_vill, df_ward, df_distr, df_reg,
   Ward <- as.character(Ward)
   District <- as.character(District)
   Region <- as.character(Region)
-
+  
   updated_df <- cbind(Village, Ward,
                       District, Region)
-
+  
   updated_df <- as.data.frame(updated_df)
-
+  
   return(updated_df)
 }
 
