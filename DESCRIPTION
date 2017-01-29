@@ -19,4 +19,5 @@ Imports: dplyr,
     sp,
     tibble,
     Hmisc,
-    readr
+    readr,
+    beepr

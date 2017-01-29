@@ -52,5 +52,6 @@ load_locations <- function(pathway)
   # Return unique rows only
   location.df <- unique(location.df)
 
+  beepr::beep(sound="ping")
   return(location.df)
 }
