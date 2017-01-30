@@ -16,8 +16,8 @@ a dataframe containing a single Metadata spreadsheet.
 \description{
 Reads in Metadata spreadsheets in the .xlsx format, and removes
 the uneccessary rows which form part of the headers; designed to be used
-within the for() loop in the \code{load_metadata} Function. It also fixes
-dates which are originally loaded incorrectly, presenting them in the ISO
-format (yyyy-mm-dd).
+within the for() loop in the \code{load_metadata} Function. It also reads in
+Y/N as Yes/No, and fixes dates which are originally loaded incorrectly,
+presenting them in the ISO format (yyyy-mm-dd).
 }
 

@@ -2,9 +2,9 @@
 #' @title read.meta
 #' @description Reads in Metadata spreadsheets in the .xlsx format, and removes
 #' the uneccessary rows which form part of the headers; designed to be used
-#' within the for() loop in the \code{load_metadata} Function. It also fixes
-#' dates which are originally loaded incorrectly, presenting them in the ISO
-#' format (yyyy-mm-dd).
+#' within the for() loop in the \code{load_metadata} Function. It also reads in
+#' Y/N as Yes/No, and fixes dates which are originally loaded incorrectly,
+#' presenting them in the ISO format (yyyy-mm-dd).
 #' @param filename an object containing the ith directory path to each Metadata
 #' file (produced in the \code{load_metadata} Function).
 #' @return a dataframe containing a single Metadata spreadsheet.
@@ -16,21 +16,34 @@ read.meta <- function(filename)
                               startRow=2, header=TRUE)
 
   # Remove column description Row
-  correct.metadata <- metadata[-1,]
+  metadata <- metadata[-1,]
 
-  # Read date colums as numeic rather than character string
-  correct.metadata$project.start.date <- as.numeric(as.character(correct.metadata$project.start.date))
-  correct.metadata$project.end.date <- as.numeric(as.character(correct.metadata$project.end.date))
-  correct.metadata$relevant.start.date <- as.numeric(as.character(correct.metadata$relevant.start.date))
-  correct.metadata$relevant.end.date <- as.numeric(as.character(correct.metadata$relevant.end.date))
+  # Read Y/N and Yes/No in Metadata
+  metadata$public.accessible <- as.character(metadata$public.accessible)
+  metadata$public.accessible[metadata$public.accessible == "N"] <- "No"
+  metadata$public.accessible[metadata$public.accessible == "Y"] <- "Yes"
+
+  metadata$permission.required <- as.character(metadata$permission.required)
+  metadata$permission.required[metadata$permission.required == "N"] <- "No"
+  metadata$permission.required[metadata$permission.required == "Y"] <- "Yes"
+
+  metadata$sensitive.data <- as.character(metadata$sensitive.data)
+  metadata$sensitive.data[metadata$sensitive.data == "N"] <- "No"
+  metadata$sensitive.data[metadata$sensitive.data == "Y"] <- "Yes"
+
+  # Read date colums as numeric rather than character string
+  metadata$project.start.date <- as.numeric(as.character(metadata$project.start.date))
+  metadata$project.end.date <- as.numeric(as.character(metadata$project.end.date))
+  metadata$relevant.start.date <- as.numeric(as.character(metadata$relevant.start.date))
+  metadata$relevant.end.date <- as.numeric(as.character(metadata$relevant.end.date))
 
   # Fix dates to read in ISO rather than Julian
-  correct.metadata$project.start.date <- as.Date(correct.metadata$project.start.date, origin="1899-12-30")
-  correct.metadata$project.end.date <- as.Date(correct.metadata$project.end.date, origin="1899-12-30")
-  correct.metadata$relevant.start.date <- as.Date(correct.metadata$relevant.start.date, origin="1899-12-30")
-  correct.metadata$relevant.end.date <- as.Date(correct.metadata$relevant.end.date, origin="1899-12-30")
+  metadata$project.start.date <- as.Date(metadata$project.start.date, origin="1899-12-30")
+  metadata$project.end.date <- as.Date(metadata$project.end.date, origin="1899-12-30")
+  metadata$relevant.start.date <- as.Date(metadata$relevant.start.date, origin="1899-12-30")
+  metadata$relevant.end.date <- as.Date(metadata$relevant.end.date, origin="1899-12-30")
 
-  return(correct.metadata)
+  return(metadata)
 }
 
 #' @title check.project.folder
