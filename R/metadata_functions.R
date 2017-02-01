@@ -154,21 +154,24 @@ check.dataset.location.file <- function(pathway, metadata)
   location.paths <- unique(location.paths)
 
   # Are any datasets missing their location sets?
-  if(any(grepl('/NA$', location.paths))==TRUE)
+  for(i in 1:length(location.paths))
   {
-    print(paste0("Missing Location file entry: ", location.paths))
-  } else {
-    # For those with Location sets, does the Metadata match the directory?
-    # Go through each dataset and check for 'existence', with message if dataset missing
-    for(i in 1:length(location.paths))
-    {
-      if(file.exists(location.paths[i])==FALSE)
-      {
-        print(paste0("Location file does not exist in Metadata Folder: ",
-                       location.paths[i]))
-      }
+    if(grepl('/NA$', location.paths[i])==TRUE){
+      print(paste0("Missing Location file entry: ", location.paths[i]))
     }
   }
+
+  # For those with Location sets, does the Metadata match the directory?
+  # Go through each dataset and check for 'existence', with message if dataset missing
+  for(i in 1:length(location.paths))
+  {
+    if(file.exists(location.paths[i])==FALSE)
+    {
+      print(paste0("Location file does not exist in Metadata Folder: ",
+                   location.paths[i]))
+    }
+  }
+
 
 }
 
