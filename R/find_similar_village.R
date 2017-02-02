@@ -26,26 +26,35 @@
 #'
 #' @return a new dataframe with:  
 #'   
-#' i) the village misspellings, stored in the first column ("misspelled_villages");
+#' i) the village misspellings, stored in the first column ("misspelling");
+#'  
+#' ii) the similar matches, each one stored in a different row of the same column
+#' ("correct_name"). The matches are ordered in the different rows according to their 
+#' level of similarity with the misspelled village.     
 #'    
-#' ii) a column specifying the level of the proposed correction ("correction_level");
-#'    
-#' iii) all the similar matches, each one stored under a separate column
-#' ("Correct_Name_1", "Correct_Name_2", etc.);
-#'
-#' iv) a column storing the region/district/ward information in the project dataframe associated
-#' to the misspelled village ("Region_in_df", "District_in_df" or "Ward_in_df"),
-#' depending on the higher_level argument specified in the function call;    
-#'      
-#' v) a series of columns (one for each similar match found) specifying the
-#' region/district/ward in the shapefile where each proposed correction
-#' is located ("Name_1_in_Region"/"Name_1_in_District"/"Name_1_in_Ward", etc.);   
-#'    
-#' vi) a column specifying whether the misspelling is a real alphanumeric typo
+#' iii) a column specifying whether the misspelling is a real alphanumeric typo
 #' or not ("real_typo);    
 #'    
-#' vii) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
-#'
+#' iv) a column storing the region/district/ward information in the project dataframe associated
+#' to the misspelled village ("region_in_df", "district_in_df" or "ward_in_df"),
+#' depending on the higher_level argument specified in the function call. This 
+#' column is only returned when only_in_distr=FALSE;       
+#'       
+#' v) a column specifying the level of the proposed correction ("correction_level"). 
+#' When look_ward=TRUE, the level could be either "Village" or "Ward".  
+#'    
+#' vi) a column storing the level of similarity of the proposed corrections ("lev_sim");  
+#'   
+#' vii) a column specifying, for each misspelling, the hierarchical rank of each 
+#' proposed correction ("choice_number"), with choice_number=1 indicating the most 
+#' strongely suggested correction.  
+#'   
+#' viii) a column specifying the region/district/ward in the shapefile where each 
+#' proposed correction is located ("correct_name_in_region", "correct_name_in_district", 
+#' "correct_name_in_ward");     
+#'      
+#' ix) a column storing the location ID of each proposed correction ("Loc_ID").  
+#'   
 #' @export
 #'
 #' @examples
@@ -126,7 +135,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     if((vll[i] %in% vll_correct)==T)
     {
       misspelled_villages[i] <- NA
-
+      
     } else { # otherwise, take note of the misspelling
       
       no_matches <- as.character("Looking for similar results because there are no matches for the village: ")
@@ -155,6 +164,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
   
   if(higher_level=="Ward")
   {
+    only_in_distr=NA
     look_ward=F
     ward_shapefile=NA
     
@@ -267,7 +277,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           
           mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
           mylist_respective_wards_v[[q]] <- mylist_respective_wards_v[[q]][unique_ind]
-        
+          
         } else {
           # if there are no case insensitive matches
           real_typo[q] <- TRUE
@@ -291,43 +301,116 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     
     villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
     villages_correct_name <- villages_identified
-    villages_correct_name <- as.data.frame(villages_correct_name)
-    totcol_villcorrname <- length(villages_correct_name)
     
-    correction_level <- rep("Village", nrow(villages_correct_name))
-    
-    for(l in 1:totcol_villcorrname)
+    n_obs <- rep(0, nrow(villages_correct_name))
+    for(y in 1:nrow(villages_correct_name))
     {
-      newname <- paste("Correct_Name_", l, sep="")
-      colnames(villages_correct_name)[l] <- newname
+      n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
     }
     
     misspelled_villages <- check_df$respective_vill
     misspelled_villages <- as.character(misspelled_villages)
     
-    corrections <- cbind(misspelled_villages, correction_level, villages_correct_name)
+    missp <- as.character()
+    misspell <- as.character()
     
-    ## cbind the Ward
+    r_typo <- as.character()
+    typo_real <- as.character()
+    
+    ## cbind the ward
     Ward_in_df <- check_df$respective_ward
-    corrections <- cbind(corrections, Ward_in_df)
+    Ward_in_df <- as.character(Ward_in_df)
+    ward_df <- as.character()
+    df_ward <- as.character()
     
-    wards_identified <- plyr::ldply(mylist_respective_wards_v, rbind)
-    wards_correct_name <- wards_identified
-    totcol_wardcorrname <- length(wards_correct_name)
+    first.time=T
     
-    for(Q in 1:totcol_wardcorrname)
+    for(t in 1:length(n_obs))
     {
-      newname <- paste("Name_", Q, "_in_Ward", sep="")
-      colnames(wards_correct_name)[Q] <- newname
+      if(sum(n_obs[t])==0)
+      {
+        misspell <- misspelled_villages[t]
+        typo_real <- real_typo[t]
+        ward_df <- Ward_in_df[t]
+        
+      } else {
+        misspell <- rep(misspelled_villages[t], n_obs[t])
+        typo_real <- rep(real_typo[t], n_obs[t])
+        ward_df <- rep(Ward_in_df[t], n_obs[t])
+        
+      }
+      
+      if(first.time==T)
+      {
+        missp <- misspell
+        r_typo <- typo_real
+        df_ward <- ward_df
+        
+        first.time=F
+      } else {
+        missp <- c(missp, misspell)
+        r_typo <- c(r_typo, typo_real)
+        df_ward <- c(df_ward, ward_df)
+      }
     }
     
-    corrections <- cbind(corrections, wards_correct_name)
+    for(u in 1:length(mylist_similar_villages))
+    {
+      if(length(mylist_similar_villages[[u]])==0)
+      {
+        mylist_similar_villages[[u]] <- NA
+      } else {
+        next
+      }
+    }
+    
+    villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+    
+    corrections <- cbind(missp, villages_identified_all, r_typo, df_ward)
     corrections <- as.data.frame(corrections)
     
-    ## cbind the real_typo column
-    real_typo <- as.character(real_typo)
-    corrections <- cbind(corrections, real_typo)
+    colnames(corrections)[1] <- "misspelling"
+    colnames(corrections)[2] <- "correct_name"
+    colnames(corrections)[3] <- "real_typo"
+    colnames(corrections)[4] <- "ward_in_df"
     
+    
+    mis_names <- as.character(unique(corrections$misspelling))
+    
+    first.time=T
+    for(x in 1:length(mis_names))
+    {
+      corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+      
+      mis <- as.character(mis_names[x])
+      cor <- as.character(corrs$correct_name)
+      
+      lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+      
+      corrs <- cbind(corrs, lev_sim)
+      corrs <- corrs[order(corrs$lev_sim, decreasing = T),]
+      
+      choice_number <- seq(1:nrow(corrs))
+      corrs <- cbind(corrs, choice_number)
+      
+      if(first.time==T)
+      {
+        ordered_corrs <- corrs
+        first.time=F
+        
+      } else {
+        ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+        ordered_corrs <- as.data.frame(ordered_corrs)
+      }
+    }
+    
+    corrections <- ordered_corrs
+    
+    tot_obs <- nrow(corrections)
+    correction_level <- c()
+    correction_level <- as.character(correction_level)
+    correction_level <- rep("Village", tot_obs)
+    corrections <- cbind(corrections, correction_level)
     
   } else { 
     
@@ -337,6 +420,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
       {
         if (!is.na(only_in_distr))
         {
+          
           only_in_distr <- as.character(only_in_distr)
           ## respective_vill: the misspelled village names
           
@@ -384,8 +468,8 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               
               mylist_similar_villages[[m]] <- mylist_similar_villages[[m]][unique_ind]
               mylist_respective_districts[[m]] <- mylist_respective_districts[[m]][unique_ind]
-           
-               } else { # if there are no case insensitive alphanumeric matches
+              
+            } else { # if there are no case insensitive alphanumeric matches
               # it is a real typo
               real_typo[m] <- TRUE
               
@@ -404,38 +488,120 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             }
           }
           
+          ## the correct villages and correct districts
           villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
           villages_correct_name <- villages_identified
-          villages_correct_name <- as.data.frame(villages_correct_name)
-          totcol_villcorrname <- length(villages_correct_name)
+          districts_identified <- plyr::ldply(mylist_respective_districts, rbind)
+          districts_correct_name <- districts_identified
           
-          for(l in 1:totcol_villcorrname)
+          n_obs <- rep(0, nrow(villages_correct_name))
+          for(y in 1:nrow(villages_correct_name))
           {
-            newname <- paste("Correct_Name_", l, sep="")
-            colnames(villages_correct_name)[l] <- newname
+            n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
           }
           
+          ## the misspelled villages
           misspelled_villages <- respective_vill
           misspelled_villages <- as.character(misspelled_villages)
           
-          corrections <- cbind(misspelled_villages, villages_correct_name)
-          corrections <- as.data.frame(corrections)
+          missp <- as.character()
+          misspell <- as.character()
           
-          districts_identified <- plyr::ldply(mylist_respective_districts, rbind)
-          districts_correct_name <- districts_identified
-          totcol_discorrname <- length(districts_correct_name)
+          r_typo <- as.character()
+          typo_real <- as.character()
           
-          for(Q in 1:totcol_discorrname)
+          
+          first.time=T
+          
+          for(t in 1:length(n_obs))
           {
-            newname <- paste("Name_", Q, "_in_District", sep="")
-            colnames(districts_correct_name)[Q] <- newname
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_villages[t]
+              typo_real <- real_typo[t]
+              
+            } else {
+              misspell <- rep(misspelled_villages[t], n_obs[t])
+              typo_real <- rep(real_typo[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              r_typo <- typo_real
+              
+              first.time=F
+            } else {
+              missp <- c(missp, misspell)
+              r_typo <- c(r_typo, typo_real)
+            }
           }
           
-          corrections <- cbind(corrections, districts_correct_name)
           
-          ## cbind the real_typo column
-          real_typo <- as.character(real_typo)
-          corrections <- cbind(corrections, real_typo)
+          for(u in 1:length(mylist_similar_villages))
+          {
+            if(length(mylist_similar_villages[[u]])==0)
+            {
+              mylist_similar_villages[[u]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          
+          villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+          districts_identified_all <- plyr::ldply(mylist_respective_districts, cbind)
+          
+          corrections <- cbind(missp, villages_identified_all, r_typo, districts_identified_all)
+          corrections <- as.data.frame(corrections)
+          
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "correct_name_in_district"
+          
+          corrections <- unique(corrections)
+          
+          mis_names <- as.character(unique(corrections$misspelling))
+          
+          first.time=T
+          for(x in 1:length(mis_names))
+          {
+            corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+            
+            mis <- as.character(mis_names[x])
+            cor <- as.character(corrs$correct_name)
+            
+            ## calculate the index of similarity and sort the results from the most similar to the most distant
+            lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+            
+            corrs <- cbind(corrs, lev_sim)
+            corrs <- corrs[order(corrs$lev_sim, decreasing = T),] 
+            
+            choice_number <- seq(1:nrow(corrs))
+            corrs <- cbind(corrs, choice_number)
+            
+            if(first.time==T)
+            {
+              ordered_corrs <- corrs
+              first.time=F
+              
+            } else {
+              ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+              ordered_corrs <- as.data.frame(ordered_corrs)
+            }
+          }
+          
+          corrections <- ordered_corrs
+          
+          tot_obs <- nrow(corrections)
+          correction_level <- c()
+          correction_level <- as.character(correction_level)
+          correction_level <- rep("Village", tot_obs)
+          
+          
+          corrections <- cbind(corrections, correction_level)
           
         } else { ## if the argument only_in_distr is NA
           
@@ -485,7 +651,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               correct_subset_vill <- unique(correct_subset_vill)
               correct_subset_dis <- correct_subset$District_N
               correct_subset_dis <- as.character(correct_subset_dis)
-            
+              
               c_sub_v <- gsub("[^[:alnum:]]", "", tolower(correct_subset_vill))
               
               ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
@@ -569,44 +735,123 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             }
           }
           
+          
           villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
           villages_correct_name <- villages_identified
-          villages_correct_name <- as.data.frame(villages_correct_name)
-          totcol_villcorrname <- length(villages_correct_name)
           
-          correction_level <- rep("Village", nrow(villages_correct_name))
-          
-          for(l in 1:totcol_villcorrname)
+          n_obs <- rep(0, nrow(villages_correct_name))
+          for(y in 1:nrow(villages_correct_name))
           {
-            newname <- paste("Correct_Name_", l, sep="")
-            colnames(villages_correct_name)[l] <- newname
+            n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
           }
           
           misspelled_villages <- check_df$respective_vill
           misspelled_villages <- as.character(misspelled_villages)
           
-          corrections <- cbind(misspelled_villages, correction_level, villages_correct_name)
           
-          ## cbind the Region
+          missp <- as.character()
+          misspell <- as.character()
+          
+          r_typo <- as.character()
+          typo_real <- as.character()
+          
+          ## cbind the district
           District_in_df <- check_df$respective_district
-          corrections <- cbind(corrections, District_in_df)
+          District_in_df <- as.character(District_in_df)
+          dis_df <- as.character()
+          df_dis <- as.character()
           
-          districts_identified <- plyr::ldply(mylist_respective_districts_v, rbind)
-          districts_correct_name <- districts_identified
-          totcol_discorrname <- length(districts_correct_name)
+          first.time=T
           
-          for(Q in 1:totcol_discorrname)
+          for(t in 1:length(n_obs))
           {
-            newname <- paste("Name_", Q, "_in_District", sep="")
-            colnames(districts_correct_name)[Q] <- newname
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_villages[t]
+              typo_real <- real_typo[t]
+              dis_df <- District_in_df[t]
+              
+            } else {
+              misspell <- rep(misspelled_villages[t], n_obs[t])
+              typo_real <- rep(real_typo[t], n_obs[t])
+              dis_df <- rep(District_in_df[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              r_typo <- typo_real
+              df_dis <- dis_df
+              
+              first.time=F
+            } else {
+              missp <- c(missp, misspell)
+              r_typo <- c(r_typo, typo_real)
+              df_dis <- c(df_dis, dis_df)
+            }
           }
           
-          corrections <- cbind(corrections, districts_correct_name)
+          
+          for(u in 1:length(mylist_similar_villages))
+          {
+            if(length(mylist_similar_villages[[u]])==0)
+            {
+              mylist_similar_villages[[u]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+          
+          corrections <- cbind(missp, villages_identified_all, r_typo, df_dis)
           corrections <- as.data.frame(corrections)
           
-          ## cbind the real_typo column
-          real_typo <- as.character(real_typo)
-          corrections <- cbind(corrections, real_typo)
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "district_in_df"
+          
+         
+          mis_names <- as.character(unique(corrections$misspelling))
+          
+          first.time=T
+          for(x in 1:length(mis_names))
+          {
+            corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+            
+            mis <- as.character(mis_names[x])
+            cor <- as.character(corrs$correct_name)
+            
+            lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+            
+            corrs <- cbind(corrs, lev_sim)
+            corrs <- corrs[order(corrs$lev_sim, decreasing = T),]
+            
+            choice_number <- seq(1:nrow(corrs))
+            corrs <- cbind(corrs, choice_number)
+            
+            if(first.time==T)
+            {
+              ordered_corrs <- corrs
+              first.time=F
+              
+            } else {
+              ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+              ordered_corrs <- as.data.frame(ordered_corrs)
+            }
+          }
+          
+          corrections <- ordered_corrs
+          
+          tot_obs <- nrow(corrections)
+          correction_level <- c()
+          correction_level <- as.character(correction_level)
+          correction_level <- rep("Village", tot_obs)
+          
+          
+          corrections <- cbind(corrections, correction_level)
           
         }
         
@@ -615,7 +860,10 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         if (!is.na(only_in_distr))
         {
           only_in_distr <- as.character(only_in_distr)
+          
           ## respective_vill: the misspelled village names
+          respective_villages <- as.character(respective_vill)
+          respective_vill <- as.character(respective_vill)
           
           ## the respective district name
           respective_district <- c()
@@ -656,6 +904,8 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           c_sub_v <- gsub("[^[:alnum:]]", "", tolower(correct_subset_vill))
           c_sub_w <- gsub("[^[:alnum:]]", "", tolower(correct_subset_ward))
           
+          missp_vill_ward <- as.character()
+          
           for(m in 1:Tot_misspell)
           {
             ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
@@ -665,6 +915,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               real_typo[m] <- FALSE
               correction_level_v[m] <- "Village"
               correction_level_w[m] <- "Ward"
+              
               number <- which(c_sub_v %in% m_v[m])
               mylist_similar_villages[[m]] <- number
               mylist_similar_villages[[m]] <- correct_subset_vill[mylist_similar_villages[[m]]]
@@ -707,6 +958,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               {
                 mylist_similar_wards[[m]] <- NA
                 mylist_respective_districts_w[[m]] <- NA
+                missp_vill_ward[m] <- NA
                 
               } else {
                 mylist_similar_wards[[m]] <- number_w
@@ -715,95 +967,250 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 mylist_respective_districts_w[[m]] <- number_w
                 mylist_respective_districts_w[[m]] <- correct_subset_dis[mylist_respective_districts_w[[m]]]
                 
+                missp_vill_ward[m] <- respective_vill[m]
                 
                 unique_ward <- !duplicated(mylist_similar_wards[[m]])
                 unique_ind_w <- seq_along(mylist_similar_wards[[m]])[unique_ward]
                 mylist_similar_wards[[m]] <- mylist_similar_wards[[m]][unique_ind_w]
                 
                 mylist_respective_districts_w[[m]] <- mylist_respective_districts_w[[m]][unique_ind_w]
-              
+                
               }
             }
           }
           
+          #############################
           #############################          
+          #############################         
+          
+          ## the correct villages and correct districts
           villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
           villages_correct_name <- villages_identified
-          villages_correct_name <- as.data.frame(villages_correct_name)
-          totcol_villcorrname <- length(villages_correct_name)
           
-          for(l in 1:totcol_villcorrname)
+          districts_identified <- plyr::ldply(mylist_respective_districts_v, rbind)
+          districts_correct_name <- districts_identified
+          
+          n_obs <- rep(0, nrow(villages_correct_name))
+          for(y in 1:nrow(villages_correct_name))
           {
-            newname <- paste("Correct_Name_", l, sep="")
-            colnames(villages_correct_name)[l] <- newname
+            n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
           }
           
-          misspelled_villages <- respective_vill
+          ## the misspelled villages
+          misspelled_villages <- respective_villages
           misspelled_villages <- as.character(misspelled_villages)
           
-          corrections_v <- cbind(misspelled_villages, correction_level_v, villages_correct_name)
-          corrections_v <- as.data.frame(corrections_v)
           
-          districts_identified_v <- plyr::ldply(mylist_respective_districts_v, rbind)
-          districts_correct_name_v <- districts_identified_v
-          totcol_discorrname_v <- length(districts_correct_name_v)
+          missp <- as.character()
+          misspell <- as.character()
           
-          for(Q in 1:totcol_discorrname_v)
+          r_typo <- as.character()
+          typo_real <- as.character()
+          
+          first.time=T
+          
+          for(t in 1:length(n_obs))
           {
-            newname <- paste("Name_", Q, "_in_District", sep="")
-            colnames(districts_correct_name_v)[Q] <- newname
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_villages[t]
+              typo_real <- real_typo[t]
+              
+            } else {
+              misspell <- rep(misspelled_villages[t], n_obs[t])
+              typo_real <- rep(real_typo[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              r_typo <- typo_real
+              first.time=F
+              
+            } else {
+              missp <- c(missp, misspell)
+              r_typo <- c(r_typo, typo_real)
+            }
           }
           
-          corrections_v <- cbind(corrections_v, districts_correct_name_v)
           
-          ## cbind the real_typo column
-          real_typo <- as.character(real_typo)
-          corrections_v <- cbind(corrections_v, real_typo)
+          for(u in 1:length(mylist_similar_villages))
+          {
+            if(length(mylist_similar_villages[[u]])==0)
+            {
+              mylist_similar_villages[[u]] <- NA
+            } else {
+              next
+            }
+          }
           
-          #############################          
+          
+          for(g in 1:length(mylist_respective_districts_v))
+          {
+            if(length(mylist_respective_districts_v[[g]])==0)
+            {
+              mylist_respective_districts_v[[g]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+          districts_identified_all <- plyr::ldply(mylist_respective_districts_v, cbind)
+          
+          
+          
+          correction_level <- rep("Village", nrow(villages_identified_all))
+          
+          corrections <- cbind(missp, villages_identified_all, r_typo, 
+                               districts_identified_all, correction_level)
+          
+          
+          corrections <- as.data.frame(corrections)
+          
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "correct_name_in_district"
+          colnames(corrections)[5] <- "correction_level"
+          
+          corrections <- unique(corrections)
+          corrections_v <- corrections
+          
+          
+          #############################  
+          
+          ## the correct wards and correct districts
           wards_identified <- plyr::ldply(mylist_similar_wards, rbind)
           wards_correct_name <- wards_identified
-          wards_correct_name <- as.data.frame(wards_correct_name)
-          totcol_wardscorrname <- length(wards_correct_name)
+          districts_identified <- plyr::ldply(mylist_respective_districts_w, rbind)
+          districts_correct_name <- districts_identified
           
-          real_typo_w <- rep("TRUE", nrow(wards_correct_name))
-          
-          for(L in 1:totcol_wardscorrname)
+          n_obs <- rep(0, nrow(wards_correct_name))
+          for(y in 1:nrow(wards_correct_name))
           {
-            newname <- paste("Correct_Name_", L, sep="")
-            colnames(wards_correct_name)[L] <- newname
+            n_obs[y] <- sum(!is.na(wards_correct_name[y,]))
+          }
+          
+          ## the misspelled wards (which were stored as villages)
+          misspelled_wards <- missp_vill_ward
+          misspelled_wards <- as.character(misspelled_wards)
+          
+          missp <- as.character()
+          misspell <- as.character()
+          
+          r_typo <- as.character()
+          typo_real <- as.character()
+          
+          first.time=T
+          
+          for(t in 1:length(n_obs))
+          {
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_wards[t]
+              
+            } else {
+              misspell <- rep(misspelled_wards[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              
+              first.time=F
+            } else {
+              missp <- c(missp, misspell)
+            }
           }
           
           
-          corrections_w <- cbind(misspelled_villages, correction_level_w, wards_correct_name)
-          corrections_w <- as.data.frame(corrections_w)
-          
-          districts_identified_w <- plyr::ldply(mylist_respective_districts_w, rbind)
-          districts_correct_name_w <- districts_identified_w
-          totcol_discorrname_w <- length(districts_correct_name_w)
-          
-          for(A in 1:totcol_discorrname_w)
+          for(u in 1:length(mylist_similar_wards))
           {
-            newname <- paste("Name_", A, "_in_District", sep="")
-            colnames(districts_correct_name_w)[A] <- newname
+            if(length(mylist_similar_wards[[u]])==0)
+            {
+              mylist_similar_wards[[u]] <- NA
+            } else {
+              next
+            }
           }
           
-          corrections_w <- cbind(corrections_w, districts_correct_name_w, real_typo_w)
           
-          colnames(corrections_v)[which(names(corrections_v) == "correction_level_v")] <- "correction_level"
-          colnames(corrections_w)[which(names(corrections_w) == "correction_level_w")] <- "correction_level"
-          colnames(corrections_w)[which(names(corrections_w) == "real_typo_w")] <- "real_typo"
+          for(g in 1:length(mylist_respective_districts_w))
+          {
+            if(length(mylist_respective_districts_w[[g]])==0)
+            {
+              mylist_respective_districts_w[[g]] <- NA
+            } else {
+              next
+            }
+          }
           
-          ## The final dataframe with the NAs in the ward names
-          corrections <- plyr::rbind.fill(corrections_v, corrections_w)
-         
+          wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
+          districts_identified_all <- plyr::ldply(mylist_respective_districts_w, cbind)
+          
+          r_typo <- rep("TRUE", nrow(wards_identified_all))
+          correction_level <- rep("Ward", nrow(wards_identified_all))
+          
+          corrections <- cbind(missp, wards_identified_all, r_typo, 
+                               districts_identified_all, correction_level)
+          
+          corrections <- as.data.frame(corrections)
+          
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "correct_name_in_district"
+          colnames(corrections)[5] <- "correction_level"
+          
+          corrections <- unique(corrections)
+          corrections_w <- corrections
+          
           ## The final dataframe without the uninformative rows
-          nocol <- c("correction_level", "real_typo")
-          nonums <- which(names(corrections) %in% nocol)
-          corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
+          nocol <- c("misspelling", "real_typo", "correction_level")
+          nonums <- which(names(corrections_w) %in% nocol)
+          corrections_w <- corrections_w[rowSums(!is.na(corrections_w[,-nonums])) > 0, ]
+          
+          #############################  
+          
+          corrections <- rbind(corrections_v, corrections_w)
+          
+          mis_names <- as.character(unique(corrections$misspelling))
+          
+          first.time=T
+          for(x in 1:length(mis_names))
+          {
+            corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+            
+            mis <- as.character(mis_names[x])
+            cor <- as.character(corrs$correct_name)
+            
+            ## calculate the index of similarity and sort the results from the most similar to the most distant
+            lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+            
+            corrs <- cbind(corrs, lev_sim)
+            corrs <- corrs[order(corrs$lev_sim, decreasing = T),] 
+            
+            choice_number <- seq(1:nrow(corrs))
+            corrs <- cbind(corrs, choice_number)
+            
+            if(first.time==T)
+            {
+              ordered_corrs <- corrs
+              first.time=F
+              
+            } else {
+              ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+              ordered_corrs <- as.data.frame(ordered_corrs)
+            }
+          }
+          
+          corrections <- ordered_corrs
           
           
-          #############################          
+          
           
         } else { ## if the argument only_in_distr is NA
           
@@ -846,6 +1253,13 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           ## only consider alphanumeric characters of the misspelled/correct village names.
           ## same names' indices
           m_v <- gsub("[^[:alnum:]]", "", tolower(check_df$respective_vill))
+          
+          respective_vill <- as.character(check_df$respective_vill) 
+          respective_district <- as.character(check_df$respective_district) 
+          
+          missp_vill_ward <- as.character()
+          missp_dis_ward <- as.character()
+          
           
           for(q in 1:Tot_misspell)
           {
@@ -916,10 +1330,14 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 
                 if(length(number_w)==0)
                 {
+                  missp_dis_ward[q] <- NA
+                  missp_vill_ward[q] <- NA
                   mylist_similar_wards[[q]] <- NA
                   mylist_respective_districts_w[[q]] <- NA
                   
                 } else {
+                  missp_dis_ward[q] <- respective_district[q]
+                  missp_vill_ward[q] <- respective_vill[q]
                   mylist_similar_wards[[q]] <- number_w
                   mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                   mylist_respective_districts_w[[q]] <- number_w
@@ -1000,8 +1418,10 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
                 {
                   mylist_similar_wards[[q]] <- NA
                   mylist_respective_districts_w[[q]] <- NA
+                  missp_vill_ward[q] <- NA
                   
                 } else {
+                  missp_vill_ward[q] <- respective_vill[q]
                   mylist_similar_wards[[q]] <- number_w
                   mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                   mylist_respective_districts_w[[q]] <- number_w
@@ -1019,93 +1439,206 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
           
           
           #############################          
+          #############################          
+          #############################          
+          
+          ## the correct villages
           villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
           villages_correct_name <- villages_identified
-          villages_correct_name <- as.data.frame(villages_correct_name)
-          totcol_villcorrname <- length(villages_correct_name)
           
-          for(l in 1:totcol_villcorrname)
+          n_obs <- rep(0, nrow(villages_correct_name))
+          for(y in 1:nrow(villages_correct_name))
           {
-            newname <- paste("Correct_Name_", l, sep="")
-            colnames(villages_correct_name)[l] <- newname
+            n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
           }
           
           misspelled_villages <- check_df$respective_vill
           misspelled_villages <- as.character(misspelled_villages)
           
-          corrections_v <- cbind(misspelled_villages, correction_level_v, villages_correct_name)
+          missp <- as.character()
+          misspell <- as.character()
           
-          ## cbind the District
+          r_typo <- as.character()
+          typo_real <- as.character()
+          
+          ## cbind the district
           District_in_df <- check_df$respective_district
-          corrections_v <- cbind(corrections_v, District_in_df)
+          District_in_df <- as.character(District_in_df)
+          dis_df <- as.character()
+          df_dis <- as.character()
           
-          districts_identified_v <- plyr::ldply(mylist_respective_districts_v, rbind)
-          districts_correct_name_v <- districts_identified_v
-          totcol_discorrname_v <- length(districts_correct_name_v)
+          first.time=T
           
-          for(Q in 1:totcol_discorrname_v)
+          for(t in 1:length(n_obs))
           {
-            newname <- paste("Name_", Q, "_in_District", sep="")
-            colnames(districts_correct_name_v)[Q] <- newname
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_villages[t]
+              typo_real <- real_typo[t]
+              dis_df <- District_in_df[t]
+              
+            } else {
+              misspell <- rep(misspelled_villages[t], n_obs[t])
+              typo_real <- rep(real_typo[t], n_obs[t])
+              dis_df <- rep(District_in_df[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              r_typo <- typo_real
+              df_dis <- dis_df
+              
+              first.time=F
+            } else {
+              missp <- c(missp, misspell)
+              r_typo <- c(r_typo, typo_real)
+              df_dis <- c(df_dis, dis_df)
+            }
           }
           
-          corrections_v <- cbind(corrections_v, districts_correct_name_v)
-          corrections_v <- as.data.frame(corrections_v)
+          villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+          districts_identified_all <- plyr::ldply(mylist_respective_districts_v, cbind)
+          correction_level <- rep("Village", nrow(villages_identified_all))
+          corrections <- cbind(missp, villages_identified_all, r_typo, df_dis, 
+                               correction_level, districts_identified_all)
           
-          ## cbind the real_typo column
-          real_typo <- as.character(real_typo)
-          corrections_v <- cbind(corrections_v, real_typo)
+          corrections <- as.data.frame(corrections)
           
-          #############################          
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "district_in_df"
+          colnames(corrections)[5] <- "correction_level"
+          colnames(corrections)[6] <- "correct_name_in_district"
+          
+          corrections <- unique(corrections)
+          corrections_v <- corrections
+          
+          
+          #############################  
+          
+          ## the correct wards 
           wards_identified <- plyr::ldply(mylist_similar_wards, rbind)
           wards_correct_name <- wards_identified
-          wards_correct_name <- as.data.frame(wards_correct_name)
-          totcol_wardscorrname <- length(wards_correct_name)
           
-          real_typo_w <- rep("TRUE", nrow(wards_correct_name))
-          
-          for(L in 1:totcol_wardscorrname)
+          n_obs <- rep(0, nrow(wards_correct_name))
+          for(y in 1:nrow(wards_correct_name))
           {
-            newname <- paste("Correct_Name_", L, sep="")
-            colnames(wards_correct_name)[L] <- newname
+            n_obs[y] <- sum(!is.na(wards_correct_name[y,]))
           }
           
-          corrections_w <- cbind(misspelled_villages, correction_level_w, wards_correct_name)
-          corrections_w <- as.data.frame(corrections_w)
+          ## the misspelled wards (which were stored as villages)
+          misspelled_wards <- missp_vill_ward
+          misspelled_wards <- as.character(misspelled_wards)
           
-          districts_identified_w <- plyr::ldply(mylist_respective_districts_w, rbind)
-          districts_correct_name_w <- districts_identified_w
-          totcol_discorrname_w <- length(districts_correct_name_w)
+          missp <- as.character()
+          misspell <- as.character()
           
-          for(A in 1:totcol_discorrname_w)
+          ## cbind the district
+          District_in_df <- missp_dis_ward
+          District_in_df <- as.character(District_in_df)
+          dis_df <- as.character()
+          df_dis <- as.character()
+          
+          first.time=T
+          
+          for(t in 1:length(n_obs))
           {
-            newname <- paste("Name_", A, "_in_District", sep="")
-            colnames(districts_correct_name_w)[A] <- newname
+            if(sum(n_obs[t])==0)
+            {
+              misspell <- misspelled_wards[t]
+              dis_df <- District_in_df[t]
+              
+            } else {
+              misspell <- rep(misspelled_wards[t], n_obs[t])
+              dis_df <- rep(District_in_df[t], n_obs[t])
+              
+            }
+            
+            if(first.time==T)
+            {
+              missp <- misspell
+              df_dis <- dis_df
+              
+              first.time=F
+            } else {
+              missp <- c(missp, misspell)
+              df_dis <- c(df_dis, dis_df)
+            }
           }
           
-          corrections_w <- cbind(corrections_w, districts_correct_name_w, real_typo_w)
           
-          #District_in_df <- check_df$respective_district
-          corrections_w <- cbind(corrections_w, District_in_df)
+          wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
+          districts_identified_all <- plyr::ldply(mylist_respective_districts_w, cbind)
           
-          colnames(corrections_v)[which(names(corrections_v) == "correction_level_v")] <- "correction_level"
-          colnames(corrections_w)[which(names(corrections_w) == "correction_level_w")] <- "correction_level"
-          colnames(corrections_w)[which(names(corrections_w) == "real_typo_w")] <- "real_typo"
+          r_typo <- rep("TRUE", nrow(wards_identified_all))
+          correction_level <- rep("Ward", nrow(wards_identified_all))
+          corrections <- cbind(missp, wards_identified_all, r_typo, df_dis, 
+                               correction_level, districts_identified_all)
           
-          ## The final dataframe with the NAs in the ward names
-          corrections <- plyr::rbind.fill(corrections_v, corrections_w)
+          corrections <- as.data.frame(corrections)
+          
+          colnames(corrections)[1] <- "misspelling"
+          colnames(corrections)[2] <- "correct_name"
+          colnames(corrections)[3] <- "real_typo"
+          colnames(corrections)[4] <- "district_in_df"
+          colnames(corrections)[5] <- "correction_level"
+          colnames(corrections)[6] <- "correct_name_in_district"
+          
+          corrections <- unique(corrections)
+          corrections_w <- corrections
+          
           
           ## The final dataframe without the uninformative rows
-          nocol <- c("correction_level", "real_typo", "District_in_df")
-          nonums <- which(names(corrections) %in% nocol)
-          corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
+          nocol <- c("misspelling", "real_typo", "correction_level")
+          nonums <- which(names(corrections_w) %in% nocol)
+          corrections_w <- corrections_w[rowSums(!is.na(corrections_w[,-nonums])) > 0, ]
           
-          #############################          
+          
+          #############################  
+          
+          corrections <- rbind(corrections_v, corrections_w)
+          
+          mis_names <- as.character(unique(corrections$misspelling))
+          
+          first.time=T
+          for(x in 1:length(mis_names))
+          {
+            corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+            
+            mis <- as.character(mis_names[x])
+            cor <- as.character(corrs$correct_name)
+            
+            ## calculate the index of similarity and sort the results from the most similar to the most distant
+            lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+            
+            corrs <- cbind(corrs, lev_sim)
+            corrs <- corrs[order(corrs$lev_sim, decreasing = T),] 
+            
+            choice_number <- seq(1:nrow(corrs))
+            corrs <- cbind(corrs, choice_number)
+            
+            if(first.time==T)
+            {
+              ordered_corrs <- corrs
+              first.time=F
+              
+            } else {
+              ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+              ordered_corrs <- as.data.frame(ordered_corrs)
+            }
+          }
+          
+          corrections <- ordered_corrs
           
         }
       }
-
+      
     } else { ## higher_level = Region
+      
+      only_in_distr=NA
       
       if(look_ward==F)
       {
@@ -1158,7 +1691,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             correct_subset_reg <- as.character(correct_subset_reg)
             
             c_sub_v <- gsub("[^[:alnum:]]", "", tolower(correct_subset_vill))
-
+            
             ## find the CASE INSENSITIVE matches, only considering alphanumeric characters
             if((m_v[q] %in% c_sub_v)==T)
             {
@@ -1220,7 +1753,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               
               mylist_similar_villages[[q]] <- mylist_similar_villages[[q]][unique_ind]
               mylist_respective_regions_v[[q]] <- mylist_respective_regions_v[[q]][unique_ind]
-            
+              
             } else {
               real_typo[q] <- TRUE
               
@@ -1245,42 +1778,118 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         
         villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
         villages_correct_name <- villages_identified
-        villages_correct_name <- as.data.frame(villages_correct_name)
-        totcol_villcorrname <- length(villages_correct_name)
         
-        correction_level <- rep("Village", nrow(villages_correct_name))
-        
-        for(l in 1:totcol_villcorrname)
+        n_obs <- rep(0, nrow(villages_correct_name))
+        for(y in 1:nrow(villages_correct_name))
         {
-          newname <- paste("Correct_Name_", l, sep="")
-          colnames(villages_correct_name)[l] <- newname
+          n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
         }
         
         misspelled_villages <- check_df$respective_vill
         misspelled_villages <- as.character(misspelled_villages)
         
-        corrections <- cbind(misspelled_villages, correction_level, villages_correct_name)
+        missp <- as.character()
+        misspell <- as.character()
         
-        ## cbind the Region
+        r_typo <- as.character()
+        typo_real <- as.character()
+        
+        ## cbind the region
         Region_in_df <- check_df$respective_region
-        corrections <- cbind(corrections, Region_in_df)
+        Region_in_df <- as.character(Region_in_df)
+        reg_df <- as.character()
+        df_reg <- as.character()
         
-        regions_identified <- plyr::ldply(mylist_respective_regions_v, rbind)
-        regions_correct_name <- regions_identified
-        totcol_regcorrname <- length(regions_correct_name)
+        first.time=T
         
-        for(Q in 1:totcol_regcorrname)
+        for(t in 1:length(n_obs))
         {
-          newname <- paste("Name_", Q, "_in_Region", sep="")
-          colnames(regions_correct_name)[Q] <- newname
+          if(sum(n_obs[t])==0)
+          {
+            misspell <- misspelled_villages[t]
+            typo_real <- real_typo[t]
+            reg_df <- Region_in_df[t]
+            
+          } else {
+            misspell <- rep(misspelled_villages[t], n_obs[t])
+            typo_real <- rep(real_typo[t], n_obs[t])
+            reg_df <- rep(Region_in_df[t], n_obs[t])
+            
+          }
+          
+          if(first.time==T)
+          {
+            missp <- misspell
+            r_typo <- typo_real
+            df_reg <- reg_df
+            
+            first.time=F
+          } else {
+            missp <- c(missp, misspell)
+            r_typo <- c(r_typo, typo_real)
+            df_reg <- c(df_reg, reg_df)
+          }
         }
         
-        corrections <- cbind(corrections, regions_correct_name)
+        
+        for(u in 1:length(mylist_similar_villages))
+        {
+          if(length(mylist_similar_villages[[u]])==0)
+          {
+            mylist_similar_villages[[u]] <- NA
+          } else {
+            next
+          }
+        }
+        
+        villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+        
+        corrections <- cbind(missp, villages_identified_all, r_typo, df_reg)
         corrections <- as.data.frame(corrections)
         
-        ## cbind the real_typo column
-        real_typo <- as.character(real_typo)
-        corrections <- cbind(corrections, real_typo)
+        colnames(corrections)[1] <- "misspelling"
+        colnames(corrections)[2] <- "correct_name"
+        colnames(corrections)[3] <- "real_typo"
+        colnames(corrections)[4] <- "region_in_df"
+        
+        mis_names <- as.character(unique(corrections$misspelling))
+        
+        first.time=T
+        for(x in 1:length(mis_names))
+        {
+          corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+          
+          mis <- as.character(mis_names[x])
+          cor <- as.character(corrs$correct_name)
+          
+          lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+          
+          corrs <- cbind(corrs, lev_sim)
+          corrs <- corrs[order(corrs$lev_sim, decreasing = T),]
+          
+          choice_number <- seq(1:nrow(corrs))
+          corrs <- cbind(corrs, choice_number)
+          
+          if(first.time==T)
+          {
+            ordered_corrs <- corrs
+            first.time=F
+            
+          } else {
+            ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+            ordered_corrs <- as.data.frame(ordered_corrs)
+          }
+        }
+        
+        corrections <- ordered_corrs
+        
+        tot_obs <- nrow(corrections)
+        correction_level <- c()
+        correction_level <- as.character(correction_level)
+        correction_level <- rep("Village", tot_obs)
+        
+        corrections <- cbind(corrections, correction_level)
+        
         
       } else { ## if look ward==T
         
@@ -1324,6 +1933,12 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         ## same names' indices
         m_v <- gsub("[^[:alnum:]]", "", tolower(check_df$respective_vill))
         
+        respective_vill <- as.character(check_df$respective_vill) 
+        respective_region <- as.character(check_df$respective_region) 
+        
+        missp_vill_ward <- as.character()
+        missp_reg_ward <- as.character()
+        
         for(q in 1:Tot_misspell)
         {
           if((is.na(check_df$respective_region[q]))==F) ## if there is region information
@@ -1342,7 +1957,7 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             correct_subset_ward <- unique(correct_subset_ward)
             
             correct_subset_reg <- correct_subset$Region_Nam
-            correct_subset_reg <- as.character(correct_subset_dis)
+            correct_subset_reg <- as.character(correct_subset_reg)
             
             c_sub_v <- gsub("[^[:alnum:]]", "", tolower(correct_subset_vill))
             c_sub_w <- gsub("[^[:alnum:]]", "", tolower(correct_subset_ward))
@@ -1394,10 +2009,15 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               number_w <- agrep(m_v[q], c_sub_w, max.distance = distnc)
               if(length(number_w)==0)
               {
+                missp_reg_ward[q] <- NA
+                missp_vill_ward[q] <- NA
                 mylist_similar_wards[[q]] <- NA
                 mylist_respective_regions_w[[q]] <- NA
                 
               } else {
+                missp_reg_ward[q] <- respective_region[q]
+                missp_vill_ward[q] <- respective_vill[q]
+                
                 mylist_similar_wards[[q]] <- number_w
                 mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                 mylist_respective_regions_w[[q]] <- number_w
@@ -1472,8 +2092,10 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
               {
                 mylist_similar_wards[[q]] <- NA
                 mylist_respective_regions_w[[q]] <- NA
+                missp_vill_ward[q] <- NA
                 
               } else {
+                missp_vill_ward[q] <- respective_vill[q]
                 mylist_similar_wards[[q]] <- number_w
                 mylist_similar_wards[[q]] <- correct_subset_ward[mylist_similar_wards[[q]]]
                 mylist_respective_regions_w[[q]] <- number_w
@@ -1490,155 +2112,290 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         }
         
         #############################          
+        #############################          
+        #############################    
+        
+        ## the correct villages
         villages_identified <- plyr::ldply(mylist_similar_villages, rbind)
         villages_correct_name <- villages_identified
-        villages_correct_name <- as.data.frame(villages_correct_name)
-        totcol_villcorrname <- length(villages_correct_name)
         
-        for(l in 1:totcol_villcorrname)
+        n_obs <- rep(0, nrow(villages_correct_name))
+        for(y in 1:nrow(villages_correct_name))
         {
-          newname <- paste("Correct_Name_", l, sep="")
-          colnames(villages_correct_name)[l] <- newname
+          n_obs[y] <- sum(!is.na(villages_correct_name[y,]))
         }
         
         misspelled_villages <- check_df$respective_vill
         misspelled_villages <- as.character(misspelled_villages)
         
-        corrections_v <- cbind(misspelled_villages, correction_level_v, villages_correct_name)
+        missp <- as.character()
+        misspell <- as.character()
         
-        ## cbind the Region
+        r_typo <- as.character()
+        typo_real <- as.character()
+        
+        ## cbind the district
         Region_in_df <- check_df$respective_region
-        corrections_v <- cbind(corrections_v, Region_in_df)
+        Region_in_df <- as.character(Region_in_df)
+        reg_df <- as.character()
+        df_reg <- as.character()
         
         
-        regions_identified_v <- plyr::ldply(mylist_respective_regions_v, rbind)
-        regions_correct_name_v <- regions_identified_v
-        totcol_regcorrname_v <- length(regions_correct_name_v)
+        first.time=T
         
-        for(Q in 1:totcol_regcorrname_v)
+        for(t in 1:length(n_obs))
         {
-          newname <- paste("Name_", Q, "_in_Region", sep="")
-          colnames(regions_correct_name_v)[Q] <- newname
+          if(sum(n_obs[t])==0)
+          {
+            misspell <- misspelled_villages[t]
+            typo_real <- real_typo[t]
+            reg_df <- Region_in_df[t]
+            
+          } else {
+            misspell <- rep(misspelled_villages[t], n_obs[t])
+            typo_real <- rep(real_typo[t], n_obs[t])
+            reg_df <- rep(Region_in_df[t], n_obs[t])
+            
+          }
+          
+          if(first.time==T)
+          {
+            missp <- misspell
+            r_typo <- typo_real
+            df_reg <- reg_df
+            
+            first.time=F
+          } else {
+            missp <- c(missp, misspell)
+            r_typo <- c(r_typo, typo_real)
+            df_reg <- c(df_reg, reg_df)
+          }
         }
         
-        corrections_v <- cbind(corrections_v, regions_correct_name_v)
-        corrections_v <- as.data.frame(corrections_v)
         
-        ## cbind the real_typo column
-        real_typo <- as.character(real_typo)
-        corrections_v <- cbind(corrections_v, real_typo)
+        for(u in 1:length(mylist_similar_villages))
+        {
+          if(length(mylist_similar_villages[[u]])==0)
+          {
+            mylist_similar_villages[[u]] <- NA
+          } else {
+            next
+          }
+        }
         
-        #############################          
+        
+        for(g in 1:length(mylist_respective_regions_v))
+        {
+          if(length(mylist_respective_regions_v[[g]])==0)
+          {
+            mylist_respective_regions_v[[g]] <- NA
+          } else {
+            next
+          }
+        }
+        
+        villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
+        regions_identified_all <- plyr::ldply(mylist_respective_regions_v, cbind)
+        correction_level <- rep("Village", nrow(villages_identified_all))
+        corrections <- cbind(missp, villages_identified_all, r_typo, df_reg, 
+                             correction_level, regions_identified_all)
+        
+        corrections <- as.data.frame(corrections)
+        
+        colnames(corrections)[1] <- "misspelling"
+        colnames(corrections)[2] <- "correct_name"
+        colnames(corrections)[3] <- "real_typo"
+        colnames(corrections)[4] <- "region_in_df"
+        colnames(corrections)[5] <- "correction_level"
+        colnames(corrections)[6] <- "correct_name_in_region"
+        
+        corrections <- unique(corrections)
+        corrections_v <- corrections
+        
+        
+        #############################  
+        
+        ## the correct wards 
         wards_identified <- plyr::ldply(mylist_similar_wards, rbind)
         wards_correct_name <- wards_identified
-        wards_correct_name <- as.data.frame(wards_correct_name)
-        totcol_wardscorrname <- length(wards_correct_name)
         
-        real_typo_w <- rep("TRUE", nrow(wards_correct_name))
-        
-        for(L in 1:totcol_wardscorrname)
+        n_obs <- rep(0, nrow(wards_correct_name))
+        for(y in 1:nrow(wards_correct_name))
         {
-          newname <- paste("Correct_Name_", L, sep="")
-          colnames(wards_correct_name)[L] <- newname
+          n_obs[y] <- sum(!is.na(wards_correct_name[y,]))
         }
         
-        corrections_w <- cbind(misspelled_villages, correction_level_w, wards_correct_name)
-        corrections_w <- as.data.frame(corrections_w)
+        ## the misspelled wards (which were stored as villages)
+        misspelled_wards <- missp_vill_ward
+        misspelled_wards <- as.character(misspelled_wards)
         
-        regions_identified_w <- plyr::ldply(mylist_respective_regions_w, rbind)
-        regions_correct_name_w <- regions_identified_w
-        totcol_regcorrname_w <- length(regions_correct_name_w)
+        missp <- as.character()
+        misspell <- as.character()
         
-        for(A in 1:totcol_regcorrname_w)
+        ## cbind the Region
+        Region_in_df <- missp_reg_ward
+        Region_in_df <- as.character(Region_in_df)
+        reg_df <- as.character()
+        df_reg <- as.character()
+        
+        first.time=T
+        
+        for(t in 1:length(n_obs))
         {
-          newname <- paste("Name_", A, "_in_Region", sep="")
-          colnames(regions_correct_name_w)[A] <- newname
+          if(sum(n_obs[t])==0)
+          {
+            misspell <- misspelled_wards[t]
+            reg_df <- Region_in_df[t]
+            
+          } else {
+            misspell <- rep(misspelled_wards[t], n_obs[t])
+            reg_df <- rep(Region_in_df[t], n_obs[t])
+            
+          }
+          
+          if(first.time==T)
+          {
+            missp <- misspell
+            df_reg <- reg_df
+            
+            first.time=F
+          } else {
+            missp <- c(missp, misspell)
+            df_reg <- c(df_reg, reg_df)
+          }
         }
         
-        corrections_w <- cbind(corrections_w, regions_correct_name_w, real_typo_w)
         
-        corrections_w <- cbind(corrections_w, Region_in_df)
+        for(u in 1:length(mylist_similar_wards))
+        {
+          if(length(mylist_similar_wards[[u]])==0)
+          {
+            mylist_similar_wards[[u]] <- NA
+          } else {
+            next
+          }
+        }
         
-        colnames(corrections_v)[which(names(corrections_v) == "correction_level_v")] <- "correction_level"
-        colnames(corrections_w)[which(names(corrections_w) == "correction_level_w")] <- "correction_level"
-        colnames(corrections_w)[which(names(corrections_w) == "real_typo_w")] <- "real_typo"
         
-        ## The final dataframe with the NAs in the ward names
-        corrections <- plyr::rbind.fill(corrections_v, corrections_w)
+        for(g in 1:length(mylist_respective_regions_w))
+        {
+          if(length(mylist_respective_regions_w[[g]])==0)
+          {
+            mylist_respective_regions_w[[g]] <- NA
+          } else {
+            next
+          }
+        }
+        
+        wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
+        regions_identified_all <- plyr::ldply(mylist_respective_regions_w, cbind)
+        
+        r_typo <- rep("TRUE", nrow(wards_identified_all))
+        correction_level <- rep("Ward", nrow(wards_identified_all))
+        corrections <- cbind(missp, wards_identified_all, r_typo, df_reg, 
+                             correction_level, regions_identified_all)
+        
+        corrections <- as.data.frame(corrections)
+        
+        colnames(corrections)[1] <- "misspelling"
+        colnames(corrections)[2] <- "correct_name"
+        colnames(corrections)[3] <- "real_typo"
+        colnames(corrections)[4] <- "region_in_df"
+        colnames(corrections)[5] <- "correction_level"
+        colnames(corrections)[6] <- "correct_name_in_region"
+        
+        corrections <- unique(corrections)
+        corrections_w <- corrections
+        
         
         ## The final dataframe without the uninformative rows
-        nocol <- c("correction_level", "real_typo", "District_in_df")
-        nonums <- which(names(corrections) %in% nocol)
-        corrections <- corrections[rowSums(!is.na(corrections[,-nonums])) > 0, ]
+        nocol <- c("misspelling", "real_typo", "correction_level")
+        nonums <- which(names(corrections_w) %in% nocol)
+        corrections_w <- corrections_w[rowSums(!is.na(corrections_w[,-nonums])) > 0, ]
         
+        
+        #############################  
+        
+        corrections <- rbind(corrections_v, corrections_w)
+        
+        mis_names <- as.character(unique(corrections$misspelling))
+        
+        first.time=T
+        for(x in 1:length(mis_names))
+        {
+          corrs <- dplyr::filter(corrections, misspelling==mis_names[x])
+          
+          mis <- as.character(mis_names[x])
+          cor <- as.character(corrs$correct_name)
+          
+          ## calculate the index of similarity and sort the results from the most similar to the most distant
+          lev_sim <- RecordLinkage::levenshteinSim(mis, cor)
+          
+          corrs <- cbind(corrs, lev_sim)
+          corrs <- corrs[order(corrs$lev_sim, decreasing = T),] 
+          
+          choice_number <- seq(1:nrow(corrs))
+          corrs <- cbind(corrs, choice_number)
+          
+          if(first.time==T)
+          {
+            ordered_corrs <- corrs
+            first.time=F
+            
+          } else {
+            ordered_corrs <- rbind.data.frame(ordered_corrs, corrs)
+            ordered_corrs <- as.data.frame(ordered_corrs)
+          }
+        }
+        
+        corrections <- ordered_corrs
       }
     }
   }
   
-  if(look_ward==F)
+  ########################################################################
+  ########################################################################
+  
+  if(higher_level=="Ward")
   {
-    corrections_II <- as.data.frame(villages_correct_name)
-    totcol <- length(corrections_II)
-    ## initialise the list to store the code
-    mylist_resp_code <- vector('list', totcol)
+    corrections_II <- corrections
+    corr_vill <- corrections_II$correct_name
+    corr_vill <- as.character(corr_vill)
+    Loc_ID <- rep(NA, length(corr_vill))
+    Loc_ID <- as.character(corr_vill)
+    wardname <- rep(NA, length(corr_vill))
+    wardname <- as.character(wardname)
     
-    for(w in 1:totcol)
+    for(b in 1:length(corr_vill))
     {
-      corr_vill <- corrections_II[,w]
-      corr_vill <- as.character(corr_vill)
+      sub_set <- dplyr::filter(shapefile@data, Vil_Mtaa_N == corr_vill[b])
       
-      Loc_ID <- rep(NA, length(corr_vill))
-      Loc_ID <- as.character(Loc_ID)
-      
-      for(b in 1:length(corr_vill))
+      if(nrow(sub_set)>0)
       {
-        sub_set <- dplyr::filter(shapefile@data, Vil_Mtaa_N == corr_vill[b])
+        wardname[b] <- as.character(sub_set$Ward_Name)
+        Loc_ID[b] <- as.character(sub_set$Loc_ID)
         
-        if(nrow(sub_set)>0)
-        {
-          Loc_ID[b] <- as.character(sub_set$Loc_ID)
-          
-        } else {
-          Loc_ID[b] <- as.character(NA)
-        }
+      } else {
+        wardname[b] <- as.character(NA)
+        Loc_ID[b] <- as.character(NA)
       }
-      
-      mylist_resp_code[[w]] <- Loc_ID
-      
     }
     
-    code_identified <- as.data.frame(mylist_resp_code)
-    
-    ## rename the columns 
-    totcol <- length(code_identified)
-    for(O in 1:totcol)
-    {
-      newname <- paste("Loc_ID_", O, sep="")
-      colnames(code_identified)[O] <- newname
-    }
-    
-    corrections_final <- cbind(corrections, code_identified)
-    corrections_final <- as.data.frame(corrections_final)
+    correct_name_in_ward <- wardname
+    corrections_II <- cbind(corrections_II, correct_name_in_ward, Loc_ID)
+    corrections_II <- as.data.frame(corrections_II)
     
   } else {
-    
-    correct_villages_proc_df <- dplyr::filter(corrections, correction_level=="Village")
-    correct_wards_proc_df <- dplyr::filter(corrections, correction_level=="Ward")
-    
-    corr_villages <- as.data.frame(correct_villages_proc_df[, grepl("Correct_Name", names(correct_villages_proc_df))])
-    corr_wards <- as.data.frame(correct_wards_proc_df[, grepl("Correct_Name", names(correct_wards_proc_df))])
-    
-    totcol_v <- length(corr_villages)
-    ## initialise the list to store the code
-    mylist_resp_code_v <- vector('list', totcol_v)
-    
-    for(w in 1:totcol_v)
+    ## If the "only_in_distr" argument is not NA
+    if (!is.na(only_in_distr))
     {
-      corr_vill <- corr_villages[,w]
+      corrections_II <- corrections
+      index_ward <- which(corrections_II$correction_level=="Ward")
+      corr_vill <- corrections_II$correct_name
       corr_vill <- as.character(corr_vill)
       
       Loc_ID <- rep(NA, length(corr_vill))
-      Loc_ID <- as.character(Loc_ID)
+      Loc_ID <- as.character(corr_vill)
       
       for(b in 1:length(corr_vill))
       {
@@ -1653,68 +2410,184 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
         }
       }
       
-      mylist_resp_code_v[[w]] <- Loc_ID
-    }
-     
-    totcol_w <- length(corr_wards)
-    
-    ## initialise the list to store the code
-    mylist_resp_code_w <- vector('list', totcol_w)
-    
-    for(W in 1:totcol_w)
-    {
-      corr_wrd <- corr_wards[,W]
-      corr_wrd <- as.character(corr_wrd)
+      corrections_II <- cbind(corrections_II, Loc_ID)
+      corrections_II <- as.data.frame(corrections_II)
       
-      Loc_ID <- rep(NA, length(corr_wrd))
-      Loc_ID <- as.character(Loc_ID)
+      corrections_II$Loc_ID[index_ward] <- NA
       
-      for(B in 1:length(corr_wrd))
+      if(length(index_ward)>0)
       {
-        sub_set <- dplyr::filter(ward_shapefile@data, Ward_Name == corr_wrd[B])
+        corr_ward <- corrections_II$correct_name[index_ward]
+        corr_ward <- as.character(corr_ward)
+        
+        sub_set <- dplyr::filter(ward_shapefile@data, Ward_Name %in% corr_ward)
         
         if(nrow(sub_set)>0)
         {
-          Loc_ID[B] <- as.character(sub_set$Loc_ID)
+          right_order <- match(corr_ward, sub_set$Ward_Name)
+          
+          sub_set$Loc_ID <- as.character(sub_set$Loc_ID)
+          corrections_II$Loc_ID <- as.character(corrections_II$Loc_ID)
+          
+          corrections_II$Loc_ID[index_ward] <- sub_set$Loc_ID[right_order]
           
         } else {
-          Loc_ID[B] <- as.character(NA)
+          # do nothing
+          sub_set <- sub_set
         }
+        
+      } else {
+        # do nothing
+        index_ward <- index_ward
       }
       
-      mylist_resp_code_w[[W]] <- Loc_ID
+    } else { ## If the "only_in_distr" argument is NA
+      
+      corrections_II <- corrections
+      
+      index_ward <- which(corrections_II$correction_level=="Ward")
+      
+      corr_vill <- corrections_II$correct_name
+      corr_vill <- as.character(corr_vill)
+      
+      Loc_ID <- rep(NA, length(corr_vill))
+      Loc_ID <- as.character(Loc_ID)
+      
+      if(higher_level=="District")
+      {
+        disname <- rep(NA, length(corr_vill))
+        disname <- as.character(disname)
+        
+        for(b in 1:length(corr_vill))
+        {
+          sub_set <- dplyr::filter(shapefile@data, Vil_Mtaa_N == corr_vill[b])
+          
+          if(nrow(sub_set)>0)
+          {
+            disname[b] <- as.character(sub_set$District_N)
+            Loc_ID[b] <- as.character(sub_set$Loc_ID)
+            
+          } else {
+            disname[b] <- as.character(NA)
+            Loc_ID[b] <- as.character(NA)
+          }
+        }
+        
+        correct_name_in_district <- disname
+        corrections_II <- cbind(corrections_II, correct_name_in_district, Loc_ID)
+        corrections_II <- as.data.frame(corrections_II)
+        
+        corrections_II$Loc_ID[index_ward] <- NA
+        corrections_II$correct_name_in_district[index_ward] <- NA
+        
+        correct_name_in_district <- corrections_II$correct_name_in_district 
+        Loc_ID <- corrections_II$Loc_ID
+        
+        if(length(index_ward)>0)
+        {
+          corr_ward <- corrections_II$correct_name[index_ward]
+          corr_ward <- as.character(corr_ward)
+          
+          sub_set <- dplyr::filter(ward_shapefile@data, Ward_Name %in% corr_ward)
+          
+          if(nrow(sub_set)>0)
+          {
+            right_order <- match(corr_ward, sub_set$Ward_Name)
+            sub_set$Loc_ID <- as.character(sub_set$Loc_ID)
+            Loc_ID <- as.character(Loc_ID)
+            sub_set$District_N <- as.character(sub_set$District_N)
+            correct_name_in_district <- as.character(correct_name_in_district)
+
+            Loc_ID[index_ward] <- sub_set$Loc_ID[right_order]
+            correct_name_in_district[index_ward] <- sub_set$District_N[right_order]
+            
+            corrections_II$Loc_ID <- NULL
+            corrections_II$correct_name_in_district <- NULL
+            
+            corrections_II$Loc_ID <- Loc_ID
+            corrections_II$correct_name_in_district <- correct_name_in_district
+            
+            
+          } else {
+            # do nothing
+            sub_set <- sub_set
+          }
+          
+        } else {
+          # do nothing
+          index_ward <- index_ward
+        }
+        
+      } else { ## higher_level == Region
+        
+        regname <- rep(NA, length(corr_vill))
+        regname <- as.character(regname)
+        
+        for(b in 1:length(corr_vill))
+        {
+          sub_set <- dplyr::filter(shapefile@data, Vil_Mtaa_N == corr_vill[b])
+          
+          if(nrow(sub_set)>0)
+          {
+            regname[b] <- as.character(sub_set$Region_Nam)
+            Loc_ID[b] <- as.character(sub_set$Loc_ID)
+            
+          } else {
+            regname[b] <- as.character(NA)
+            Loc_ID[b] <- as.character(NA)
+          }
+        }
+        
+        correct_name_in_region <- regname
+        corrections_II <- cbind(corrections_II, correct_name_in_region, Loc_ID)
+        corrections_II <- as.data.frame(corrections_II)
+        
+        corrections_II$Loc_ID[index_ward] <- NA
+        corrections_II$correct_name_in_region[index_ward] <- NA
+        
+        correct_name_in_region <- corrections_II$correct_name_in_region 
+        Loc_ID <- corrections_II$Loc_ID
+        
+        if(length(index_ward)>0)
+        {
+          corr_ward <- corrections_II$correct_name[index_ward]
+          corr_ward <- as.character(corr_ward)
+          
+          sub_set <- dplyr::filter(ward_shapefile@data, Ward_Name %in% corr_ward)
+          
+          if(nrow(sub_set)>0)
+          {
+            right_order <- match(corr_ward, sub_set$Ward_Name)
+            
+            sub_set$Loc_ID <- as.character(sub_set$Loc_ID)
+            Loc_ID <- as.character(Loc_ID)
+            sub_set$Region_Nam <- as.character(sub_set$Region_Nam)
+            correct_name_in_region <- as.character(correct_name_in_region)
+            
+            Loc_ID[index_ward] <- sub_set$Loc_ID[right_order]
+            correct_name_in_region[index_ward] <- sub_set$Region_Nam[right_order]
+            
+            corrections_II$Loc_ID <- NULL
+            corrections_II$correct_name_in_region <- NULL
+            
+            corrections_II$Loc_ID <- Loc_ID
+            corrections_II$correct_name_in_region <- correct_name_in_region
+            
+          } else {
+            # do nothing
+            sub_set <- sub_set
+          }
+          
+        } else {
+          # do nothing
+          index_ward <- index_ward
+        }
+      }
     }
-    
-    code_identified_v <- as.data.frame(mylist_resp_code_v)
-    
-    ## rename the columns 
-    totcol <- length(code_identified_v)
-    for(O in 1:totcol)
-    {
-      newname <- paste("Loc_ID_", O, sep="")
-      colnames(code_identified_v)[O] <- newname
-    }
-    
-    
-    code_identified_w <- as.data.frame(mylist_resp_code_w)
-    ## rename the columns 
-    totcol <- length(code_identified_w)
-    for(P in 1:totcol)
-    {
-      newname <- paste("Loc_ID_", P, sep="")
-      colnames(code_identified_w)[P] <- newname
-    }
- 
-    corrections_final_v <- cbind(correct_villages_proc_df, code_identified_v)  
-    corrections_final_w <- cbind(correct_wards_proc_df, code_identified_w)  
-    
-    corrections_final <- plyr::rbind.fill(corrections_final_v, corrections_final_w)
-    corrections_final <- as.data.frame(corrections_final)
+  }
   
-    }
-  
-  corrections_final <- corrections_final[order(corrections_final$misspelled_villages),]
-  return(corrections_final)
+  return(corrections_II)
 }
+
 
 
