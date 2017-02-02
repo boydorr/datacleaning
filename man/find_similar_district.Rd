@@ -23,23 +23,30 @@ find_similar_district(dataframe, label, label_higher_level, shapefile, distnc,
 \value{
 a new dataframe with:
 
-i) the district misspellings, stored in the first column ("misspelled_districts");
+i) the district misspellings, stored in the first column ("misspelling");
 
-ii) all the similar matches, each one stored under a separate column
-("Correct_Name_1", "Correct_Name_2", etc.);
-
-iii) a column storing the region information in the project dataframe associated
-to the misspelled district ("Region_in_df");
-
-iv) a column specifying whether the misspelling is a real alphanumeric typo
-or not ("real_typo);
-
-v) a column specifying the level of the proposed correction ("correction_level");
-
-vi) a series of columns (one for each similar match found) specifying the
-region in the shapefile where each proposed correction is located ("Name_1_in_Region", "Name_2_in_Region", etc.);
-
-vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
+ii) the similar matches, each one stored in a different row of the same column
+("correct_name"). The matches are ordered in the different rows according to their 
+level of similarity with the misspelled district;  
+ 
+iii) a column specifying whether the misspelling is a real alphanumeric typo
+or not ("real_typo);   
+   
+iv) a column storing the region information in the project dataframe associated
+to the misspelled district ("region_in_df");   
+   
+v) a column storing the level of similarity of the proposed corrections ("lev_sim"); 
+     
+vi) a column specifying, for each misspelling, the hierarchical rank of each 
+proposed correction ("choice_number"), with choice_number=1 indicating the most 
+strongely suggested correction;     
+    
+vii) a column specifying the level of the proposed correction ("correction_level");
+ 
+viii) a column specifying the region in the shapefile where each proposed 
+correction is located ("correct_name_in_region");       
+    
+ix) a column storing the location ID of each proposed correction ("Loc_ID").
 }
 \description{
 Identifies the misspelled district names in the project dataset
