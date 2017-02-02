@@ -27,25 +27,32 @@ find_similar_ward(dataframe, label, higher_level, label_higher_level, shapefile,
 \value{
 a new dataframe with:
 
-i) the ward misspellings, stored in the first column ("misspelled_wards");
+i) the ward misspellings, stored in the first column ("misspelling");
 
-ii) all the similar matches, each one stored under a separate column
-("Correct_Name_1", "Correct_Name_2", etc.);
-
-iii) a column storing the region/district information in the project dataframe associated
-to the misspelled ward ("Region_in_df" or "District_in_df"), depending on
-the higher_level argument specified in the function call;
-
-iv) a column specifying whether the misspelling is a real alphanumeric typo
-or not ("real_typo);
-
-v) a column specifying the level of the proposed correction ("correction_level");
-
-vi) a series of columns (one for each similar match found) specifying the
-region/district in the shapefile where each proposed correction
-is located ("Name_1_in_Region"/"Name_1_in_District", etc.);
-
-vi) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
+ii) the similar matches, each one stored in a different row of the same column
+("correct_name"). The matches are ordered in the different rows according to their 
+level of similarity with the misspelled ward;  
+ 
+iii) a column specifying whether the misspelling is a real alphanumeric typo
+or not ("real_typo);   
+   
+iv) a column storing the region/district information in the project dataframe 
+associated to the misspelled ward ("region_in_df", "district_in_df"), depending 
+on the higher_level argument specified in the function call. 
+This column is only returned when only_in_distr=FALSE;         
+   
+v) a column storing the level of similarity of the proposed corrections ("lev_sim"); 
+     
+vi) a column specifying, for each misspelling, the hierarchical rank of each 
+proposed correction ("choice_number"), with choice_number=1 indicating the most 
+strongely suggested correction;     
+    
+vii) a column specifying the level of the proposed correction ("correction_level");
+ 
+viii) a column specifying the region/district in the shapefile where each 
+proposed correction is located ("correct_name_in_region", "correct_name_in_district");         
+      
+ix) a column storing the location ID of each proposed correction ("Loc_ID").
 }
 \description{
 Identifies the misspelled ward names in the project dataset and
