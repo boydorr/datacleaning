@@ -7,10 +7,11 @@
 #' @param dataframe the project dataframe with misspelled names to correct
 #' @param  typo_df the typos dataframe containing all the typos and their respective corrections
 #' @param  dataframe_label the name of the dataframe's column in which to look for the misspellings. NOTE: The label must be specified as "label" (i.e. "village", for instance)
-#' @param  typo_label_wrong the name of the typos dataframe's column with the misspellings. NOTE: The label must be specified as "label"
-#' @param  typo_label_correct the name of the typos dataframe's column with the respective corrections. NOTE: The label must be specified as "label"
+#' @param  typo_label_wrong (default = "misspelling"). The name of the typos dataframe's column with the misspellings. NOTE: The label must be specified as "label"
+#' @param  typo_label_correct (default = "correct_name"). The name of the typos dataframe's column with the respective corrections. NOTE: The label must be specified as "label"
+#' @param  choice_number_label (default = "choice_number"). The name of the typos dataframe's column with the the hierarchical rank of each proposed correction (i.e. the "choice_number" column in the typo dataframe produced by the find_similar functions)
 #' @param  legal_names a vector containing the legal village/ward/district/region names specified by the shapefile
-#' @param  mixed_typo (default = FALSE). logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward
+#' @param  mixed_typo (default = FALSE). Logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward
 #' @param  dataframe_label_w (default = NA). The name of the dataframe's column in which to look for the WARD misspellings. It must be used only when mixed_typo is TRUE
 #' @param  legal_names_w (default = NA). A vector containing the legal WARD names specified by the shapefile. It must be used only when mixed_typo is TRUE.
 #'
@@ -27,20 +28,23 @@
 #' #
 #'
 
-fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
-                      typo_label_correct, legal_names, mixed_typo=F, 
-                      dataframe_label_w=NA, legal_names_w=NA)
+fix_typos <- function(dataframe, typo_df, dataframe_label, 
+                      typo_label_wrong="misspelling", typo_label_correct="correct_name", 
+                      choice_number_label="choice_number", legal_names, 
+                      mixed_typo=F, dataframe_label_w=NA, legal_names_w=NA)
 {
   ## the number of observation in the project dataset
   ntot <- nrow(dataframe)
-
   df_name <- dataframe[[dataframe_label]]
   df_name <- as.character(df_name)
 
   if(mixed_typo==F)
   {
-    name_correct <- typo_df[[typo_label_correct]]
+    names_correct_df <- subset(typo_df, typo_df[[choice_number_label]] == 1)
+    
+    name_correct <- names_correct_df[[typo_label_correct]]
     name_correct <- as.character(name_correct)
+    
     name_typo <- typo_df[[typo_label_wrong]]
     name_typo <- as.character(name_typo)
 
@@ -66,7 +70,7 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
       }
     }
 
-    ## append the correct region names to the dataframe as a new column
+    ## append the correct names to the dataframe as a new column
     new_df <- cbind(dataframe, Correct)
 
     ## the right name for the column
@@ -84,16 +88,19 @@ fix_typos <- function(dataframe, typo_df, dataframe_label, typo_label_wrong,
     typo_df_v <- dplyr::filter(typo_df, correction_level=="Village")
     typo_df_w <- dplyr::filter(typo_df, correction_level=="Ward")
 
-    name_correct_v <- typo_df_v[[typo_label_correct]]
+    names_correct_v_df <- subset(typo_df_v, typo_df_v[[choice_number_label]] == 1)
+    names_correct_w_df <- subset(typo_df_w, typo_df_w[[choice_number_label]] == 1)
+    
+    name_correct_v <- names_correct_v_df[[typo_label_correct]]
     name_correct_v <- as.character(name_correct_v)
 
-    name_correct_w <- typo_df_w[[typo_label_correct]]
+    name_correct_w <- names_correct_w_df[[typo_label_correct]]
     name_correct_w <- as.character(name_correct_w)
 
-    name_typo_v <- typo_df_v[[typo_label_wrong]]
+    name_typo_v <- names_correct_v_df[[typo_label_wrong]]
     name_typo_v <- as.character(name_typo_v)
 
-    name_typo_w <- typo_df_w[[typo_label_wrong]]
+    name_typo_w <- names_correct_w_df[[typo_label_wrong]]
     name_typo_w <- as.character(name_typo_w)
 
     ## initialise a column with the right names
