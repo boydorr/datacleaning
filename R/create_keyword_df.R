@@ -20,16 +20,14 @@ create_keyword_df <- function(dataframe)
   keyword.df <- data.frame()
 
   # Change class of required column
-  keywords <- as.character(dataframe$keywords)
-  project.tag <- as.character(dataframe$project.tag)
-  location.tag <- as.character(dataframe$location.tag)
+  dataframe$keywords <- as.character(dataframe$keywords)
 
   # Write loop to create dataframes, then rbind as it goes to empty dataframe
-  for(i in 1:length(keywords))
+  for(i in 1:nrow(dataframe))
   {
     # Remove extra spaces and characters
     fixed.keywords <- sub("^[[:blank:];]*(.*[^[:blank:];])[[:blank:];]*$",
-                          "\\1", keywords[i])
+                          "\\1", dataframe$keywords[i])
 
     # Extract Keywords
     split.keywords <- strsplit(fixed.keywords, ";")
@@ -38,29 +36,41 @@ create_keyword_df <- function(dataframe)
     split.keyword.df <- as.data.frame(split.keywords)
 
     # Remove extra spaces
-    correct.keywords.df <- sub("^[[:blank:]]*(.*[^[:blank:]])[[:blank:]]*$",
-                            "\\1", split.keyword.df[[1]])
+    correct.keywords <- sub("^[[:blank:]]*(.*[^[:blank:]])[[:blank:]]*$",
+                                            "\\1", split.keyword.df[[1]])
 
     # Capitalise keywords which appear in lower case
-    for(i in 1:length(correct.keywords.df))
+    for(j in 1:length(correct.keywords))
     {
-      if(correct.keywords.df[i] == tolower(correct.keywords.df[i]))
+      if(correct.keywords[j] == tolower(correct.keywords[j]))
       {
-        correct.keywords.df[i] <- capname(correct.keywords.df[i])
+        correct.keywords[j] <- capname(correct.keywords[j])
       }
     }
 
-    # Extract project tag
-    project.tag.df <- as.data.frame(project.tag[i])
+    correct.keywords.df <- as.data.frame(correct.keywords)
 
-    # Extract location tag
-    location.tag.df <- as.data.frame(location.tag[i])
+    # Extract project and location tags
+    project.tag.df <- as.data.frame(dataframe$project.tag[i])
+    location.tag.df <- as.data.frame(dataframe$location.tag[i])
+    tags.df <- cbind(project.tag.df, location.tag.df)
+
+    if(nrow(correct.keywords.df)!=nrow(tags.df))
+    {
+      x <- nrow(correct.keywords.df)
+      tags.df <- tags.df[rep(seq_len(nrow(tags.df)), x), ]
+
+        #new.row = as.data.frame(NA)
+        #names(new.row)[1] = "author.email"
+        #email_df = rbind(email_df, new.row)
+
+    }
 
     # Attach project and location tags to new dataframe
-    complete.keyword.df <- cbind(correct.keywords.df, project.tag.df,
-                                 location.tag.df, deparse.level=0)
+    complete.keyword.df <- cbind(correct.keywords.df, tags.df)
 
     colnames(complete.keyword.df) <- colnames(keyword.df)
+
     keyword.df <- rbind(keyword.df, complete.keyword.df)
   }
 
