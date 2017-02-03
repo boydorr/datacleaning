@@ -256,6 +256,26 @@ find_similar_ward <- function(dataframe, label,
         }
       }
       
+      for(u in 1:length(mylist_similar_wards))
+      {
+        if(length(mylist_similar_wards[[u]])==0)
+        {
+          mylist_similar_wards[[u]] <- NA
+        } else {
+          next
+        }
+      }
+      
+      for(u in 1:length(mylist_respective_districts))
+      {
+        if(length(mylist_respective_districts[[u]])==0)
+        {
+          mylist_respective_districts[[u]] <- NA
+        } else {
+          next
+        }
+      }
+      
       wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
       districts_identified_all <- plyr::ldply(mylist_respective_districts, cbind)
       
@@ -455,6 +475,16 @@ find_similar_ward <- function(dataframe, label,
         }
       }
       
+      for(u in 1:length(mylist_similar_wards))
+      {
+        if(length(mylist_similar_wards[[u]])==0)
+        {
+          mylist_similar_wards[[u]] <- NA
+        } else {
+          next
+        }
+      }
+      
       wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
       
       corrections <- cbind(missp, wards_identified_all, r_typo, df_dis)
@@ -505,6 +535,8 @@ find_similar_ward <- function(dataframe, label,
     }
     
   } else { ## higher_level = "Region"
+    
+    only_in_distr=NA
     
     rg <- unique(dataframe[[label_higher_level]])
     rg <- as.character(rg)
@@ -614,7 +646,6 @@ find_similar_ward <- function(dataframe, label,
     reg_df <- as.character()
     df_reg <- as.character()
     
-    
     first.time=T
     
     for(t in 1:length(n_obs))
@@ -643,6 +674,16 @@ find_similar_ward <- function(dataframe, label,
         missp <- c(missp, misspell)
         r_typo <- c(r_typo, typo_real)
         df_reg <- c(df_reg, reg_df)
+      }
+    }
+    
+    for(u in 1:length(mylist_similar_wards))
+    {
+      if(length(mylist_similar_wards[[u]])==0)
+      {
+        mylist_similar_wards[[u]] <- NA
+      } else {
+        next
       }
     }
     
