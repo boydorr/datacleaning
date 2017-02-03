@@ -549,6 +549,15 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             }
           }
           
+          for(u in 1:length(mylist_respective_districts))
+          {
+            if(length(mylist_respective_districts[[u]])==0)
+            {
+              mylist_respective_districts[[u]] <- NA
+            } else {
+              next
+            }
+          }
           
           villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
           districts_identified_all <- plyr::ldply(mylist_respective_districts, cbind)
@@ -1498,6 +1507,28 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             }
           }
           
+          
+          for(u in 1:length(mylist_similar_villages))
+          {
+            if(length(mylist_similar_villages[[u]])==0)
+            {
+              mylist_similar_villages[[u]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          for(u in 1:length(mylist_respective_districts_v))
+          {
+            if(length(mylist_respective_districts_v[[u]])==0)
+            {
+              mylist_respective_districts_v[[u]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          
           villages_identified_all <- plyr::ldply(mylist_similar_villages, cbind)
           districts_identified_all <- plyr::ldply(mylist_respective_districts_v, cbind)
           correction_level <- rep("Village", nrow(villages_identified_all))
@@ -1569,6 +1600,26 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
             }
           }
           
+          
+          for(u in 1:length(mylist_similar_wards))
+          {
+            if(length(mylist_similar_wards[[u]])==0)
+            {
+              mylist_similar_wards[[u]] <- NA
+            } else {
+              next
+            }
+          }
+          
+          for(u in 1:length(mylist_respective_districts_w))
+          {
+            if(length(mylist_respective_districts_w[[u]])==0)
+            {
+              mylist_respective_districts_w[[u]] <- NA
+            } else {
+              next
+            }
+          }
           
           wards_identified_all <- plyr::ldply(mylist_similar_wards, cbind)
           districts_identified_all <- plyr::ldply(mylist_respective_districts_w, cbind)
