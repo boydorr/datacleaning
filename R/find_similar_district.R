@@ -219,7 +219,6 @@ find_similar_district <- function(dataframe, label, label_higher_level,
     n_obs[y] <- sum(!is.na(districts_correct_name[y,]))
   }
   
-  
   misspelled_districts <- check_df$respective_district
   misspelled_districts <- as.character(misspelled_districts)
   
@@ -263,6 +262,16 @@ find_similar_district <- function(dataframe, label, label_higher_level,
       missp <- c(missp, misspell)
       r_typo <- c(r_typo, typo_real)
       df_reg <- c(df_reg, reg_df)
+    }
+  }
+  
+  for(u in 1:length(mylist_similar_districts))
+  {
+    if(length(mylist_similar_districts[[u]])==0)
+    {
+      mylist_similar_districts[[u]] <- NA
+    } else {
+      next
     }
   }
   
