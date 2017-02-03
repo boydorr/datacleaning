@@ -205,6 +205,16 @@ find_similar_region <- function(dataframe, label, distnc,
     }
   }
   
+  for(u in 1:length(mylist_similar_regions))
+  {
+    if(length(mylist_similar_regions[[u]])==0)
+    {
+      mylist_similar_regions[[u]] <- NA
+    } else {
+      next
+    }
+  }
+  
   regions_identified_all <- plyr::ldply(mylist_similar_regions, cbind)
   
   corrections <- cbind(missp, regions_identified_all, r_typo)
