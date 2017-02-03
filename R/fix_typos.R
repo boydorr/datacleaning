@@ -135,10 +135,10 @@ fix_typos <- function(dataframe, typo_df, dataframe_label,
     ## loop through the rows of the dataframe
     for (i in 1:ntot)
     {
-      if (df_name_w[i] %in% name_typo_w)
-      { # if the name in the dataframe is also in the typos dataframe
+      if (df_name[i] %in% name_typo_w)
+      { # if the village name in the dataframe is in the ward typos dataframe
         ## find the row number of the typo in the typo dataframe
-        typo_index <- which(name_typo_w %in% df_name_w[i])
+        typo_index <- which(name_typo_w %in% df_name[i])
         Correct_w[i] <- name_correct_w[typo_index]
       } else { # if in the dataframe there is a legal name, copy it
         if (df_name_w[i] %in% legal_names_w)
