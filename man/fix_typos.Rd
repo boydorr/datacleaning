@@ -4,9 +4,10 @@
 \alias{fix_typos}
 \title{Correct any location typos in the project dataset}
 \usage{
-fix_typos(dataframe, typo_df, dataframe_label, typo_label_wrong,
-  typo_label_correct, legal_names, mixed_typo = F, dataframe_label_w = NA,
-  legal_names_w = NA)
+fix_typos(dataframe, typo_df, dataframe_label,
+  typo_label_wrong = "misspelling", typo_label_correct = "correct_name",
+  choice_number_label = "choice_number", legal_names, mixed_typo = F,
+  dataframe_label_w = NA, legal_names_w = NA)
 }
 \arguments{
 \item{dataframe}{the project dataframe with misspelled names to correct}
@@ -15,13 +16,15 @@ fix_typos(dataframe, typo_df, dataframe_label, typo_label_wrong,
 
 \item{dataframe_label}{the name of the dataframe's column in which to look for the misspellings. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
 
-\item{typo_label_wrong}{the name of the typos dataframe's column with the misspellings. NOTE: The label must be specified as "label"}
+\item{typo_label_wrong}{(default = "misspelling"). The name of the typos dataframe's column with the misspellings. NOTE: The label must be specified as "label"}
 
-\item{typo_label_correct}{the name of the typos dataframe's column with the respective corrections. NOTE: The label must be specified as "label"}
+\item{typo_label_correct}{(default = "correct_name"). The name of the typos dataframe's column with the respective corrections. NOTE: The label must be specified as "label"}
+
+\item{choice_number_label}{(default = "choice_number"). The name of the typos dataframe's column with the the hierarchical rank of each proposed correction (i.e. the "choice_number" column in the typo dataframe produced by the find_similar functions)}
 
 \item{legal_names}{a vector containing the legal village/ward/district/region names specified by the shapefile}
 
-\item{mixed_typo}{(default = FALSE). logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward}
+\item{mixed_typo}{(default = FALSE). Logical, TRUE/FALSE. Specifies whether the correction_level in the typos dataframe is only Village or both Village and Ward}
 
 \item{dataframe_label_w}{(default = NA). The name of the dataframe's column in which to look for the WARD misspellings. It must be used only when mixed_typo is TRUE}
 

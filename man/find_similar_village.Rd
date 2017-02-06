@@ -32,25 +32,34 @@ find_similar_village(dataframe, label, higher_level, label_higher_level,
 \value{
 a new dataframe with:  
   
-i) the village misspellings, stored in the first column ("misspelled_villages");
+i) the village misspellings, stored in the first column ("misspelling");
+ 
+ii) the similar matches, each one stored in a different row of the same column
+("correct_name"). The matches are ordered in the different rows according to their 
+level of similarity with the misspelled village.     
    
-ii) a column specifying the level of the proposed correction ("correction_level");
-   
-iii) all the similar matches, each one stored under a separate column
-("Correct_Name_1", "Correct_Name_2", etc.);
-
-iv) a column storing the region/district/ward information in the project dataframe associated
-to the misspelled village ("Region_in_df", "District_in_df" or "Ward_in_df"),
-depending on the higher_level argument specified in the function call;    
-     
-v) a series of columns (one for each similar match found) specifying the
-region/district/ward in the shapefile where each proposed correction
-is located ("Name_1_in_Region"/"Name_1_in_District"/"Name_1_in_Ward", etc.);   
-   
-vi) a column specifying whether the misspelling is a real alphanumeric typo
+iii) a column specifying whether the misspelling is a real alphanumeric typo
 or not ("real_typo);    
    
-vii) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
+iv) a column storing the region/district/ward information in the project dataframe associated
+to the misspelled village ("region_in_df", "district_in_df" or "ward_in_df"),
+depending on the higher_level argument specified in the function call. This 
+column is only returned when only_in_distr=FALSE;       
+      
+v) a column specifying the level of the proposed correction ("correction_level"). 
+When look_ward=TRUE, the level could be either "Village" or "Ward".  
+   
+vi) a column storing the level of similarity of the proposed corrections ("lev_sim");  
+  
+vii) a column specifying, for each misspelling, the hierarchical rank of each 
+proposed correction ("choice_number"), with choice_number=1 indicating the most 
+strongely suggested correction.  
+  
+viii) a column specifying the region/district/ward in the shapefile where each 
+proposed correction is located ("correct_name_in_region", "correct_name_in_district", 
+"correct_name_in_ward");     
+     
+ix) a column storing the location ID of each proposed correction ("Loc_ID").
 }
 \description{
 Identifies the misspelled village names in the project dataset

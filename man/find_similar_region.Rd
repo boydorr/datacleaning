@@ -21,17 +21,24 @@ find_similar_region(dataframe, label, distnc, shapefile,
 \value{
 a new dataframe with:  
   
-i) the region misspellings, stored in the first column ("misspelled_regions");
-
-ii) all the similar matches, each one stored under a separate column
-("Correct_Name_1", "Correct_Name_2", etc.);
-
+i) the region misspellings, stored in the first column ("misspelling");
+  
+ii) the similar matches, each one stored in a different row of the same column
+("correct_name"). The matches are ordered in the different rows according to their 
+level of similarity with the misspelled region;           
+   
 iii) a column specifying whether the misspelling is a real alphanumeric typo
-or not ("real_typo);
-
-iv) a column specifying the level of the proposed correction ("correction_level");
-
-v) all the location IDs, for each proposed correction ("Loc_ID_1", Loc_ID_2, etc.).
+or not ("real_typo);   
+         
+iv) a column storing the level of similarity of the proposed corrections ("lev_sim");   
+    
+v) a column specifying, for each misspelling, the hierarchical rank of each 
+proposed correction ("choice_number"), with choice_number=1 indicating the most 
+strongely suggested correction;      
+    
+vi) a column specifying the level of the proposed correction ("correction_level");
+ 
+vii) a column storing the location ID of each proposed correction ("Loc_ID").
 }
 \description{
 Identifies the misspelled region names in the project dataset
