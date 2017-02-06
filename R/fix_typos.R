@@ -45,7 +45,7 @@ fix_typos <- function(dataframe, typo_df, dataframe_label,
     name_correct <- names_correct_df[[typo_label_correct]]
     name_correct <- as.character(name_correct)
     
-    name_typo <- typo_df[[typo_label_wrong]]
+    name_typo <- names_correct_df[[typo_label_wrong]]
     name_typo <- as.character(name_typo)
 
     ## initialise a column with the right names
