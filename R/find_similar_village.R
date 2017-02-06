@@ -2637,6 +2637,35 @@ find_similar_village <- function(dataframe, label, higher_level, label_higher_le
     }
   }
   
+  if(look_ward==T)
+  {
+    
+    first_ward_choice <- dplyr::filter(corrections_II, choice_number=="1" & correction_level=="Ward")
+    
+    if(nrow(first_ward_choice)!=0)
+    {
+      v_is_w <- as.character()
+      resp_w <- as.character()
+      
+      for(i in 1:nrow(first_ward_choice))
+      {
+        v_is_w[i] <- as.character(first_ward_choice$misspelling[i])
+        resp_w[i] <- as.character(first_ward_choice$correct_name[i])
+        
+        warn_text <- paste("The closest match for the village", v_is_w[i], 
+                           "is the ward: ", resp_w[i])
+
+        warning(warn_text)
+      }
+      
+    } else {
+      corrections_II <- corrections_II
+    }
+    
+  } else {
+    corrections_II <- corrections_II
+  }
+  
   return(corrections_II)
 }
 
