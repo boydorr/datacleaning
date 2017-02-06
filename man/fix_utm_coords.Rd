@@ -42,3 +42,4 @@ fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y
 # Run without remove.extra
 fix_utm_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", remove.extra=FALSE)
 }
+

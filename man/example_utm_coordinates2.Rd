@@ -9,3 +9,4 @@
 This is an example set of UTM coordinates based in Tanzania with
 some NAs present.
 }
+

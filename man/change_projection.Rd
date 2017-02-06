@@ -30,3 +30,4 @@ proj.shapefile <- change_projection(example_utm36S_shapefile)
 # Check projection has been changed to Geographic WGS84
 sp::proj4string(proj.shapefile)
 }
+

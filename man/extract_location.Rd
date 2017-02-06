@@ -81,3 +81,4 @@ data("example_geog_coordinates")
 # Run function without updating dataframe with locations
 extract_location(dataframe=example_geog_coordinates, data.projection="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", x_label="Longitude", y_label="Latitude")
 }
+

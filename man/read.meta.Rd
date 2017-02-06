@@ -20,3 +20,4 @@ within the for() loop in the \code{load_metadata} Function. It also reads in
 Y/N as Yes/No, and fixes dates which are originally loaded incorrectly,
 presenting them in the ISO format (yyyy-mm-dd).
 }
+

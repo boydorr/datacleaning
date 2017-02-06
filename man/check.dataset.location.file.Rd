@@ -22,3 +22,4 @@ highlighting when this is the case; if a location file is present, checks
 that the file exists in the directory by matching them to names in the
 Metadata spreadsheet. This function does not need to be attached to an object.
 }
+

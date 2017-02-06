@@ -2,8 +2,8 @@
 % Please edit documentation in R/metadata_functions.R
 \name{check.dataset.folder}
 \alias{check.dataset.folder}
-\alias{check.dataset.name.raw}
 \alias{check.dataset.name.processed}
+\alias{check.dataset.name.raw}
 \title{check.dataset.folder}
 \usage{
 check.dataset.folder(pathway, metadata)
@@ -28,3 +28,4 @@ Checks the presence of folders and files wihin the directory by
 matching them to names in the Metadata spreadsheet. These function does not
 need to be attached to an object.
 }
+

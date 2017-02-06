@@ -3,7 +3,6 @@
 \docType{data}
 \name{village_2012}
 \alias{village_2012}
-\alias{village_2012}
 \title{Example Village Spatial Polygon Dataframe}
 \format{A Spatial Polygon Dataframe}
 \usage{
@@ -16,3 +15,4 @@ information on villages based in Tanzania.
 village_2012
 }
 \keyword{datasets}
+

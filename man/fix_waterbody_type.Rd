@@ -23,3 +23,4 @@ existing format to either Dam, River, Spring or Water Hole.
 If a cell is empty, there is no effect. The column should be checked after
 running the function to check for any which have been missed.
 }
+

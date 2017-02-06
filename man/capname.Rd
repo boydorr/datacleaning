@@ -17,3 +17,4 @@ Corrected string
 \description{
 Capitalises first letter of words in string, as for names.
 }
+

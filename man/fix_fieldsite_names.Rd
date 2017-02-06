@@ -20,3 +20,4 @@ Standardises fieldsite names to reduce risk of confusion.
 If a cell is empty, there is no effect. The column should be checked after
 running the function to check for any which have been missed.
 }
+

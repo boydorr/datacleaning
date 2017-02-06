@@ -13,8 +13,9 @@ Description: This package contains the useful helper functions that we are using
     to clean and process datasets we are working with.
 License: What license is it under?
 LazyData: TRUE
-RoxygenNote: 6.0.0
-Imports: dplyr,
+RoxygenNote: 5.0.1
+Imports:
+    dplyr,
     rgdal,
     sp,
     tibble,
