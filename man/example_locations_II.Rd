@@ -11,4 +11,3 @@ location data at village and district level. Wards and regions are NAs.
 This is designed to have mis-spellings and mistakes, mainly
 for use in "demo2.1" and "demo2.2".
 }
-

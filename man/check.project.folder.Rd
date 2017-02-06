@@ -18,4 +18,3 @@ more than one project in the sheet.
 Checks that there is only one project per Metadata spreadsheet.
 This function does not need to be attached to an object.
 }
-

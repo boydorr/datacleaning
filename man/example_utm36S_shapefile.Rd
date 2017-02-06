@@ -9,4 +9,3 @@
 This is an example Shapefile within Tanzania with a UTM 36S
 projection.
 }
-

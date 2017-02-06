@@ -24,4 +24,3 @@ This function reads in each spreadsheet individually and attaches
 the location tag in the same format as the \code{load_metadata} function:
 "Project.Name--Location.File.Name".
 }
-

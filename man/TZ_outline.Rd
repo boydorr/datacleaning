@@ -9,4 +9,3 @@
 This is an example Spatial Polygon Dataframe to be used for quick
 plotting of the Tanzania outline.
 }
-

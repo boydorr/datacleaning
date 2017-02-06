@@ -9,4 +9,3 @@
 This is an example set of Geographic WGS84 coordinates based in
 Tanzania.
 }
-

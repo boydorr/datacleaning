@@ -18,4 +18,3 @@ information for each Project.
 Reads in location spreadsheets in the .csv format; designed to
 be used within the for() loop in the \code{load_locatino} function.
 }
-

@@ -3,6 +3,7 @@
 \docType{data}
 \name{ward_2012}
 \alias{ward_2012}
+\alias{ward_2012}
 \title{Example Ward Spatial Polygon Dataframe}
 \format{A Spatial Polygon Dataframe}
 \usage{
@@ -15,4 +16,3 @@ information on wards based in Tanzania.
 ward_2012
 }
 \keyword{datasets}
-
