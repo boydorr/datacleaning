@@ -4,7 +4,8 @@
 \alias{identify_location}
 \title{Create a SpatialPolygonsDataFrame object of the regions/districts/wards/villages of interest}
 \usage{
-identify_location(dataframe, loc_type, label_ID, shapefile, plot = T)
+identify_location(dataframe, loc_type, label_ID, shapefile, plot_loc = T,
+  plot_additional = T)
 }
 \arguments{
 \item{dataframe}{the final dataframe returned by the function create_final_df}
@@ -15,11 +16,13 @@ identify_location(dataframe, loc_type, label_ID, shapefile, plot = T)
 
 \item{shapefile}{the shapefile object with Tanzania villages/wards/districts/regions, depending on the location type of interest}
 
-\item{plot}{optional, default = TRUE. Specifies whether the identified regions/districts/wards must be plotted.}
+\item{plot_loc}{optional, default = TRUE. Specifies whether the identified regions/districts/wards/villages must be plotted.}
+
+\item{plot_additional}{optional, default = TRUE. Specifies whether the identified additional regions/districts/wards must be plotted.}
 }
 \value{
 a SpatialPolygonsDataframe object (that can be easily exported as shapefile)
-(and a plot, if the argument plot=T) of the locations of interest.
+(and a plot, if the argument plot_loc=T) of the locations of interest.
 }
 \description{
 It creates (and plots, if plot=TRUE) a SpatialPolygonsDataFrame object of the regions/districts/wards/villages of interest
@@ -27,7 +30,12 @@ It creates (and plots, if plot=TRUE) a SpatialPolygonsDataFrame object of the re
 \details{
 \code{identify_location} uses the regions/districts/wards/villages information
 in the dataset returned by the function create_final_df to produce a SpatialPolygonsDataFrame 
-object of the regions/districts/wards/villages of interest.
+object of the regions/districts/wards/villages of interest. If a Village/Ward/District 
+was NA in the original dataset and plot_additional=T, the uncertainty associated 
+to it is represented by plotting its respective higher level element. For instance, 
+if a village is NA and plot_additional=T, the function will plot the WARD associated 
+to the NA village; if also the ward is NA, it will plot the District, and if 
+also the district is NA it will plot the respective Region.
 }
 \examples{
 #
