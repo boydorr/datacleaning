@@ -14,13 +14,15 @@
 #' in the dataset and the Location ID dataframe to produce the final Location dataset 
 #' that can be used for plotting. 
 #'  
-#' @return a new dataframe with 3 columns:   
+#' @return a new dataframe with 4 columns:   
 #'    
 #' i) Location: column storing the location names; 
 #'   
 #' ii) Location_Type: column storing the location type (i.e. Village/Ward/District/Region);  
 #'   
-#' iii) Loc_ID: the unique ID associated to each location  
+#' iii) Loc_ID: the unique ID associated to each location 
+#'   
+#' iv) Real_Loc_Type:   
 #'    
 #' @export
 #'
@@ -29,7 +31,7 @@
 #'
 
 create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_distr, 
-                        corr_df_reg, ID_df)
+                            corr_df_reg, ID_df)
   
 {
   corrected_df <- unique(corrected_df)
@@ -94,20 +96,23 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
   ## list to store the indices
   mylist_nums <- vector('list', ntot)
   
+  
   # identify the relevant rows 
   for(i in 1:ntot)
   {
     # villages
-    if(is.na(vill[i])==F)
+    if(!is.na(vill[i]))
     {
       # villages
       mylist_villages[[i]] <- which(vill_ID==vill[i])
+      
     } else {
       mylist_villages[[i]] <- c(1:length(vill_ID))
+      
     }
     
     # ward
-    if(is.na(ward[i])==F)
+    if(!is.na(ward[i]))
     {
       mylist_wards[[i]] <- which(ward_ID==ward[i])
     } else {
@@ -115,7 +120,7 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
     }
     
     # districts
-    if(is.na(dis[i])==F)
+    if(!is.na(dis[i]))
     {
       mylist_districts[[i]] <- which(dis_ID==dis[i])
     } else {
@@ -123,7 +128,7 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
     }
     
     # regions
-    if(is.na(reg[i])==F)
+    if(!is.na(reg[i]))
     {
       mylist_regions[[i]] <- which(reg_ID==reg[i])
     } else {
@@ -142,7 +147,13 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
   code_d <- rep(NA, ntot)
   code_r <- rep(NA, ntot)
   
+  
   # VILLAGE
+  
+  real_loc_v <- as.character()
+  real_loc_type_v <- as.character()
+  real_code_v <- as.character()
+  
   for(h in 1:ntot)
   {
     if(length(mylist_nums[[h]])==0)
@@ -155,10 +166,40 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
       if(length(mylist_nums[[h]])==1)
       {
         ## if there is no village info in the original dataset
-        if(is.na(vill[h])==T)
+        if(is.na(vill[h]))
         {
           ## no chance of retrieving that info
           code_v[h] <- NA
+          
+          if(!is.na(ward[h]))
+          {
+            real_loc_type_v[h] <- "Ward"
+            real_loc_v[h] <- ward[h]
+            real_code_v[h] <- ward_ID_code[mylist_nums[[h]]]
+            
+          } else {
+            
+            if(!is.na(dis[h]))
+            {
+              real_loc_type_v[h] <- "District"
+              real_loc_v[h] <- dis[h]
+              real_code_v[h] <- dis_ID_code[mylist_nums[[h]]]
+              
+            } else {
+              
+              if(!is.na(reg[h]))
+              {
+                real_loc_type_v[h] <- "Region"
+                real_loc_v[h] <- reg[h]
+                real_code_v[h] <- reg_ID_code[mylist_nums[[h]]]
+                
+              } else {
+                real_loc_type_v[h] <- NA
+                real_loc_v[h] <- NA
+                real_code_v[h] <- NA
+              }
+            }
+          }
           
         } else {
           ## otherwise, take note of the village name
@@ -173,6 +214,54 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
           ## no chance of retrieving that info
           code_v[h] <- NA
           
+          if(!is.na(ward[h]))
+          {
+            real_loc_type_v[h] <- "Ward"
+            real_loc_v[h] <- ward[h]
+            
+            if(length(unique(ward_ID_code[mylist_nums[[h]]])==1))
+            {
+              real_code_v[h] <- unique(ward_ID_code[mylist_nums[[h]]])
+            } else {
+              real_code_v[h] <- NA
+            }
+            
+          } else {
+            
+            if(!is.na(dis[h]))
+            {
+              real_loc_type_v[h] <- "District"
+              real_loc_v[h] <- dis[h]
+              
+              if(length(unique(dis_ID_code[mylist_nums[[h]]])==1))
+              {
+                real_code_v[h] <- unique(dis_ID_code[mylist_nums[[h]]])
+              } else {
+                real_code_v[h] <- NA
+              }
+              
+            } else {
+              
+              if(!is.na(reg[h]))
+              {
+                real_loc_type_v[h] <- "Region"
+                real_loc_v[h] <- reg[h]
+                
+                if(length(unique(reg_ID_code[mylist_nums[[h]]])==1))
+                {
+                  real_code_v[h] <- unique(reg_ID_code[mylist_nums[[h]]])
+                } else {
+                  real_code_v[h] <- NA
+                }
+                
+              } else {
+                real_loc_type_v[h] <- NA
+                real_loc_v[h] <- NA
+                real_code_v[h] <- NA
+              }
+            }
+          }
+          
         } else { ## otherwise
           if(length(unique(vill_ID_code[mylist_nums[[h]]])==1)) ## if multiple numbers indicate the same code
           {
@@ -183,7 +272,6 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
             code_v[h] <- NA
           }
         }
-        
       }
     }
   }
@@ -193,102 +281,237 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
   colnames(vill_df)[1] <- "Location"
   colnames(vill_df)[2] <- "Location_Type"
   colnames(vill_df)[3] <- "Loc_ID"
+  vill_df$Real_Loc_Type <- c(rep("Village", vill_length))
   
+  add_vill_df <- cbind(real_loc_v, real_loc_type_v, real_code_v)
+  colnames(add_vill_df)[1] <- "Location"
+  colnames(add_vill_df)[2] <- "Real_Loc_Type"
+  colnames(add_vill_df)[3] <- "Loc_ID"
+  
+  Loc_Type_v <- c(rep("Village", nrow(add_vill_df)))
+  add_vill_df <- cbind(add_vill_df, Loc_Type_v)
+  colnames(add_vill_df)[4] <- "Location_Type"
+  add_vill_df <- as.data.frame(add_vill_df)
+  
+  ## The final dataframe without the uninformative rows
+  nocol <- c("Location_Type")
+  nonums <- which(names(add_vill_df) %in% nocol)
+  add_vill_df <- add_vill_df[rowSums(!is.na(add_vill_df[,-nonums])) > 0, ]
+  
+  vill_df <- plyr::rbind.fill(vill_df, add_vill_df)
+  vill_df <- as.data.frame(vill_df)
+  
+  
+  ########
   # WARD
-  for(w in 1:ntot)
+  
+  real_loc_w <- as.character()
+  real_loc_type_w <- as.character()
+  real_code_w <- as.character()
+  
+  for(h in 1:ntot)
   {
-    if(length(mylist_nums[[w]])==0)
+    if(length(mylist_nums[[h]])==0)
     {
       next
       
     } else {
       
       ## if the intersection comprised only one number:
-      if(length(mylist_nums[[w]])==1)
+      if(length(mylist_nums[[h]])==1)
       {
-        ## if there is no village info in the original dataset
-        if(is.na(ward[w])==T)
+        ## if there is no ward info in the original dataset
+        if(is.na(ward[h]))
         {
           ## no chance of retrieving that info
-          code_w[w] <- NA
+          code_w[h] <- NA
+          
+          if(!is.na(dis[h]))
+          {
+            real_loc_type_w[h] <- "District"
+            real_loc_w[h] <- dis[h]
+            real_code_w[h] <- dis_ID_code[mylist_nums[[h]]]
+            
+          } else {
+            
+            if(!is.na(reg[h]))
+            {
+              real_loc_type_w[h] <- "Region"
+              real_loc_w[h] <- reg[h]
+              real_code_w[h] <- reg_ID_code[mylist_nums[[h]]]
+              
+            } else {
+              real_loc_type_w[h] <- NA
+              real_loc_w[h] <- NA
+              real_code_w[h] <- NA
+            }
+          }
           
         } else {
-          ## otherwise, take note of the village name
-          code_w[w] <- ward_ID_code[mylist_nums[[w]]]
+          ## otherwise, take note of the ward code
+          code_w[h] <- ward_ID_code[mylist_nums[[h]]]
         }
         
       } else {  ## if the intersection comprised more numbers:
         
-        ## if there is no village info in the original dataset
-        if(is.na(ward[w])==T)
+        ## if there is no ward info in the original dataset
+        if(is.na(ward[h])==T)
         {
           ## no chance of retrieving that info
-          code_w[w] <- NA
+          code_w[h] <- NA
+          
+          if(!is.na(dis[h]))
+          {
+            real_loc_type_w[h] <- "District"
+            real_loc_w[h] <- dis[h]
+            if(length(unique(dis_ID_code[mylist_nums[[h]]])==1))
+            {
+              real_code_w[h] <- unique(dis_ID_code[mylist_nums[[h]]])
+            } else {
+              real_code_w[h] <- NA
+            }
+            
+          } else {
+            
+            if(!is.na(reg[h]))
+            {
+              real_loc_type_w[h] <- "Region"
+              real_loc_w[h] <- reg[h]
+              if(length(unique(reg_ID_code[mylist_nums[[h]]])==1))
+              {
+                real_code_w[h] <- unique(reg_ID_code[mylist_nums[[h]]])
+              } else {
+                real_code_w[h] <- NA
+              }
+              
+            } else {
+              real_loc_type_w[h] <- NA
+              real_loc_w[h] <- NA
+              real_code_w[h] <- NA
+            }
+          }
           
         } else { ## otherwise
-          if(length(unique(ward_ID_code[mylist_nums[[w]]])==1)) ## if multiple numbers indicate the same code
+          
+          if(length(unique(ward_ID_code[mylist_nums[[h]]])==1)) ## if multiple numbers indicate the same code
           {
             ## take note of the village name
-            code_w[w] <- unique(ward_ID_code[mylist_nums[[w]]])
+            code_w[h] <- unique(ward_ID_code[mylist_nums[[h]]])
             
           } else { ## if multiple numbers indicate different names
-            code_w[w] <- NA
+            code_w[h] <- NA
           }
         }
-        
       }
     }
   }
+  
   Location_Type_w <- c(rep("Ward", ward_length))
   ward_df <- cbind(ward, Location_Type_w, code_w)
   ward_df <- as.data.frame(ward_df)
   colnames(ward_df)[1] <- "Location"
   colnames(ward_df)[2] <- "Location_Type"
   colnames(ward_df)[3] <- "Loc_ID"
+  ward_df$Real_Loc_Type <- c(rep("Ward", ward_length))
+  
+  add_ward_df <- cbind(real_loc_w, real_loc_type_w, real_code_w)
+  colnames(add_ward_df)[1] <- "Location"
+  colnames(add_ward_df)[2] <- "Real_Loc_Type"
+  colnames(add_ward_df)[3] <- "Loc_ID"
+  
+  Loc_Type_w <- c(rep("Ward", nrow(add_ward_df)))
+  add_ward_df <- cbind(add_ward_df, Loc_Type_w)
+  colnames(add_ward_df)[4] <- "Location_Type"
+  add_ward_df <- as.data.frame(add_ward_df)
+  
+  ## The final dataframe without the uninformative rows
+  nocol <- c("Location_Type")
+  nonums <- which(names(add_ward_df) %in% nocol)
+  add_ward_df <- add_ward_df[rowSums(!is.na(add_ward_df[,-nonums])) > 0, ]
+  
+  ward_df <- plyr::rbind.fill(ward_df, add_ward_df)
+  ward_df <- as.data.frame(ward_df)
   
   
+  ########
   # DISTRICT
-  for(d in 1:ntot)
+  
+  real_loc_d <- as.character()
+  real_loc_type_d <- as.character()
+  real_code_d <- as.character()
+  
+  for(h in 1:ntot)
   {
-    if(length(mylist_nums[[d]])==0)
+    if(length(mylist_nums[[h]])==0)
     {
       next
       
     } else {
       
       ## if the intersection comprised only one number:
-      if(length(mylist_nums[[d]])==1)
+      if(length(mylist_nums[[h]])==1)
       {
-        ## if there is no village info in the original dataset
-        if(is.na(dis[d])==T)
+        ## if there is no dis info in the original dataset
+        if(is.na(dis[h]))
         {
           ## no chance of retrieving that info
-          code_d[d] <- NA
+          code_d[h] <- NA
+          
+          if(!is.na(reg[h]))
+          {
+            real_loc_type_d[h] <- "Region"
+            real_loc_d[h] <- reg[h]
+            real_code_d[h] <- reg_ID_code[mylist_nums[[h]]]
+            
+          } else {
+            real_loc_type_d[h] <- NA
+            real_loc_d[h] <- NA
+            real_code_d[h] <- NA
+          }
           
         } else {
-          ## otherwise, take note of the village name
-          code_d[d] <- dis_ID_code[mylist_nums[[d]]]
+          
+          ## otherwise, take note of the district code
+          code_d[h] <- dis_ID_code[mylist_nums[[h]]]
+          
         }
-        
       } else {  ## if the intersection comprised more numbers:
         
-        ## if there is no village info in the original dataset
-        if(is.na(dis[d])==T)
+        ## if there is no dis info in the original dataset
+        if(is.na(dis[h]))
         {
           ## no chance of retrieving that info
-          code_d[d] <- NA
+          code_d[h] <- NA
+          
+          if(!is.na(reg[h]))
+          {
+            real_loc_type_d[h] <- "Region"
+            real_loc_d[h] <- reg[h]
+            
+            if(length(unique(reg_ID_code[mylist_nums[[h]]])==1))
+            {
+              real_code_d[h] <- unique(reg_ID_code[mylist_nums[[h]]])
+            } else {
+              real_code_d[h] <- NA
+            }
+            
+          } else {
+            real_loc_type_w[h] <- NA
+            real_loc_w[h] <- NA
+            real_code_w[h] <- NA
+          }
           
         } else { ## otherwise
-          if(length(unique(dis_ID_code[mylist_nums[[d]]])==1)) ## if multiple numbers indicate the same code
+          
+          if(length(unique(dis_ID_code[mylist_nums[[h]]])==1)) ## if multiple numbers indicate the same code
           {
             ## take note of the village name
-            code_d[d] <- unique(dis_ID_code[mylist_nums[[d]]])
+            code_d[h] <- unique(dis_ID_code[mylist_nums[[h]]])
             
           } else { ## if multiple numbers indicate different names
-            code_d[d] <- NA
+            code_d[h] <- NA
           }
         }
-        
       }
     }
   }
@@ -299,8 +522,28 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
   colnames(dis_df)[1] <- "Location"
   colnames(dis_df)[2] <- "Location_Type"
   colnames(dis_df)[3] <- "Loc_ID"
+  dis_df$Real_Loc_Type <- c(rep("District", dis_length))
   
+  add_dis_df <- cbind(real_loc_d, real_loc_type_d, real_code_d)
+  colnames(add_dis_df)[1] <- "Location"
+  colnames(add_dis_df)[2] <- "Real_Loc_Type"
+  colnames(add_dis_df)[3] <- "Loc_ID"
   
+  Loc_Type_d <- c(rep("District", nrow(add_dis_df)))
+  add_dis_df <- cbind(add_dis_df, Loc_Type_d)
+  colnames(add_dis_df)[4] <- "Location_Type"
+  add_dis_df <- as.data.frame(add_dis_df)
+  
+  ## The final dataframe without the uninformative rows
+  nocol <- c("Location_Type")
+  nonums <- which(names(add_dis_df) %in% nocol)
+  add_dis_df <- add_dis_df[rowSums(!is.na(add_dis_df[,-nonums])) > 0, ]
+  
+  dis_df <- plyr::rbind.fill(dis_df, add_dis_df)
+  dis_df <- as.data.frame(dis_df)
+  
+
+  ########
   # REGION
   for(r in 1:ntot)
   {
@@ -353,13 +596,15 @@ create_final_df <- function(corrected_df, corr_df_vill, corr_df_ward, corr_df_di
   colnames(reg_df)[1] <- "Location"
   colnames(reg_df)[2] <- "Location_Type"
   colnames(reg_df)[3] <- "Loc_ID"
+  reg_df$Real_Loc_Type <- c(rep("Region", reg_length))
   
   
+  ## the whole df
   final_df <- plyr::rbind.fill(vill_df, ward_df, dis_df, reg_df)
   final_df <- as.data.frame(final_df)
   
   ## The final dataframe without the uninformative rows
-  nocol <- c("Location_Type")
+  nocol <- c("Location_Type", "Real_Loc_Type")
   nonums <- which(names(final_df) %in% nocol)
   final_df <- final_df[rowSums(!is.na(final_df[,-nonums])) > 0, ]
   

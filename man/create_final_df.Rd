@@ -21,13 +21,15 @@ create_final_df(corrected_df, corr_df_vill, corr_df_ward, corr_df_distr,
 \item{ID_df}{the Location_ID_df, which is available in the datacleaning package}
 }
 \value{
-a new dataframe with 3 columns:   
+a new dataframe with 4 columns:   
    
 i) Location: column storing the location names; 
   
 ii) Location_Type: column storing the location type (i.e. Village/Ward/District/Region);  
   
-iii) Loc_ID: the unique ID associated to each location
+iii) Loc_ID: the unique ID associated to each location 
+  
+iv) Real_Loc_Type:
 }
 \description{
 Takes as input the corrected dataframe produced by fill_names and 
