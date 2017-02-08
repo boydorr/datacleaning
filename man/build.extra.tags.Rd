@@ -21,4 +21,3 @@ district and region) in the format of: V--Region--Distict--Ward--Village;
 W--Region--Distict--Ward etc... These are then attached to the dataframe as
 new columns.
 }
-

@@ -48,4 +48,3 @@ of the same type as the one returned by find_similar_village, find_similar_ward,
 #
 
 }
-

@@ -80,4 +80,3 @@ function can be used as argument of fix_typos.
 #
 
 }
-

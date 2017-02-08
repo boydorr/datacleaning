@@ -2,8 +2,8 @@
 % Please edit documentation in R/datacleaning-package.R
 \docType{package}
 \name{datacleaning-package}
-\alias{datacleaning}
 \alias{datacleaning-package}
+\alias{datacleaning}
 \title{datacleaning}
 \description{
 The \code{datacleaning} package provides a variety of cleaning
@@ -19,4 +19,3 @@ Richard Reeve, Rachel Steenson, Francesco Ventura
 \cr
 Maintainer: Richard Reeve <richard.reeve@glasgow.ac.uk>
 }
-

@@ -9,4 +9,3 @@
 This is an example Spatial Polygon Dataframe containing
 information on districts based in Tanzania.
 }
-

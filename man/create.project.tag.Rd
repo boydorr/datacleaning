@@ -17,4 +17,3 @@ each row
 Creates a project tag for each dataset by stringing together the
 Project Name, Dataset Folder and Dataset Name, and removes any file extensions.
 }
-

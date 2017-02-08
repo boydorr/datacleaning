@@ -8,4 +8,3 @@
 \description{
 This is an example set of UTM coordinates based in Tanzania.
 }
-
