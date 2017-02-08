@@ -152,7 +152,10 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
       add_bounds <- F
     }
     
+  } else {
+    add_bounds <- F 
   } 
+  
   
   if(plot_loc==T)
   {  
@@ -160,6 +163,7 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
     return(loc_subset)
     
   } else {
+    plot_additional = F
     return(loc_subset)
   }
 }
