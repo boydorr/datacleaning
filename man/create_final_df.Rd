@@ -21,24 +21,32 @@ create_final_df(corrected_df, corr_df_vill, corr_df_ward, corr_df_distr,
 \item{ID_df}{the Location_ID_df, which is available in the datacleaning package}
 }
 \value{
-a new dataframe with 4 columns:   
-   
-i) Location: column storing the location names; 
-  
-ii) Location_Type: column storing the location type (i.e. Village/Ward/District/Region);  
-  
-iii) Loc_ID: the unique ID associated to each location 
-  
-iv) Real_Loc_Type:
+a new dataframe with 4 columns:
+
+i) Location: column storing the location names;
+
+ii) Location_Type: column storing the location type (i.e. Village/Ward/District/Region);
+
+iii) Loc_ID: the unique ID associated to each location
+
+iv) Real_Loc_Type: the real location type of the higher element that was used
+instead of the lower level NA.
 }
 \description{
-Takes as input the corrected dataframe produced by fill_names and 
+Takes as input the corrected dataframe produced by fill_names and
 the Location_ID_df to produce the final location dataframe.
 }
 \details{
 \code{create_final_df} uses the CORRECT village/ward/district/region names
-in the dataset and the Location ID dataframe to produce the final Location dataset 
-that can be used for plotting.
+in the dataset and the Location ID dataframe to produce the final Location dataset
+that can be used for plotting. If a village/ward/district is NA, that is taken
+into account by adding to the dataframe the closest higher level information
+available ( for instance, ward, district or region information), associated to
+the NA. A new row will be added to the dataframe, which will have the
+ward/district/region info stored under "Location", the same "Location_Type" as
+the NA value, the real location type (Ward/District/Region) of the higher level
+element stored in the "Real_Loc_Type" column and the respective location ID stored
+in the "Loc_ID" column.
 }
 \examples{
 #
