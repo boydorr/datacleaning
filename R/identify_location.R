@@ -115,7 +115,8 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
   ## create the final shapefile with only the identified locations
   loc_subset <- shapefile[final_loc_rows,]
   
-
+  add_bounds <- T
+    
   if(plot_additional==T)
   {
     plot_loc <- T
@@ -127,31 +128,35 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
     } else {
       ## do nothing
       loc_subset <- loc_subset
+      add_bounds <- F
     }
     
     if("District" %in% unique(additional_loc$Real_Loc_Type))
     {
-      sp::plot(loc_subset_d, col="darkolivegreen4", add=T)
+      sp::plot(loc_subset_d, col="darkolivegreen4", add=add_bounds)
+      add_bounds <- T
       
     } else {
       ## do nothing
       loc_subset <- loc_subset
+      add_bounds <- F
     }
     
     if("Ward" %in% unique(additional_loc$Real_Loc_Type))
     {
-      sp::plot(loc_subset_w, col="darkolivegreen3", add=T)
-      
+      sp::plot(loc_subset_w, col="darkolivegreen3", add=add_bounds)
+      add_bounds <- T
     } else {
       ## do nothing
       loc_subset <- loc_subset
+      add_bounds <- F
     }
     
   } 
   
   if(plot_loc==T)
   {  
-    sp::plot(loc_subset, col="darkolivegreen1", add=T)
+    sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
     return(loc_subset)
     
   } else {
