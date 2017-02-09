@@ -8,6 +8,7 @@
 #' @param  shapefile the shapefile object with Tanzania villages/wards/districts/regions, depending on the location type of interest 
 #' @param  plot_loc optional, default = TRUE. Specifies whether the identified regions/districts/wards/villages must be plotted.
 #' @param  plot_additional optional, default = TRUE. Specifies whether the identified additional regions/districts/wards must be plotted.
+#' @param  overlay_to_outline optional, default = FALSE. Specifies whether the identified additional regions/districts/wards must be plotted on top of an already plotted outline.
 #'
 #' @details \code{identify_location} uses the regions/districts/wards/villages information
 #' in the dataset returned by the function create_final_df to produce a SpatialPolygonsDataFrame 
@@ -28,7 +29,7 @@
 #'
 
 identify_location <- function(dataframe, loc_type, label_ID, shapefile, 
-                              plot_loc=T, plot_additional=T)
+                              plot_loc=T, plot_additional=T, overlay_to_outline=F)
 {
   
   ## filter the loc_df by location type
@@ -115,55 +116,109 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
   ## create the final shapefile with only the identified locations
   loc_subset <- shapefile[final_loc_rows,]
   
-  add_bounds <- T
-    
-  if(plot_additional==T)
-  {
-    plot_loc <- T
-    
-    if("Region" %in% unique(additional_loc$Real_Loc_Type))
-    {
-      sp::plot(loc_subset_r, col="darkolivegreen")
-      
-    } else {
-      ## do nothing
-      loc_subset <- loc_subset
-      add_bounds <- F
-    }
-    
-    if("District" %in% unique(additional_loc$Real_Loc_Type))
-    {
-      sp::plot(loc_subset_d, col="darkolivegreen4", add=add_bounds)
-      add_bounds <- T
-      
-    } else {
-      ## do nothing
-      loc_subset <- loc_subset
-      add_bounds <- F
-    }
-    
-    if("Ward" %in% unique(additional_loc$Real_Loc_Type))
-    {
-      sp::plot(loc_subset_w, col="darkolivegreen3", add=add_bounds)
-      add_bounds <- T
-    } else {
-      ## do nothing
-      loc_subset <- loc_subset
-      add_bounds <- F
-    }
-    
-  } else {
-    add_bounds <- F 
-  } 
+  tz_outline <- datacleaning::TZ_outline
   
   
   if(plot_loc==T)
   {  
-    sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
-    return(loc_subset)
+    if(plot_additional==T) # if plot_additional is TRUE
+    {
+      if(overlay_to_outline==T)
+      {
+        sp::plot(tz_outline)
+        add_bounds <- T
+        
+        if("Region" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_r, col="darkolivegreen", add=add_bounds)
+          add_bounds <- T
+          
+        } else {
+          ## do nothing
+          loc_subset <- loc_subset
+        }
+        
+        if("District" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_d, col="darkolivegreen4", add=add_bounds)
+          add_bounds <- T
+          
+        } else {
+          ## do nothing
+          loc_subset <- loc_subset
+        }
+        
+        if("Ward" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_w, col="darkolivegreen3", add=add_bounds)
+          add_bounds <- T
+        } else {
+          ## do nothing
+          loc_subset <- loc_subset
+        }
+        
+        sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
+        
+      } else {
+        
+        add_bounds <- F
+        
+        if("Region" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_r, col="darkolivegreen", add=add_bounds)
+          add_bounds <- T
+          
+        } else {
+          ## do nothing
+          add_bounds <- F
+          loc_subset <- loc_subset
+        }
+        
+        if("District" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_d, col="darkolivegreen4", add=add_bounds)
+          add_bounds <- T
+          
+        } else {
+          ## do nothing
+          add_bounds <- F
+          loc_subset <- loc_subset
+        }
+        
+        if("Ward" %in% unique(additional_loc$Real_Loc_Type))
+        {
+          sp::plot(loc_subset_w, col="darkolivegreen3", add=add_bounds)
+          add_bounds <- T
+        } else {
+          ## do nothing
+          add_bounds <- F
+          loc_subset <- loc_subset
+        }
+        
+        sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
+        
+      }
+ 
+    } else { # if plot_additional is FALSE
+      
+      if(overlay_to_outline==T)
+      {
+        add_bounds <- T
+        sp::plot(tz_outline)
+        sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
+        
+      } else {
+        add_bounds <- F
+        sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
+        
+      }
+      
+      return(loc_subset)
+    } 
     
   } else {
     plot_additional = F
+    overlay_to_outline= F
     return(loc_subset)
   }
 }

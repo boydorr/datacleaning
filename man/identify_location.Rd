@@ -5,7 +5,7 @@
 \title{Create a SpatialPolygonsDataFrame object of the regions/districts/wards/villages of interest}
 \usage{
 identify_location(dataframe, loc_type, label_ID, shapefile, plot_loc = T,
-  plot_additional = T)
+  plot_additional = T, overlay_to_outline = F)
 }
 \arguments{
 \item{dataframe}{the final dataframe returned by the function create_final_df}
@@ -19,6 +19,8 @@ identify_location(dataframe, loc_type, label_ID, shapefile, plot_loc = T,
 \item{plot_loc}{optional, default = TRUE. Specifies whether the identified regions/districts/wards/villages must be plotted.}
 
 \item{plot_additional}{optional, default = TRUE. Specifies whether the identified additional regions/districts/wards must be plotted.}
+
+\item{overlay_to_outline}{optional, default = FALSE. Specifies whether the identified additional regions/districts/wards must be plotted on top of an already plotted outline.}
 }
 \value{
 a SpatialPolygonsDataframe object (that can be easily exported as shapefile)
