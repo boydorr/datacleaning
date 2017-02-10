@@ -104,8 +104,6 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
     }
   }
   
-  
-  
   ## extract the unique Loc_ID
   loc_code <- as.character(loc_df[[label_ID]])
   loc_code <- unique(loc_code)
@@ -196,7 +194,7 @@ identify_location <- function(dataframe, loc_type, label_ID, shapefile,
         }
         
         sp::plot(loc_subset, col="darkolivegreen1", add=add_bounds)
-        
+        return(loc_subset)
       }
  
     } else { # if plot_additional is FALSE
