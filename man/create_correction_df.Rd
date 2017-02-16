@@ -4,7 +4,8 @@
 \alias{create_correction_df}
 \title{Produce a table with all the misspellings and the respective corrections}
 \usage{
-create_correction_df(processed_df, processed_df_raw_col, processed_df_corr_col)
+create_correction_df(processed_df, processed_df_raw_col, processed_df_corr_col,
+  extra_cols = F, reg_col = NA, dis_col = NA, ward_col = NA)
 }
 \arguments{
 \item{processed_df}{the processed project dataframe with raw names and the respective corrections.}
@@ -12,10 +13,19 @@ create_correction_df(processed_df, processed_df_raw_col, processed_df_corr_col)
 \item{processed_df_raw_col}{the name of the dataframe's column in which to look for the raw names. NOTE: The label must be specified as "label" (i.e. "village", for instance)}
 
 \item{processed_df_corr_col}{the name of the dataframe's column in which to look for the corrected names. NOTE: The label must be specified as "label" (i.e. "correct_village", for instance)}
+
+\item{extra_cols}{optional, default is FALSE. If TRUE, the function will add extra columns (storing the additional ward/district/region information) to the resulting dataframe}
+
+\item{reg_col}{optional, default == NA. It is only sensible when extra_cols==T. The name of the dataframe's column in which to look for the region information. NOTE: The label must be specified as "label" (i.e. "correct_region", for instance)}
+
+\item{dis_col}{optional, default == NA. It is only sensible when extra_cols==T. The name of the dataframe's column in which to look for the district information. NOTE: The label must be specified as "label" (i.e. "correct_district", for instance)}
+
+\item{ward_col}{optional, default == NA. It is only sensible when extra_cols==T. The name of the dataframe's column in which to look for the ward information. NOTE: The label must be specified as "label" (i.e. "correct_ward", for instance)}
 }
 \value{
-a data frame with two columns. The first column contains the misspellings 
-and the second column stores the respective correction.
+If extra_cols=F, a data frame with two columns. The first column contains the misspellings 
+and the second column stores the respective correction. If extra_cols=T, the function 
+will add the extra columns containing the additional ward/district/region information.
 }
 \description{
 Create a dataframe with all the misspellings and the respective 
