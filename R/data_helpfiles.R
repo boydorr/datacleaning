@@ -40,9 +40,41 @@ NULL
 NULL
 
 #' @name TZ_outline
-#' @title Example Tanzania Outline Spatial Polygon Dataframe
-#' @description This is an example Spatial Polygon Dataframe to be used for quick
+#' @title Tanzania Outline Spatial Polygon Dataframe
+#' @description This is a Spatial Polygon Dataframe to be used for quick
 #' plotting of the Tanzania outline.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name TZ_region_outline
+#' @title Tanzania Region Outline Spatial Polygon Dataframe
+#' @description This is a Spatial Polygon Dataframe to be used for quick
+#' plotting of the Tanzania regions.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name TZ_district_outline
+#' @title Tanzania District Outline Spatial Polygon Dataframe
+#' @description This is a Spatial Polygon Dataframe to be used for quick
+#' plotting of the Tanzania districts.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name TZ_ward_outline
+#' @title Tanzania Ward Outline Spatial Polygon Dataframe
+#' @description This is a Spatial Polygon Dataframe to be used for quick
+#' plotting of the Tanzania wards.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
+#' @name TZ_village_outline
+#' @title Tanzania Village Outline Spatial Polygon Dataframe
+#' @description This is a Spatial Polygon Dataframe to be used for quick
+#' plotting of the Tanzania villages.
 #' @docType data
 #' @format A Spatial Polygon Dataframe
 NULL

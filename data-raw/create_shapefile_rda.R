@@ -44,6 +44,33 @@ sp::proj4string(TZ_outline) <- Geoproj
 # export it and save it as a .rda object in the "data" folder
 devtools::use_data(TZ_outline, overwrite = TRUE)
 
+# Tanzania regions outline shapefile
+TZ_region_outline <- rgdal::readOGR(".","TZ_Region_Outline")
+# transform to geo projection (lat long)
+sp::proj4string(TZ_region_outline) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_region_outline, overwrite = TRUE)
+
+# Tanzania districts outline shapefile
+TZ_district_outline <- rgdal::readOGR(".","TZ_District_Outline")
+# transform to geo projection (lat long)
+sp::proj4string(TZ_district_outline) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_district_outline, overwrite = TRUE)
+
+# Tanzania wards outline shapefile
+TZ_ward_outline <- rgdal::readOGR(".","TZ_Ward_Outline")
+# transform to geo projection (lat long)
+sp::proj4string(TZ_ward_outline) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_ward_outline, overwrite = TRUE)
+
+# Tanzania village outline shapefile
+TZ_village_outline <- rgdal::readOGR(".","TZ_Village_Outline")
+# transform to geo projection (lat long)
+sp::proj4string(TZ_village_outline) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_village_outline, overwrite = TRUE)
 
 # Now move to the root of the package
 devtools::wd(".")

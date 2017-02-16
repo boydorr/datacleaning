@@ -3,9 +3,9 @@
 \docType{data}
 \name{TZ_outline}
 \alias{TZ_outline}
-\title{Example Tanzania Outline Spatial Polygon Dataframe}
+\title{Tanzania Outline Spatial Polygon Dataframe}
 \format{A Spatial Polygon Dataframe}
 \description{
-This is an example Spatial Polygon Dataframe to be used for quick
+This is a Spatial Polygon Dataframe to be used for quick
 plotting of the Tanzania outline.
 }
