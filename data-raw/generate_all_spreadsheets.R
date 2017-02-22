@@ -9,7 +9,7 @@
 server="Z:/"
 
 # mac server pathway:
-server=
+# server=
 
 #----------#
 # Metadata #
@@ -20,7 +20,7 @@ server=
 metadata.df <- load_metadata(pathway=server)
 
 # Produce the correct file path to save on the server
-save.path = paste(server, "Metadata/AllMetadataDates.csv", sep="")
+save.path = paste(server, "Metadata/AllMetadata.csv", sep="")
 
 # Save file on server
 write.csv(metadata.df, file = save.path, row.names=FALSE)
