@@ -72,6 +72,19 @@ sp::proj4string(TZ_village_outline) <- Geoproj
 # export it and save it as a .rda object in the "data" folder
 devtools::use_data(TZ_village_outline, overwrite = TRUE)
 
+# Tanzania all boundaries shapefile
+TZ_all_bound <- rgdal::readOGR(".","TZ_all_boundaries")
+colnames(TZ_all_bound@data)[1] <- "Region_Nam"
+colnames(TZ_all_bound@data)[3] <- "Loc_type"
+colnames(TZ_all_bound@data)[4] <- "Location_Name"
+colnames(TZ_all_bound@data)[5] <- "District_N"
+colnames(TZ_all_bound@data)[6] <- "Ward_Name"
+colnames(TZ_all_bound@data)[7] <- "Vil_Mtaa_N"
+# transform to geo projection (lat long)
+sp::proj4string(TZ_all_bound) <- Geoproj
+# export it and save it as a .rda object in the "data" folder
+devtools::use_data(TZ_all_bound, overwrite = TRUE)
+
 # Now move to the root of the package
 devtools::wd(".")
 

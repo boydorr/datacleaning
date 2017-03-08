@@ -79,6 +79,14 @@ NULL
 #' @format A Spatial Polygon Dataframe
 NULL
 
+#' @name TZ_all_bound
+#' @title Tanzania shapefile with all Village, Ward, District & Region boundaries 
+#' @description This is a Spatial Polygon Dataframe that stores all the geographic 
+#' information about tanzania Village, Ward, District & Region borders.
+#' @docType data
+#' @format A Spatial Polygon Dataframe
+NULL
+
 #' @name Location_ID_df
 #' @title The location IDs dataframe
 #' @description This dataframe stores all the location IDs for each village, ward, district and region
