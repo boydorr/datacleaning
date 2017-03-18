@@ -4,13 +4,15 @@
 \alias{check.dataset.location.file}
 \title{check.dataset.location.file}
 \usage{
-check.dataset.location.file(pathway, metadata)
+check.dataset.location.file(pathway, metadata, comments)
 }
 \arguments{
 \item{pathway}{the pathway as specified in the original call to
 \code{load_metadata} which states the base of the directory.}
 
 \item{metadata}{dataframe containing a single Metadata spreadsheet.}
+
+\item{comments}{vector which collects any comments made by functions}
 }
 \value{
 A printed message informing the user if the location entry in the

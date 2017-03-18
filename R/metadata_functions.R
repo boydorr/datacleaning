@@ -50,23 +50,26 @@ read.meta <- function(filename)
 #' @description Checks that there is only one project per Metadata spreadsheet.
 #' This function does not need to be attached to an object.
 #' @param metadata dataframe containing a single Metadata spreadsheet.
+#' @param comments vector which collects any comments made by functions
 #' @return Prints the name of the Project which is currently being assessed to
 #' allow the user to keep track of progress, and stops the function if there is
 #' more than one project in the sheet.
 
-check.project.folder <- function(metadata)
+check.project.folder <- function(metadata, comments)
 {
   # Get unique names of project folders
   project.folder <- unique(metadata$project.folder)
 
   # Print the name of the current Project being assessed
-  print(paste0("Current Project being assessed: ", project.folder))
+  new.comment <- paste0("Current Project being assessed: ", project.folder)
+  comments <- c(comments, new.comment)
 
   # Is there only one project folder?
   if(length(project.folder)!=1)
   {
     stop("Number of Project Folders is Incorrect")
   }
+  return(comments)
 }
 
 #' @title check.dataset.folder
@@ -76,11 +79,12 @@ check.project.folder <- function(metadata)
 #' @param pathway the pathway as specified in the original call to
 #' \code{load_metadata} which states the base of the directory.
 #' @param metadata dataframe containing a single Metadata spreadsheet.
+#' @param comments vector which collects any comments made by functions
 #' @return Stops the function if there is a folder missing from the directory
 #' which is present in the Metadata spreadsheet (or Warns if using dataset.name
 #' functions) and states the folder/file name which caused the stop.
 
-check.dataset.folder <- function(pathway, metadata)
+check.dataset.folder <- function(pathway, metadata, comments)
 {
   # Get full path names to dataset folders
   project.paths <- paste(pathway, metadata$project.folder,
@@ -91,15 +95,17 @@ check.dataset.folder <- function(pathway, metadata)
   {
     if(file.exists(project.paths[i])==FALSE)
     {
-      print(paste0("Project Folder does not exist: ", project.paths[i]))
+      new.comment <- paste0("Project Folder does not exist: ", project.paths[i])
+      comments <- c(comments, new.comment)
     }
   }
+  return(comments)
 }
 
 #' @title check.dataset.name.raw
 #' @rdname  check.dataset.folder
 
-check.dataset.name.raw <- function(pathway, metadata)
+check.dataset.name.raw <- function(pathway, metadata, comments)
 {
   # Get full path names to dataset names
   raw.paths <- paste(pathway, metadata$project.folder, metadata$dataset.folder, "Raw",
@@ -110,16 +116,18 @@ check.dataset.name.raw <- function(pathway, metadata)
   {
     if(file.exists(raw.paths[i])==FALSE)
     {
-      print(paste0("Dataset does not exist in Raw: ", raw.paths[i]))
+      new.comment <- paste0("Dataset does not exist in Raw: ", raw.paths[i])
+      comments <- c(comments, new.comment)
       }
   }
+  return(comments)
 }
 
 
 #' @title check.dataset.name.processed
 #' @rdname check.dataset.folder
 
-check.dataset.name.processed <- function(pathway, metadata)
+check.dataset.name.processed <- function(pathway, metadata, comments)
 {
   # Get full path names to dataset names
   processed.paths <- paste(pathway, metadata$project.folder, metadata$dataset.folder,
@@ -130,9 +138,11 @@ check.dataset.name.processed <- function(pathway, metadata)
   {
     if(file.exists(processed.paths[i])==FALSE)
     {
-      print(paste0("Dataset does not exist in Processed: ", processed.paths[i]))
+      new.comment <- paste0("Dataset does not exist in Processed: ", processed.paths[i])
+      comments <- c(comments, new.comment)
     }
   }
+  return(comments)
 }
 
 
@@ -145,7 +155,7 @@ check.dataset.name.processed <- function(pathway, metadata)
 #' @return A printed message informing the user if the location entry in the
 #' Metadata is missing, or if the Metadata entry is missing from the directory.
 
-check.dataset.location.file <- function(pathway, metadata)
+check.dataset.location.file <- function(pathway, metadata, comments)
 {
   # Get full path names to location file names
   location.paths <- paste(pathway, metadata$project.folder, "Metadata",
@@ -157,7 +167,8 @@ check.dataset.location.file <- function(pathway, metadata)
   for(i in 1:length(location.paths))
   {
     if(grepl('/NA$', location.paths[i])==TRUE){
-      print(paste0("Missing Location file entry: ", location.paths[i]))
+      new.comment <- paste0("Missing Location file entry: ", location.paths[i])
+      comments <- c(comments, new.comment)
     }
   }
 
@@ -167,12 +178,12 @@ check.dataset.location.file <- function(pathway, metadata)
   {
     if(file.exists(location.paths[i])==FALSE)
     {
-      print(paste0("Location file does not exist in Metadata Folder: ",
-                   location.paths[i]))
+      new.comment <- paste0("Location file does not exist in Metadata Folder: ",
+                   location.paths[i])
+      comments <- c(comments, new.comment)
     }
   }
-
-
+  return(comments)
 }
 
 
@@ -190,13 +201,30 @@ create.project.tag <- function(metadata)
   metadata$dataset.folder <- as.character(metadata$dataset.folder)
   metadata$dataset.name <- as.character(metadata$dataset.name)
 
-  # Create unique string tag - project.folder-dataset.folder-dataset.name
+  # Create unique string tag - project.folder--dataset.folder--dataset.name
   metadata$project.tag<- with(metadata,
                              paste(project.folder, dataset.folder, dataset.name, sep="--"))
 
   # Remove file extensions from unique tag
   metadata$project.tag <- gsub("\\..*$", "", metadata$project.tag)
   # Replace space with -
+
+  return(metadata)
+}
+
+#' @title create.server.loc.tag
+#' @description Creates a tag for each dataset by replacing the "--" in project.tag
+#' and replacing with "/" to denote a file location; this tag is made up of
+#' Project Name, Dataset Folder and Dataset Name (without file extensions).
+#' @inheritParams check.project.folder
+#' @return a new column in the Metadata dataframe containing the unique tag for
+#' each row
+
+create.server.loc.tag <- function(metadata)
+{
+  # Create unique string tag - project.folder/dataset.folder/dataset.name
+  metadata$server.loc.tag<- with(metadata,
+                              paste(project.folder, dataset.folder, dataset.name, sep="/"))
 
   return(metadata)
 }

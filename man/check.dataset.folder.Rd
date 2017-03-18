@@ -6,17 +6,19 @@
 \alias{check.dataset.name.processed}
 \title{check.dataset.folder}
 \usage{
-check.dataset.folder(pathway, metadata)
+check.dataset.folder(pathway, metadata, comments)
 
-check.dataset.name.raw(pathway, metadata)
+check.dataset.name.raw(pathway, metadata, comments)
 
-check.dataset.name.processed(pathway, metadata)
+check.dataset.name.processed(pathway, metadata, comments)
 }
 \arguments{
 \item{pathway}{the pathway as specified in the original call to
 \code{load_metadata} which states the base of the directory.}
 
 \item{metadata}{dataframe containing a single Metadata spreadsheet.}
+
+\item{comments}{vector which collects any comments made by functions}
 }
 \value{
 Stops the function if there is a folder missing from the directory

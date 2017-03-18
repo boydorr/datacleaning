@@ -4,11 +4,14 @@
 \alias{load_metadata}
 \title{Load in Metadata Spreadsheets}
 \usage{
-load_metadata(pathway)
+load_metadata(pathway, file.list = NULL)
 }
 \arguments{
 \item{pathway}{This is the path for the base location of where all the files
 are stored.}
+
+\item{file.list}{NULL by default. If an alternative is provided, it must be
+the full pathway e.g. "Z://WaterSamples/Metadata/WaterSamples Metadata.xlsx"}
 }
 \value{
 A single dataframe containing all of the individual Metadata sheets

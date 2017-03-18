@@ -8,6 +8,8 @@
 #'
 #' @param pathway This is the path for the base location of where all the files
 #' are stored.
+#' @param file.list NULL by default. If an alternative is provided, it must be
+#' the full pathway e.g. "Z://WaterSamples/Metadata/WaterSamples Metadata.xlsx"
 #'
 #' @details This function reads in each spreadsheet individually, allowing a
 #' series of tests to be run on each before it is joined to the grouped dataframe.
@@ -33,17 +35,22 @@
 #'
 #' @export
 
-load_metadata <- function(pathway)
+load_metadata <- function(pathway, file.list=NULL)
 {
   # Print message to inform user of progress - the next part takes a while!
   print("Searching for Metadata...")
 
   # Find metadata locations
-  file.list <- list.files(path=pathway, pattern=" Metadata.xlsx$",
+  if(is.null(file.list))
+     file.list <- list.files(path=pathway, pattern=" Metadata.xlsx$",
                           recursive=TRUE, full.names = TRUE)
 
   # create empty dataframe
   metadata.df <- data.frame()
+
+  # Create vector for comments
+  comments <- c()
+  comments <- c(comments, "Searching for Metadata...")
 
   # Load in and check metadata spreadsheets
   for(i in 1:length(file.list))
@@ -52,28 +59,34 @@ load_metadata <- function(pathway)
     metadata <- read.meta(filename=file.list[i])
 
     # Check number of project.folders is correct
-    datacleaning:::check.project.folder(metadata)
+    comments <- datacleaning:::check.project.folder(metadata, comments)
 
     # Check dataset.folders are correct
-    datacleaning:::check.dataset.folder(pathway, metadata)
+    comments <- datacleaning:::check.dataset.folder(pathway, metadata, comments)
 
     # Check datasets are correct
-    datacleaning:::check.dataset.name.raw(pathway, metadata)
-    datacleaning:::check.dataset.name.processed(pathway, metadata)
+    comments <- datacleaning:::check.dataset.name.raw(pathway, metadata, comments)
+    comments <- datacleaning:::check.dataset.name.processed(pathway, metadata, comments)
 
     # Does LOCATION.csv exist? #
-    datacleaning:::check.dataset.location.file(pathway, metadata)
+    comments <- datacleaning:::check.dataset.location.file(pathway, metadata, comments)
 
     # Does SHAPEFILE exist? #
 
     # Create unique tag for each dataset
-    tagged.metadata <- datacleaning:::create.project.tag(metadata)
+    tag1.metadata <- datacleaning:::create.project.tag(metadata)
+
+    # Create tag to denote location of dataset on the server
+    tag2.metadata <- datacleaning:::create.server.loc.tag(tag1.metadata)
 
     # Create location tag for each dataset
-    tagged.metadata <- datacleaning:::create.location.tag(tagged.metadata)
+    tagged.metadata <- datacleaning:::create.location.tag(tag2.metadata)
 
     # Bind data to dataframes
     metadata.df <- rbind(metadata.df, tagged.metadata)
   }
-  return(metadata.df)
+
+  metadata_results <- list(metadata.df=metadata.df, comments=comments)
+  beepr::beep(sound="ping")
+  return(metadata_results)
 }

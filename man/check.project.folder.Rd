@@ -4,10 +4,12 @@
 \alias{check.project.folder}
 \title{check.project.folder}
 \usage{
-check.project.folder(metadata)
+check.project.folder(metadata, comments)
 }
 \arguments{
 \item{metadata}{dataframe containing a single Metadata spreadsheet.}
+
+\item{comments}{vector which collects any comments made by functions}
 }
 \value{
 Prints the name of the Project which is currently being assessed to
