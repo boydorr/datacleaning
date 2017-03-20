@@ -49,18 +49,18 @@ taken upon running the function.
 
 A list is returned containing:
 
-1) A data frame with location information seperated into four columns
+[1] A data frame with location information seperated into four columns
 (Village, Ward, District and Region). This information is a set of unique
 locations. A warning message will be produced if NAs are present in this
 dataframe.
-2) A dataframe with location information in a setup using unique codes to
+[2] A dataframe with location information in a setup using unique codes to
 identify each location, using three columns (Location, Location_Type and
 Loc_ID); This dataframe is used within the Shiny App.
 
 If \code{update.df} or \code{add.coords} is used in the function call, a
 third item is returned:
 
-3) The original dataframe with the updates in new columns.
+[3] The original dataframe with the updates in new columns.
 
 Each of these can be accessed by calling \code{data_location[[i]]}, where
 \code{i} is the number mentioned above.

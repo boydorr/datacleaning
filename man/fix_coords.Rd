@@ -34,28 +34,36 @@ replaces them with NA. This enables onward use of other functions within the
 \code{datacleaning} package without issue of mixed coordinate formats or
 wrongly input numbers in raw data.
 }
+\details{
+This function fixes two types of errors:
+1) Coordinates input in a different format to the majority.
+2) Coordinates outside of a set range. This is 500000-1000000 (x-) and
+6000000-11000000 (y-) for UTM coordinates, and 29.0-42.0 (longitude) and
+-13.0-0 (latitude) for Geographic WGS84. These boundaries mark the maximum
+for Tanzania.
+}
 \examples{
 # WITH UTM COORDINATES
-data("example_utm_coordinates2")
+data("utm_coordinates_err")
 
 # View dataframe
-example_utm_coordinates2
+utm_coordinates_err
 
 # Run with remove.extra
-fix_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", coord_type="UTM")
+fix_coords(dataframe=utm_coordinates_err, x_label="x.utm", y_label="y.utm", coord_type="UTM")
 
 # Run without remove.extra
-fix_coords(dataframe=example_utm_coordinates2, x_label="x_label", y_label="y_label", coord_type="UTM", remove.extra=FALSE)
+fix_coords(dataframe=utm_coordinates_err, x_label="x.utm", y_label="y.utm", coord_type="UTM", remove.extra=FALSE)
 
 # WITH GEOGRAPHIC WGS84 COORDINATES
-data("example_geo_coordinates")
+data("geo_coordinates_err")
 
 # View dataframe
-example_geo_coordinates
+geo_coordinates_err
 
 # Run with remove.extra
-fix_coords(dataframe=example_geo_coordinates, x_label="x_label", y_label="y_label", coord_type="Geo-WGS84")
+fix_coords(dataframe=geo_coordinates_err, x_label="longitude", y_label="latitude", coord_type="Geo-WGS84")
 
 # Run without remove.extra
-fix_coords(dataframe=example_geo_coordinates, x_label="x_label", y_label="y_label", coord_type="Geo-WGS84", remove.extra=FALSE)
+fix_coords(dataframe=geo_coordinates_err, x_label="longitude", y_label="latitude", coord_type="Geo-WGS84", remove.extra=FALSE)
 }
