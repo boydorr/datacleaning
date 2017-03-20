@@ -80,8 +80,8 @@ NULL
 NULL
 
 #' @name TZ_all_bound
-#' @title Tanzania shapefile with all Village, Ward, District & Region boundaries 
-#' @description This is a Spatial Polygon Dataframe that stores all the geographic 
+#' @title Tanzania shapefile with all Village, Ward, District & Region boundaries
+#' @description This is a Spatial Polygon Dataframe that stores all the geographic
 #' information about tanzania Village, Ward, District & Region borders.
 #' @docType data
 #' @format A Spatial Polygon Dataframe
@@ -145,16 +145,16 @@ NULL
 #' @format A Dataframe
 NULL
 
-#' @name example_utm_coordinates2
-#' @title Example UTM Coordinate Set 2
+#' @name utm_coordinates_err
+#' @title Example UTM Coordinate with errors
 #' @description This is an example set of UTM coordinates based in Tanzania with
 #' some NAs present.
 #' @docType data
 #' @format A Dataframe
 NULL
 
-#' @name example_geo_coordinates
-#' @title Example Geographic WGS84 Coordinate Set
+#' @name geo_coordinates_err
+#' @title Example Geographic WGS84 Coordinate Set with errors
 #' @description This is an example set of Geographic WGS84 coordinates based in
 #' Tanzania.
 #' @docType data
