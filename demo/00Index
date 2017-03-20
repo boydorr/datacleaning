@@ -1,3 +1,2 @@
-demo1    Demonstrates the process of checking, suggesting changes to and fixing location names within a dataset.
-demo2.1    Shows how to process a datasets of wrong locations, using the relevant functions to identify the misspellings, create a typos dataframe and finally fix the misspellings.
-demo2.2    Shows how to process and fix a datasets of wrong locations. Unlike demo2.1, demo2.2 assumes that a typos dataframe is already available.
+demo1.1    (DRAFT) Shows how to process a datasets of wrong locations, using the relevant functions to identify the misspellings, create a typos dataframe and finally fix the misspellings.
+demo1.2    (DRAFT) Shows how to process and fix a datasets of wrong locations. Unlike demo2.1, demo2.2 assumes that a typos dataframe is already available.
