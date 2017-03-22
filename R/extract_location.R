@@ -70,7 +70,7 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
                              x_label="X.UTM", y_label="Y.UTM", update.df=FALSE,
                              add.coords=FALSE)
 {
-  # Remove rows with NA values
+ # Remove rows with NA values
   data <- dataframe[!is.na(dataframe[[x_label]]),]
   data <- data[!is.na(data[[y_label]]),]
 
@@ -130,19 +130,47 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
                                          ID_df=Location_ID_df)
   final_location_df <- unique(final_location_df)
 
-  # Make coordinate update to dataframe
+  #-----------------------------------------#
+  # Add transformed coordinate to dataframe #
+  #-----------------------------------------#
   if(add.coords==TRUE)
   {
     # View as dataframe
     new.coord <- as.data.frame(proj.data)
 
-    # Rename columns
-    colnames(new.coord)[1] <- "Latitude"
-    colnames(new.coord)[2] <- "Longitude"
+    # Find which rows contain non-NAs in original dataframe coordinate columns
+    rows <- which(!is.na(dataframe[[x_label]]))
+
+    # Create empty data frame
+    new.coord.df <- data.frame()
+
+    # Create an object to tick through each row in new.coord
+    j=1
+
+    for(i in 1:nrow(dataframe)){
+      # If any of the row numbers of non-NA cells is equal to i
+      if(any(rows==i)){
+        new.row <- subset(new.coord, rownames(new.coord)==j)
+
+        names(new.row)[[1]] <- "Latitude"
+        names(new.row)[[2]] <- "Longitude"
+
+        new.coord.df <- rbind(new.coord.df, new.row)
+
+        # Add 1 to j to scroll to next row in "rows" dataframe
+        j = j + 1
+      } else {
+        new.row <- data.frame(NA, NA)
+        names(new.row)[[1]] <- "Latitude"
+        names(new.row)[[2]] <- "Longitude"
+
+        new.coord.df <- rbind(new.coord.df, new.row)
+      }
+    }
 
     # Add transformed coordinates to original dataframe
     print("Geograhic WGS84 coordinates added")
-    dataframe <- cbind(dataframe, new.coord)
+    dataframe <- cbind(dataframe, new.coord.df)
   }
 
   # Make location update to dataframe
@@ -151,7 +179,7 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
     print("Village, Ward, District and Region columns added to dataframe")
 
     # Bind columns detailing Village, Ward, District and Region to original dataframe
-    dataframe <- cbind(dataframe, location_df)
+    dataframe <- merge(dataframe, complete_location_df, by="row.names")
   }
 
   # Create list of returnable items
