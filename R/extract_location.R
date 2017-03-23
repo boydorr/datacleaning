@@ -122,13 +122,13 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
   complete_location_df <- unique_location_df[complete.cases(unique_location_df),]
 
   # Create Final dataframe of locations
-  final_location_df <- datacleaning::create_final_df(complete_location_df,
+  shiny_location_df <- datacleaning::create_final_df(complete_location_df,
                                          corr_df_vill ="Village",
                                          corr_df_ward="Ward",
                                          corr_df_distr="District",
                                          corr_df_reg="Region",
                                          ID_df=Location_ID_df)
-  final_location_df <- unique(final_location_df)
+  shiny_location_df <- unique(shiny_location_df)
 
   #-----------------------------------------#
   # Add transformed coordinate to dataframe #
@@ -173,20 +173,56 @@ extract_location <- function(dataframe, data.projection, shapefile=village_2012,
     dataframe <- cbind(dataframe, new.coord.df)
   }
 
-  # Make location update to dataframe
+  #----------------------------------#
+  # Add location update to dataframe #
+  #----------------------------------#
   if(update.df==TRUE)
   {
+    # Find which rows contain non-NAs in original dataframe coordinate columns
+    rows <- which(!is.na(dataframe[[x_label]]))
+
+    # Create empty data frame
+    loc.df <- data.frame()
+
+    # Create an object to tick through each row in new.coord
+    k=1
+
+    for(m in 1:nrow(dataframe)){
+      # If any of the row numbers of non-NA cells is equal to i
+      if(any(rows==m)){
+        n.row <- subset(location_df, rownames(location_df)==k)
+
+        names(n.row)[[1]] <- "Village"
+        names(n.row)[[2]] <- "Ward"
+        names(n.row)[[3]] <- "District"
+        names(n.row)[[4]] <- "Region"
+
+        loc.df <- rbind(loc.df, n.row)
+
+        # Add 1 to k to scroll to next row in "rows" dataframe
+        k = k + 1
+      } else {
+        n.row <- data.frame(NA, NA, NA, NA)
+        names(n.row)[[1]] <- "Village"
+        names(n.row)[[2]] <- "Ward"
+        names(n.row)[[3]] <- "District"
+        names(n.row)[[4]] <- "Region"
+
+        loc.df <- rbind(loc.df, n.row)
+      }
+    }
+
     print("Village, Ward, District and Region columns added to dataframe")
 
     # Bind columns detailing Village, Ward, District and Region to original dataframe
-    dataframe <- merge(dataframe, complete_location_df, by="row.names")
+    dataframe <- cbind(dataframe, loc.df)
   }
 
   # Create list of returnable items
   if(add.coords==TRUE | update.df==TRUE){
-    final_list <- list(complete_location_df, final_location_df, dataframe)
+    final_list <- list(complete_location_df, shiny_location_df, dataframe)
   } else {
-    final_list <- list(complete_location_df, final_location_df)
+    final_list <- list(complete_location_df, shiny_location_df)
   }
 
   return(final_list)
