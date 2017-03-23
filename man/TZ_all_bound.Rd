@@ -6,6 +6,6 @@
 \title{Tanzania shapefile with all Village, Ward, District & Region boundaries}
 \format{A Spatial Polygon Dataframe}
 \description{
-This is a Spatial Polygon Dataframe that stores all the geographic 
+This is a Spatial Polygon Dataframe that stores all the geographic
 information about tanzania Village, Ward, District & Region borders.
 }
