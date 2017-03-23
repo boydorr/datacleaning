@@ -16,9 +16,10 @@
 #----------------------#
 # Load in example data #
 #----------------------#
+# We will load in two example datasets: one in UTM 36S, and one in Geographic
+# WGS84.
 data("utm_coordinates_err")
 data("geo_coordinates_err")
-#
 #
 #---------------------#
 # Fix UTM coordinates #
@@ -68,33 +69,50 @@ geo_coordinates_rm.ext <- fix_coords(geo_coordinates_err, x_label = "longitude",
 #----------------------------------#
 # Run function for UTM coordinates #
 #----------------------------------#
-#
 # If you would like to keep the original dataframe intact, update.df and add.coords
 # are FALSE by default.
 utm_results <- extract_location(dataframe = utm_coordinates_rm.ext,
                                 x_label = "x.utm", y_label = "y.utm",
                                 data.projection="+proj=utm +zone=36 +south +datum=WGS84",
-                                update.df = F, add.coords = F)
+                                update.df = T, add.coords = T)
 #
 # Each item from the list is extracted as follows:
 utm_loc_info <- utm_results[[1]]
 utm_shiny_app_df <- utm_results[[2]]
+utm_orig_df <- utm_results[[3]]
 #
 # The first item can be used to find the unique areas within Tanzania the data
 # is collected from when the information was originally missing/mis-sampled.
 utm_loc_info
 #
+# The second item is used within the shiny Tanzania app, and introduces unique tags.
+utm_shiny_app_df
+#
+# The third item is an updated dataframe with the new additions.
+utm_orig_df
 #
 #-----------------------------------------#
 # Run function for Geographic coordinates #
 #-----------------------------------------#
+# add.coords is not needed if you begin with coordinated in the Geographic WGS84
+# projection.
 geo_results <- extract_location(dataframe = geo_coordinates_rm.ext,
                                 x_label = "longitude", y_label = "latitude",
                                 data.projection="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0",
-                                update.df = F, add.coords = F)
+                                update.df = T, add.coords = F)
 #
 # Each item from the list is extracted as follows:
 geo_loc_info <- geo_results[[1]]
 geo_shiny_app_df <- geo_results[[2]]
+geo_orig_df <- geo_results[[3]]
 #
+# As before, the first item can be used to find the unique areas within Tanzania
+# the data is collected from when the information was originally missing/mis-sampled.
 geo_loc_info
+#
+# The second item is used within the shiny Tanzania app, and introduces unique tags.
+geo_shiny_app_df
+#
+# The third item is an updated dataframe with the new additions.
+geo_orig_df
+
