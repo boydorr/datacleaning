@@ -84,7 +84,7 @@ fix_coords <- function(dataframe, x_label, y_label, coord_type="UTM",
 
     # Remove y-coordinate number if outside of range
     dataframe[[y_label]] <- lapply(dataframe[[y_label]],
-                                   function(x) ifelse(x<=-13.0, "", x))
+                                   function(x) ifelse(x<=-12.0, "", x))
     dataframe[[y_label]] <- lapply(dataframe[[y_label]],
                                    function(x) ifelse(x>=0, "", x))
   }
