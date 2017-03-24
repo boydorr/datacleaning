@@ -113,6 +113,15 @@ NULL
 #' @format A Dataframe
 NULL
 
+#' @name example_locations_names
+#' @title Example Location Name Dataframe
+#' @description This is an example dataframe containing a range of
+#' location data at village, ward, district and region level. This is designed to
+#' have mis-spellings and mistakes, mainly for use in shinydatacleaning.
+#' @docType data
+#' @format A Dataframe
+NULL
+
 #' @name example_typos
 #' @title Example typos dataset
 #' @description This is an example typos dataset containing a set of misspelled
