@@ -21,4 +21,5 @@ Imports:
     tibble,
     Hmisc,
     readr,
-    beepr
+    beepr,
+    RecordLinkage
