@@ -86,11 +86,7 @@ plot_districts <- function(dataframe, label_dis, label_reg,
 
   ## the shapefile with the villages of interest
   vill_subset <- shapefile[final_dist_rows,]
-  vill_subset@data <- select(vill_subset@data, OBJECTID, Ward_Name,
-                             District_N, Region_Nam)
-
-  vill_subset$Ward_Name <- as.character(vill_subset$Ward_Name)
-  vill_subset$Ward_Name <- as.factor(vill_subset$Ward_Name)
+  vill_subset@data <- dplyr::select(vill_subset@data, District_N, Region_Nam)
 
   vill_subset$District_N <- as.character(vill_subset$District_N)
   vill_subset$District_N <- as.factor(vill_subset$District_N)
@@ -98,6 +94,6 @@ plot_districts <- function(dataframe, label_dis, label_reg,
   vill_subset$Region_Nam <- as.character(vill_subset$Region_Nam)
   vill_subset$Region_Nam <- as.factor(vill_subset$Region_Nam)
 
-  plot(vill_subset)
+  sp::plot(vill_subset)
   return(vill_subset)
 }

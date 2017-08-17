@@ -142,7 +142,7 @@ plot_villages <- function(dataframe, label_vill, label_ward, label_dis, label_re
   ## the shapefile with the villages of interest
   vill_subset <- shapefile[final_village_rows,]
 
-  vill_subset@data <- select(vill_subset@data, OBJECTID, Vil_Mtaa_N, Ward_Name,
+  vill_subset@data <- dplyr::select(vill_subset@data, Vil_Mtaa_N, Ward_Name,
                              District_N, Region_Nam)
 
   vill_subset$Vil_Mtaa_N <- as.character(vill_subset$Vil_Mtaa_N)
@@ -157,7 +157,7 @@ plot_villages <- function(dataframe, label_vill, label_ward, label_dis, label_re
   vill_subset$Region_Nam <- as.character(vill_subset$Region_Nam)
   vill_subset$Region_Nam <- as.factor(vill_subset$Region_Nam)
 
-  plot(vill_subset)
+  sp::plot(vill_subset)
 
   return(vill_subset)
 }

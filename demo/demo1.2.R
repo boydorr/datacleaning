@@ -28,14 +28,14 @@ example_typos <- readr::read_csv(system.file("extdata", "example_typos.csv", pac
 ## Since the village typo dataframe is already available, I can simply:
 
 ## get the real ("legal") names, i.e. the names in the village shapefile
-real_vill_names <- village_2012$Vil_Mtaa_N
+real_vill_names <- datacleaning::TZ_all_bound$Vil_Mtaa_N
 
 ## 1) fix the misspellings in the village names based on the typo dataframe and on the legal names
-corrected_df_vill <- fix_typos(dataframe=example_locations_II, typo_df = example_typos,
-                               dataframe_label = "Village",
-                               typo_label_correct = "Correct_Village_1",
-                               typo_label_wrong = "misspelled_villages",
-                               legal_names = real_vill_names)
+corrected_df_vill <- fix_typos(dataframe=example_locations_II, typo_df=example_typos,
+                               dataframe_label="Village",
+                               typo_label_wrong="misspelling",
+                               typo_label_correct="correct_name",
+                               legal_names=real_vill_names, mixed_typo = F)
 
 readline("1st step completed. Hit RETURN to move to the 2nd step.")
 
@@ -67,18 +67,20 @@ readline("3rd step completed. Hit RETURN to move to the 4th step.")
 #'** Produce the shapefile at the village/ward/district/region levels **
 #-------------------------------------------------------------------------------
 
-study_villages <- plot_villages(dataframe = updated_names, label_vill = "Updated_Villages",
-                                label_ward = "Updated_Wards", label_dis = "Updated_Districts",
-                                label_reg = "Updated_Regions", shapefile = village_2012)
+study_villages <- plot_villages(dataframe = updated_names, label_vill = "Village",
+                                label_ward = "Ward", label_dis = "District",
+                                label_reg = "Region", shapefile = village_2012)
 
-study_wards <- plot_wards(dataframe = updated_names,  label_ward = "Updated_Wards",
-                          label_dis = "Updated_Districts", label_reg = "Updated_Regions",
-                          shapefile = ward_2012)
+study_wards <- plot_wards(dataframe = updated_names,
+                          label_ward = "Ward", label_dis = "District",
+                          label_reg = "Region", shapefile = ward_2012)
 
-study_districts <- plot_districts(dataframe = updated_names,  label_dis = "Updated_Districts",
-                                  label_reg = "Updated_Regions", shapefile = ward_2012)
+study_districts <- plot_districts(dataframe = updated_names,
+                                  label_dis = "District",
+                                  label_reg = "Region", shapefile = district_2012)
 
-study_regions <- plot_regions(dataframe = updated_names, label_reg = "Updated_Regions",
-                              shapefile = ward_2012)
+study_regions <- plot_regions(dataframe = updated_names,
+                              label_reg = "Region", shapefile = region_2012)
+
 
 

@@ -23,7 +23,7 @@ example_locations_II <- readr::read_csv(system.file("extdata", "example_location
 #-------------------------------------------------------------------------------
 
 ## the real ("legal") names are the names in the shapefile
-real_dis_names <- ward_2012$District_N
+real_dis_names <- datacleaning::TZ_all_bound$District_N
 
 ## are the district names correct?
 doublecheck_dis <- check_names(dataframe=example_locations_II, label = "District",
@@ -39,7 +39,7 @@ readline("1st step completed. Hit RETURN to move to the 2nd step.")
 #-------------------------------------------------------------------------------
 
 ## the real ("legal") names are the names in the village shapefile
-real_vill_names <- village_2012$Vil_Mtaa_N
+real_vill_names <- datacleaning::TZ_all_bound$Vil_Mtaa_N
 
 ## are the village names correct?
 doublecheck_vill <- check_names(dataframe=example_locations_II, label = "Village",
@@ -80,11 +80,12 @@ readline("2nd step completed. Hit RETURN to move to the 3rd step.")
 example_typos <- readr::read_csv(system.file("extdata", "example_typos.csv", package="datacleaning"))
 
 ## (iii) fix the misspellings
-corrected_df_vill <- fix_typos(dataframe=example_locations_II, typo_df = example_typos,
-                               dataframe_label = "Village",
-                               typo_label_correct = "Correct_Village_1",
-                               typo_label_wrong = "misspelled_villages",
-                               legal_names = real_vill_names)
+corrected_df_vill <- fix_typos(dataframe=example_locations_II, typo_df=example_typos,
+                               dataframe_label="Village",
+                               typo_label_wrong="misspelling",
+                               typo_label_correct="correct_name",
+                               legal_names=real_vill_names, mixed_typo = F)
+
 
 ## are the village names now correct?
 doublecheck_vill <- check_names(dataframe=corrected_df_vill,
@@ -128,18 +129,19 @@ readline("4th step completed. Hit RETURN to move to the 5th step.")
 #'** Produce the shapefile at the village/ward/district/region levels **
 #-------------------------------------------------------------------------------
 
-study_villages <- plot_villages(dataframe = updated_names, label_vill = "Updated_Villages",
-                                label_ward = "Updated_Wards", label_dis = "Updated_Districts",
-                                label_reg = "Updated_Regions", shapefile = village_2012)
+study_villages <- plot_villages(dataframe = updated_names, label_vill = "Village",
+                                label_ward = "Ward", label_dis = "District",
+                                label_reg = "Region", shapefile = village_2012)
 
-study_wards <- plot_wards(dataframe = updated_names,  label_ward = "Updated_Wards",
-                          label_dis = "Updated_Districts", label_reg = "Updated_Regions",
-                          shapefile = ward_2012)
+study_wards <- plot_wards(dataframe = updated_names,
+                             label_ward = "Ward", label_dis = "District",
+                             label_reg = "Region", shapefile = ward_2012)
 
-study_districts <- plot_districts(dataframe = updated_names,  label_dis = "Updated_Districts",
-                                  label_reg = "Updated_Regions", shapefile = ward_2012)
+study_districts <- plot_districts(dataframe = updated_names,
+                              label_dis = "District",
+                              label_reg = "Region", shapefile = district_2012)
 
-study_regions <- plot_regions(dataframe = updated_names, label_reg = "Updated_Regions",
-                              shapefile = ward_2012)
+study_regions <- plot_regions(dataframe = updated_names,
+                                label_reg = "Region", shapefile = region_2012)
 
 
