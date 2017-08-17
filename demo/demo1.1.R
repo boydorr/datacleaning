@@ -55,8 +55,9 @@ doublecheck_vill <- check_names(dataframe=example_locations_II, label = "Village
 
 ## the function "fix_typos" deals with the task in (iii)
 
-## the study took place only in the district of Kilosa.
-stud_distr <- c("Kilosa")
+## the study took place only in the district of Kilosa, but we'll pretend
+## it might have been in Arusha too...
+stud_distr <- c("Kilosa", "Arusha")
 
 ## Use the available information (district Kilosa) to narrow down the search.
 
